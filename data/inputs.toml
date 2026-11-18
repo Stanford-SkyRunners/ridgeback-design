@@ -1,0 +1,84 @@
+# Ridgeback Scout: the typed design numbers behind the calculations (rules, air, aerodynamics, motors, battery...).
+#
+# HOW TO EDIT: change a number and press "Commit changes". GitHub recomputes every sheet and the website in about
+# 2 minutes, so everything that depends on it (stall speed, loiter time, cost...) updates too.
+# Each line: name = value   # what it is [unit], where the number comes from
+# Keep the name on the left as it is. Prices, links and masses of parts are in data/parts.toml.
+
+
+[Requirements]
+req_loiter = 80   # Loiter time, with 20 % reserve left [min]; [A] team rule (OWN_SMALL_DRONE §1)
+req_tw = 1.5   # Hover thrust / weight, 800 m altitude, ISA+20 (hot day); [A] common VTOL control-margin rule; same rule as the 3.35 m design
+req_stall = 15.0   # Stall speed (clean wing, takeoff mass, sea level) [m/s]; [A] team rule
+req_payload = 0.316   # Sensor payload (core kit) [kg]; [A] payload_fit.py boxes: Jetson 176 g, thermal 25 g, colour camera 35 g, 1610 nm spot sensor 80 g
+req_budget = 3000   # Budget for the aircraft [USD]; user (10-30): $3k cap, stretch 4-5k
+req_alt = 800   # Design altitude for the hot-day case [m]; [A]
+req_dT = 20   # Hot-day temperature above ISA [K]; [A] ISA+20 = 30 °C at sea level
+req_radius = 1000   # Operating radius from the take-off point [m]; [A] FAA Part 107 §107.31: the pilot or a visual observer must see the aircraft; our field plan flies within ~1 km (docs/BASE_STATION.md D3)
+req_site = 2   # Site surveyed per flight [ha]; [A] docs/BASE_STATION.md §2.1: a 5-acre plot of chaparral plus a 50 m buffer
+req_survey = 15   # Time over the site per flight [min]; [A] BASE_STATION.md: 18 lines x 240 m ≈ 7 min at 19 m/s, plus passes and hovering for the spot sensor
+req_flights = 3   # Flights per field day on one battery; [A] BASE_STATION.md: pre-dawn, mid-morning, midday (the water-loss curve needs at least dawn and midday)
+
+[Constants]
+g = 9.80665   # Gravity [m/s²]; standard
+Rair = 287.05   # Gas constant of air [J/(kg K)]; standard
+T0 = 288.15   # Sea-level ISA temperature [K]; ISA
+p0 = 101325   # Sea-level ISA pressure [Pa]; ISA
+lapse = 0.0065   # Temperature lapse rate [K/m]; ISA
+h_sl = 0   # Altitude [m]
+dT_sl = 0   # ISA deviation [K]
+
+[Mass_CG]
+cg_target = 94   # CG target [mm]; [C] mini_layout.py, 15 % static margin
+
+[Airfoil_SD7037]
+tc = 0.092   # Thickness / chord; [C]
+
+[Drag_Buildup]
+Vref = 19.0   # Reference airspeed for Reynolds numbers [m/s]; [A]
+fuse_L = 0.94   # Fuselage length [m]; [C] cad/design.py
+fuse_W = 0.17   # Fuselage width [m]; [C]
+fuse_H = 0.165   # Fuselage height [m]; [C]
+fuse_Swet = 0.45   # Fuselage wetted area [m²]; [C] CAD, 2 methods
+boom_len = 1.358   # Boom tube length [m]; [C]
+boom_D = 0.03   # Boom tube diameter [m]; [C]
+tail_c = 0.12   # Arch tail chord [m]; [C]
+tail_h = 0.36   # Arch tail apex height [m]; [C]
+boom_y = 0.39   # Boom lateral position [m]; [C]
+nac_L = 0.22   # Nacelle (ESC fairing) length [m]; [C]
+nac_W = 0.064   # Nacelle width [m]; [C]
+nac_H = 0.095   # Nacelle height [m]; [C]
+leg_c = 0.048   # Leg fairing chord (NACA 0025) [m]; [C]
+leg_h = 0.148   # Leg fairing height [m]; [C]
+foot_D = 0.036   # Foot diameter (TPU) [m]; [C]
+foot_H = 0.045   # Foot height [m]; [C]
+mot_D = 0.0556   # Lift motor diameter [m]; [C]
+mot_H = 0.031   # Lift motor height [m]; [C]
+Cd_bluff = 0.8   # Cd of short bluff cylinders (motors, feet); [A] Hoerner: short cylinder in cross-flow, L/D ≈ 0.5-1.3 → 0.6-0.9
+misc_frac = 0.1   # Extra for gaps, hinges, antennas, GNSS pads, rough print; [A] Raymer: 5-10 % (leakage + protuberance)
+CD0_rev_lo = 0.04   # Independent review: CD0 low; [C from A] independent reviewer 11-17
+CD0_rev_mid = 0.06   # Independent review: CD0 likely; [C from A]
+CD0_rev_hi = 0.09   # Independent review: CD0 high; [C from A]
+
+[Aero_Cruise]
+S = 0.5   # Wing area [m²]; [C] cad/design.py WING_AREA_M2
+b = 2.24   # Span [m]; [C]
+c_root = 0.2706   # Root chord [m]; [C]
+c_tip = 0.1759   # Tip chord [m]; [C]
+eta_push = 0.55   # Pusher efficiency (electrical → thrust power); [A] motor ~0.80 x prop ~0.70 at cruise
+P_av = 20   # Avionics + sensor power [W]; [A] avionics 15 W + spot sensor / logger 5 W; Jetson adds 7-15 W when fitted
+
+[Lift_Hover]
+Tmax_test = 4215   # Max thrust per motor in the test (100 %) [g]; [V]
+V_test = 22.51   # Test voltage at 100 % [V]; [V]
+rho_test = 1.2   # Air density during the maker's test [kg/m³]; [A] not stated on the page
+I_esc = 40   # ESC continuous rating (ALPHA 40A 6S) [A]; [V] product name / page
+
+[Pusher]
+J0 = 0.66   # Advance ratio where thrust reaches zero; [A] APC thin-electric props, pitch/diameter ≈ 0.5: zero thrust at J ≈ 0.62-0.70 (independent review, from UIUC/APC data; APC file blocked HTTP 403)
+
+[Mission_Energy]
+bat_S = 6   # Cells in series; [V] parts
+reserve = 0.2   # Landing reserve kept; [A] same as the 3.35 m design
+h_climb = 120   # Winged climb height [m]; [A] to 120 m (Part 107 limit)
+roc_plan = 1.5   # Planned winged climb rate [m/s]; [A] Pusher tab: best winged climb ≈ 1.5-2 m/s

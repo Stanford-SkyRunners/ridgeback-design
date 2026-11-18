@@ -205,7 +205,7 @@ function showDetail(p) {
    <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>${calcBlock(p)}
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}
    ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}
-   <p class="small"><a href="#row-${p.id}">Show in the parts table</a></p>`;
+   <p class="small"><a href="#row-${p.id}">Show in the parts table</a> · <a href="${esc(p.edit)}" target="_blank" rel="noopener">Edit this part</a> (data/parts.toml, line ${p.editLine})</p>`;
   document.querySelectorAll('#detail [data-go]').forEach(b => b.addEventListener('click', () => select(b.dataset.go)));
 }
 document.querySelectorAll('tr[data-id]').forEach(r => {

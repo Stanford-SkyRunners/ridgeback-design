@@ -124,3 +124,4 @@ span.num{padding-right:0}
 .calcbox .katex{font-size:1.02em}
 .calcbox .line{overflow-x:auto;padding:2px 0}
 .calcbox .why{font-size:13.5px;color:var(--quiet);margin:0 0 6px}
+ol.steps{max-width:760px;padding-left:22px;line-height:1.55}ol.steps li{margin:6px 0}

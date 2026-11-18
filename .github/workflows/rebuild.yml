@@ -1,0 +1,31 @@
+name: Rebuild sheets and website
+# Runs when someone saves (commits) a change to the data, the sheet code or the site code.
+on:
+  push:
+    branches: [main]
+    paths: ["data/parts.toml", "data/inputs.toml", "sheets/**", "tools/**", "docs/assets/*.js", "docs/assets/*.css"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency: { group: rebuild, cancel-in-progress: false }
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - run: pip install openpyxl==3.1.5 formulas==1.3.4
+      - run: tools/rebuild.sh
+      - name: Save the rebuilt sheets and pages
+        run: |
+          git config user.name "ridgeback-rebuild"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs data
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git commit -m "Rebuild sheets and site after: ${{ github.event.head_commit.message || 'manual run' }}"
+          git push
+      - name: Publish the website
+        run: gh api -X POST repos/${{ github.repository }}/pages/builds || true
+        env: { GH_TOKEN: "${{ github.token }}" }

@@ -4,3 +4,4 @@ sheets/split/
 sheets/Ridgeback_mini_VTOL_design_*.xlsx
 build/
 *.lck
+sheets/typed_inputs.json

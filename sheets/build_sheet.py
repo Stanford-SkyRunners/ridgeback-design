@@ -21,6 +21,24 @@ REF = {}            # key -> 'Tab'!$C$n
 PENDING = []        # (ws, cell, template)
 
 SITE = "https://stanford-skyrunners.github.io/ridgeback-design/"
+
+# Prices, links, quantities and masses of bought parts come from data/parts.toml (one place to edit).
+import sys as _sys, tomllib as _toml
+_sys.path.insert(0, str(HERE.parent / "tools"))
+from parts import PARTS as _PARTS
+PP = {p["id"]: p for p in _PARTS}
+def part_price(pid): return PP[pid]["price"]                          # unit price, US$
+def part_url(pid): return PP[pid]["buy"][0][1] if PP[pid]["buy"] else ""   # first shop link
+def part_mass(pid): return PP[pid]["mass"]                           # mass each, g
+def part_qty(pid): return PP[pid]["qty"]
+def part_store(pid): return PP[pid]["buy"][0][0].split(" (")[0] if PP[pid]["buy"] else ""
+
+# Typed design inputs can be changed in data/inputs.toml without touching this file.
+_INF = HERE.parent / "data/inputs.toml"
+INPUTS = _toml.loads(_INF.read_text()) if _INF.exists() else {}
+INPUTS = {k: v for grp in INPUTS.values() for k, v in (grp.items() if isinstance(grp, dict) else [])}
+USED_INPUTS = set()
+TYPED = []   # every typed input: (tab, key, label, value, unit, source)
 PART_KEYS = [("pixhawk", "pixhawk"), ("m9n", "gnss"), ("airspeed", "airspeed"), ("pm07", "pm07"), ("telemetry", "telemetry"), ("rc receiver", "rc_rx"),
              ("mn5008", "motor_lift"), ("p18", "prop_lift"), ("alpha 40a", "esc_lift"), ("at3520", "motor_pusher"), ("apc", "prop_pusher"),
              ("kst", "servos"), ("servo regulator", "servo_reg"), ("ruko", "remote_id"), ("p50b", "battery"), ("bms", "battery"),
@@ -148,6 +166,11 @@ def p(ws, key, label, sym, val, unit, eq, src, note="", fmt="0.000", key_result=
     """One parameter row: value in column C. Strings starting with '=' are formulas ({key} -> cell)."""
     r = ws._r
     isf = isinstance(val, str) and val.startswith("=")
+    if key in INPUTS:
+        assert not isf, f"data/inputs.toml sets '{key}', but '{label}' is calculated, not typed. Remove it from inputs.toml."
+        val = INPUTS[key]; USED_INPUTS.add(key)
+    if key and not isf:
+        TYPED.append((ws.title, key, label, val, unit, src))
     put(ws, r, 1, label); put(ws, r, 2, readable(sym))
     put(ws, r, 3, val, fill=(KEY if key_result else (CALC if isf else INP)), fmt=fmt, bold=key_result)
     put(ws, r, 4, lit(unit)); put(ws, r, 5, readable(lit(eq))); put(ws, r, 6, clean(lit(src))); put(ws, r, 7, readable(clean(lit(note))))
@@ -572,7 +595,7 @@ two("Re", "Reynolds number at the MAC", "Re", "={rho_sl}*{V_sl}*{MAC}/{mu_sl}", 
 # =====================================================================================================
 ws = sheet("Lift_Hover", [36, 12, 13, 13, 56, 38, 40])
 title(ws, "Hover: lift motor T-Motor MN5008 KV340 + P18x6.1 (4 motors)")
-for txt, url in (("Buy the motor: UnmannedRC, $89.99", "https://unmannedrc.com/products/mn5008-antigravity-type-6-12s-uav-motor"),
+for txt, url in ((f"Buy the motor: {part_store('motor_lift')}, ${part_price('motor_lift'):.2f}", part_url("motor_lift")),
                  ("Maker's test table (thrust and power)", "https://store.tmotor.com/product/mn5008-kv340-motor-antigravity-type.html"),
                  ("This motor on the website's 3D drone", SITE + "index.html#motor_lift")):
     c = ws.cell(row=ws._r, column=1, value=txt); c.hyperlink = url; c.font = Font(color="1155CC", underline="single"); ws._r += 1
@@ -614,7 +637,7 @@ two("throttle", "Hover throttle (thrust share of max)", "T/T_max", "={Thov_sl}/1
 # =====================================================================================================
 ws = sheet("Pusher", [36, 12, 13, 13, 56, 38, 44])
 title(ws, "Cruise thrust: pusher T-Motor AT3520 KV550")
-for txt, url in (("Buy the motor: UnmannedRC, $79.99", "https://unmannedrc.com/products/at3520-long-shaft-fixed-wing-uav-motor-kv550-kv720-kv850"),
+for txt, url in ((f"Buy the motor: {part_store('motor_pusher')}, ${part_price('motor_pusher'):.2f}", part_url("motor_pusher")),
                  ("Maker's spec and test table", "https://store.tmotor.com/product/at3520-long-shaft-fixed-wing-motor.html"),
                  ("This motor on the website's 3D drone", SITE + "index.html#motor_pusher")):
     c = ws.cell(row=ws._r, column=1, value=txt); c.hyperlink = url; c.font = Font(color="1155CC", underline="single"); ws._r += 1
@@ -702,10 +725,10 @@ title(ws, "Battery choice: same equations as Aero_Cruise / Lift_Hover / Mission_
       "Pack mass = cells x cell mass x 1.08 (strip, BMS, wrap [A]). Mass of everything else = Mass_CG takeoff mass without the battery. CG shift not recomputed per row.")
 header(ws, ["Option", "P", "Ah/cell", "Wh/cell", "g/cell", "A rating", "$/cell", "Pack g", "Pack Wh", "Mass kg", "V_s m/s", "V m/s", "P_cr W", "P_hov W (SL)",
             "Loiter min (SL)", "T/W hot", "A/cell hot hover", "Pack $", "Passes all?", "Source / note"])
-OPTS = [("Molicel P50B 6S4P", 4, 5.0, 70, 60, 8.99, "[V] liionwholesale.com 10-31; 70 g [S]; 60 A [S]"),
-        ("Molicel P50B 6S5P", 5, 5.0, 70, 60, 8.99, "same cell"),
-        ("Molicel P50B 6S6P (chosen)", 6, 5.0, 70, 60, 8.99, "same cell; chosen 11-02"),
-        ("Molicel P50B 6S7P", 7, 5.0, 70, 60, 8.99, "same cell"),
+OPTS = [("Molicel P50B 6S4P", 4, 5.0, part_mass("battery"), 60, part_price("battery"), "[V] liionwholesale.com 10-31; 70 g [S]; 60 A [S]"),
+        ("Molicel P50B 6S5P", 5, 5.0, part_mass("battery"), 60, part_price("battery"), "same cell"),
+        ("Molicel P50B 6S6P (chosen)", 6, 5.0, part_mass("battery"), 60, part_price("battery"), "same cell; chosen 11-02"),
+        ("Molicel P50B 6S7P", 7, 5.0, part_mass("battery"), 60, part_price("battery"), "same cell"),
         ("Samsung 50S 6S6P", 6, 5.0, 70, 25, 6.99, "[V] imrbatteries $6.99 10-31; 25 A rated, ~20 A continuous per Mooch [S]; voltage sag vs P50B NOT FOUND → bench test"),
         ("Samsung 50E 6S6P", 6, 4.9, 69, 9.8, 6.99, "[S] 9.8 A rating: too low for hover (rejected)")]
 b0 = ws._r
@@ -779,22 +802,22 @@ EL = [
     ("Telemetry radio (Sky4 SiK / LoRa)", "ground link", 1, "REUSE (Sky4)", 0, "", 30, "owned; model to confirm", "SiK V3 $58.99 [S], sold out"),
     ("RC receiver (Sky4)", "manual control", 1, "REUSE (Sky4)", 0, "", 6, "owned if Sky4 has one; model NOT FOUND", "transmitter + receiver ≈ $154 [S] if the club has none"),
     ("NVIDIA Jetson Orin Nano (Sky4)", "payload computer (later)", 1, "REUSE (Sky4)", 0, "", 176, "owned; not needed for first flights", "Raspberry Pi 5 logger"),
-    ("T-Motor MN5008 KV340", "lift motor", 4, "BUY", 89.99, "https://unmannedrc.com/products/mn5008-antigravity-type-6-12s-uav-motor", 135,
+    ("T-Motor MN5008 KV340", "lift motor", part_qty("motor_lift"), "BUY", part_price("motor_lift"), part_url("motor_lift"), part_mass("motor_lift"),
      "maker's thrust table [V] gives T/W 1.5+ at 800 m hot on 6S with P18 (Lift_Hover)", "Sky4 SunnySky V4014 KV330 (owned, $0): T/W 1.20 hot [C] → rejected"),
-    ("T-Motor P18x6.1 prop pair", "lift props", 2, "BUY", 82.90, "https://unmannedrc.com/products/polish-p18-6-1-prop-2pcs-pair", 63, "matched to MN5008 in the maker's test", ""),
-    ("T-Motor ALPHA 40A 6S ESC", "motor drive (4 lift + 1 pusher)", 5, "BUY", 92.00, "https://store.uniteduav.com/products/alpha-40a-6s", 54.5,
+    ("T-Motor P18x6.1 prop pair", "lift props", part_qty("prop_lift"), "BUY", part_price("prop_lift"), part_url("prop_lift"), part_mass("prop_lift"), "matched to MN5008 in the maker's test", ""),
+    ("T-Motor ALPHA 40A 6S ESC", "motor drive (4 lift + 1 pusher)", part_qty("esc_lift") + part_qty("esc_pusher"), "BUY", part_price("esc_lift"), part_url("esc_lift"), part_mass("esc_lift"),
      "FOC, 6S; 40 A > 33.5 A motor full-throttle current [C Lift_Hover]; US stock = no import duty", "UnmannedRC $69.99 + 37.5 % duty = $96.24 [C]; Sky4 Tekko32 (owned): CHECK model, see Cost_Options"),
-    ("T-Motor AT3520 KV550 long shaft", "pusher motor", 1, "BUY", 79.99, "https://unmannedrc.com/products/at3520-long-shaft-fixed-wing-uav-motor-kv550-kv720-kv850", 218,
+    ("T-Motor AT3520 KV550 long shaft", "pusher motor", part_qty("motor_pusher"), "BUY", part_price("motor_pusher"), part_url("motor_pusher"), part_mass("motor_pusher"),
      "maker recommends 6S + 13x6.5; table [V] 3.58 kg static at 34.9 A", "V4014 too slow (330 KV)"),
-    ("APC 12x6E pusher prop", "pusher prop", 1, "BUY", 12.00, "https://www.apcprop.com/", 28, "fits the CAD (305 mm disc, ground clearance); price [A]", "13x6.5 (maker's test prop, 34.9 A < 40 A [V]) leaves ~15 mm ground clearance → only with longer legs"),
-    ("KST X10 V2 wing servo", "ailerons + ruddervators", 4, "BUY", 45.00, "https://www.boomerangrcjets.com/products/kst-x10-v2-wing-servo", 23,
+    ("APC 12x6E pusher prop", "pusher prop", part_qty("prop_pusher"), "BUY", part_price("prop_pusher"), part_url("prop_pusher"), part_mass("prop_pusher"), "fits the CAD (305 mm disc, ground clearance); price [A]", "13x6.5 (maker's test prop, 34.9 A < 40 A [V]) leaves ~15 mm ground clearance → only with longer legs"),
+    ("KST X10 V2 wing servo", "ailerons + ruddervators", part_qty("servos"), "BUY", part_price("servos"), part_url("servos"), part_mass("servos"),
      "10 mm thin-wing servo; 7.5 kg cm vs 4.7 needed [C]", "KST DS145MG $34.99 (5.2 kg cm, ships from China) → Cost_Options"),
-    ("Servo regulator 5-6 V ≥ 5 A", "servo power", 1, "BUY (or Sky4 UBEC)", 39.99, "https://keycityhobby.com/products/castle-010-0154-00", 20,
+    ("Servo regulator 5-6 V ≥ 5 A", "servo power", part_qty("servo_reg"), "BUY (or Sky4 UBEC)", part_price("servo_reg"), part_url("servo_reg"), part_mass("servo_reg"),
      "ALPHA ESCs have no BEC [S]", "Sky4 UBEC if its model is OK → Cost_Options"),
-    ("Ruko R111S Remote ID", "FAA broadcast Remote ID", 1, "BUY", 39.99, "https://www.ruko.net/products/ruko-r111-remote-id-module", 13.5,
+    ("Ruko R111S Remote ID", "FAA broadcast Remote ID", part_qty("remote_id"), "BUY", part_price("remote_id"), part_url("remote_id"), part_mass("remote_id"),
      "on the FAA accepted list (RID000001939) [V 10-31], cheapest found", "Dronetag Beacon $149"),
-    ("Molicel P50B 21700 cell", "battery 6S6P (Battery_Options)", 36, "BUY", 8.99,
-     "https://liionwholesale.com/products/molicel-npe-inr-21700-p50b-60a-5000mah-flat-top-21700-battery-authorized-distributor", 70,
+    ("Molicel P50B 21700 cell", "battery 6S6P (Battery_Options)", part_qty("battery"), "BUY", part_price("battery"),
+     part_url("battery"), part_mass("battery"),
      "best loiter per $ that passes every rule", "Samsung 50S $6.99 (bench test first)"),
 ]
 e0 = ws._r
@@ -850,15 +873,15 @@ title(ws, "Bill of materials and cost (aircraft for first flights; sensors separ
       "Duty applies to China-origin goods (HTS 2026 Rev 22, read 10-30: normal + Section 301 25 % + 12.5 %). Tariffs change: 25 % on drone parts from 2027-02-09 [S].")
 header(ws, ["Item", "Qty", "Unit $", "Line $", "Store", "China? 1/0", "Duty rate", "Duty $", "Buy", "Source [tag] / note", "On the website"])
 BOM = [
-    ("MN5008 KV340 lift motor", 4, 89.99, "UnmannedRC", 1, 0.415, "https://unmannedrc.com/products/mn5008-antigravity-type-6-12s-uav-motor", "[V] 11-10; HTS 8501.31.40 4 % + 25 % + 12.5 %"),
-    ("P18x6.1 prop pair", 2, 82.90, "UnmannedRC", 1, 0.375, "https://unmannedrc.com/products/polish-p18-6-1-prop-2pcs-pair", "[V] 11-10; 8807.10.00"),
-    ("AT3520 KV550 pusher motor", 1, 79.99, "UnmannedRC", 1, 0.415, "https://unmannedrc.com/products/at3520-long-shaft-fixed-wing-uav-motor-kv550-kv720-kv850", "[V]"),
-    ("ALPHA 40A 6S ESC (US stock)", 5, 92.00, "United UAV", 0, 0, "https://store.uniteduav.com/products/alpha-40a-6s", "[V] 11-10; US → no duty"),
-    ("Pusher prop APC 12x6E", 1, 12.00, "any hobby store", 0, 0, "https://www.apcprop.com/", "[A]"),
-    ("KST X10 V2 servo", 4, 45.00, "Boomerang RC Jets", 0, 0, "https://www.boomerangrcjets.com/products/kst-x10-v2-wing-servo", "[V] 11-10"),
-    ("Servo regulator ≥ 5 A (Castle CC BEC 2.0)", 1, 39.99, "Key City Hobby", 0, 0, "https://keycityhobby.com/products/castle-010-0154-00", "[V] out of stock 11-10"),
-    ("Ruko R111S Remote ID", 1, 39.99, "Ruko", 0, 0, "https://www.ruko.net/products/ruko-r111-remote-id-module", "[V]"),
-    ("Molicel P50B cells", "={bat_S}*{bat_P}", 8.99, "Liion Wholesale", 0, 0, "https://liionwholesale.com/products/molicel-npe-inr-21700-p50b-60a-5000mah-flat-top-21700-battery-authorized-distributor", "[V] 10-31; qty = Battery_Options"),
+    ("MN5008 KV340 lift motor", part_qty("motor_lift"), part_price("motor_lift"), part_store("motor_lift"), 1, 0.415, part_url("motor_lift"), "[V] 11-10; HTS 8501.31.40 4 % + 25 % + 12.5 %"),
+    ("P18x6.1 prop pair", part_qty("prop_lift"), part_price("prop_lift"), part_store("prop_lift"), 1, 0.375, part_url("prop_lift"), "[V] 11-10; 8807.10.00"),
+    ("AT3520 KV550 pusher motor", part_qty("motor_pusher"), part_price("motor_pusher"), part_store("motor_pusher"), 1, 0.415, part_url("motor_pusher"), "[V]"),
+    ("ALPHA 40A 6S ESC (US stock)", part_qty("esc_lift") + part_qty("esc_pusher"), part_price("esc_lift"), part_store("esc_lift"), 0, 0, part_url("esc_lift"), "[V] 11-10; US → no duty"),
+    ("Pusher prop APC 12x6E", part_qty("prop_pusher"), part_price("prop_pusher"), part_store("prop_pusher"), 0, 0, part_url("prop_pusher"), "[A]"),
+    ("KST X10 V2 servo", part_qty("servos"), part_price("servos"), part_store("servos"), 0, 0, part_url("servos"), "[V] 11-10"),
+    ("Servo regulator ≥ 5 A (Castle CC BEC 2.0)", part_qty("servo_reg"), part_price("servo_reg"), part_store("servo_reg"), 0, 0, part_url("servo_reg"), "[V] out of stock 11-10"),
+    ("Ruko R111S Remote ID", part_qty("remote_id"), part_price("remote_id"), part_store("remote_id"), 0, 0, part_url("remote_id"), "[V]"),
+    ("Molicel P50B cells", "={bat_S}*{bat_P}", part_price("battery"), part_store("battery"), 0, 0, part_url("battery"), "[V] 10-31; qty = Battery_Options"),
     ("Pack BMS, nickel strip, wrap", 1, 50.00, "any", 0, 0, "", "[A]; spot welder needed (club or lab?)"),
     ("HaoZhong 1 m carbon tubes (13: booms, spars, rods, legs)", 1, 197.01, "HaoZhong", 1, 0.375, "https://carbonfibertubes.net", "[V 10-30 cart]; 6815.13.00"),
     ("HaoZhong 2 more 6/4 tubes", 2, 9.82, "HaoZhong", 1, 0.375, "https://carbonfibertubes.net", "[V 11-02]"),
@@ -921,14 +944,14 @@ text_rows(ws, [
     ["Club leftovers for ASA / TPU / PETG", 83.00, "OPEN", "need < 100 g of each", "ask in #officers or the CHIP shelf", "[A]"],
     ["Hardware and epoxy from club / lab stock", 120.00, "OPEN", "", "check the bins before ordering", "[A]"],
     ["Skip the hardened nozzle", 52.90, "OPEN", "only if the CORE One already has one (PETG-CF wears brass)", "look at the nozzle marking", "[V] price"],
-    ["Sky4 UBEC instead of a new servo regulator", 39.99, "OPEN", "needs ≥ 5 A at 5-6 V", "read the UBEC label", "[A]"],
-    ["Sky4 Tekko32 ESC (if 4 channels usable) instead of 4 ALPHA 40A", "=4*92", "OPEN, CHECK", "6S OK; current rating vs 33.5 A full throttle; a 4-in-1 sits in the fuselage → 4 long motor leads (~0.6 m) and one failure takes out all 4 lift motors", "exact model + rating; bench run on one motor", "[A]"],
-    ["Samsung 50S cells instead of Molicel P50B", "=36*(8.99-6.99)", "OPEN, TEST", "voltage sag under 12 A per cell must be within 0.2 V of the P50B (else hot-day T/W drops below 1.5)", "bench: one 6S pack at hover current, log voltage + temperature", "[C] doc §4l"],
-    ["KST DS145MG servos instead of KST X10", "=4*(45-34.99)", "NOT RECOMMENDED", "margin 1.11 over need (X10 1.60); ships from China (+duty, 10-20 days)", "", "[C] mini_servo.md"],
-    ["Buy motors + props in the US (no duty)", "=ROUND(4*89.99*0.415+2*82.9*0.375+79.99*0.415,0)", "OPEN", "only IR-LOCK found; out of stock since 10-30", "check IR-LOCK / United UAV stock", "[C] mini_duty.md"],
+    ["Sky4 UBEC instead of a new servo regulator", part_price("servo_reg"), "OPEN", "needs ≥ 5 A at 5-6 V", "read the UBEC label", "[A]"],
+    ["Sky4 Tekko32 ESC (if 4 channels usable) instead of 4 ALPHA 40A", f"={part_qty('esc_lift')}*{part_price('esc_lift')}", "OPEN, CHECK", "6S OK; current rating vs 33.5 A full throttle; a 4-in-1 sits in the fuselage → 4 long motor leads (~0.6 m) and one failure takes out all 4 lift motors", "exact model + rating; bench run on one motor", "[A]"],
+    ["Samsung 50S cells instead of Molicel P50B", f"={part_qty('battery')}*({part_price('battery')}-6.99)", "OPEN, TEST", "voltage sag under 12 A per cell must be within 0.2 V of the P50B (else hot-day T/W drops below 1.5)", "bench: one 6S pack at hover current, log voltage + temperature", "[C] doc §4l"],
+    ["KST DS145MG servos instead of KST X10", f"={part_qty('servos')}*({part_price('servos')}-34.99)", "NOT RECOMMENDED", "margin 1.11 over need (X10 1.60); ships from China (+duty, 10-20 days)", "", "[C] mini_servo.md"],
+    ["Buy motors + props in the US (no duty)", f"=ROUND({part_qty('motor_lift')}*{part_price('motor_lift')}*0.415+{part_qty('prop_lift')}*{part_price('prop_lift')}*0.375+{part_price('motor_pusher')}*0.415,0)", "OPEN", "only IR-LOCK found; out of stock since 10-30", "check IR-LOCK / United UAV stock", "[C] mini_duty.md"],
     ["Bambu PETG-CF from the Bambu US store", "=2*(31.99-19.99)", "UNVERIFIED", "$19.99 seen in a snippet, maybe a sale", "open the page", "[S]"],
     ["HaoZhong standard shipping instead of expedited", 15.00, "OPEN", "+1-2 weeks", "", "[V]"],
-    ["Fewer cells (6S5P)", "=6*8.99", "NOT RECOMMENDED", "loiter falls below the 80 min rule (Battery_Options)", "", "[C]"],
+    ["Fewer cells (6S5P)", f"=6*{part_price('battery')}", "NOT RECOMMENDED", "loiter falls below the 80 min rule (Battery_Options)", "", "[C]"],
 ])
 
 # =====================================================================================================
@@ -992,4 +1015,7 @@ for w in wb.worksheets:
     w.freeze_panes = None
 wb.save(OUTF)
 json.dump(REF, open(HERE / "refs.json", "w"))
+_unused = sorted(set(INPUTS) - USED_INPUTS)
+assert not _unused, f"data/inputs.toml has names the workbook does not know (typo?): {_unused}"
+json.dump(TYPED, open(HERE / "typed_inputs.json", "w"), ensure_ascii=False, indent=0)
 print("saved", OUTF, len(REF), "named cells")

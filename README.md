@@ -39,3 +39,13 @@ The CAD and the 3D-model export need build123d and a build folder; set `SKY_BUIL
 ## Not in this repository
 
 How the water measurement is computed stays private until Stanford's technology licensing office has reviewed it.
+
+## Change a value or a link
+
+- A part (price, quantity, mass, shop link, why, connections): edit [data/parts.toml](data/parts.toml).
+- A design number (requirements, air, wing, drag, motors, battery, mission): edit [data/inputs.toml](data/inputs.toml).
+
+Press **Commit changes** on GitHub. The workflow `.github/workflows/rebuild.yml` then rebuilds the sheets
+(`docs/sheets/*.xlsx`), checks every formula (0 errors, split files equal to the full model) and regenerates
+the site, in about 2 minutes. If a check fails, nothing is published and the Actions tab says why.
+Locally: `pip install openpyxl formulas && tools/rebuild.sh`.
