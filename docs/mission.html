@@ -1,11 +1,20 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ridgeback mission and range</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<title>Ridgeback mission and range</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script></head>
 <body><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
 <span class="who">SkyRunners, Stanford Student Robotics</span></div><nav><a href="index.html">Drone</a><a href="mission.html" aria-current=page>Mission and range</a><a href="calculations.html">Calculations</a><a href="files.html">Sheets, code, CAD</a></nav></header>
 <main>
 <section class="lead"><h1>Mission and range</h1>
 <p>We plan around an operating radius of about 1 km, set by the rule that the drone must stay in sight.
 So the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
+<section class="mapsec"><h2>Where fire meets our flights</h2>
+<p>Every wildfire over 50 acres since 2000 within about 40 km of Stanford, and the prescribed burns on record. In August 2020 the CZU Lightning Complex
+burned 86,553 acres of the Santa Cruz Mountains, about 25 km from Jasper Ridge. Prescribed burns are the tool for lowering that risk, and they
+are planned around how dry the living plants are.</p>
+<div class="mapbar" role="group" aria-label="Map view"><button type="button" data-view="region" aria-pressed="true">Fires since 2000</button><button type="button" data-view="site" aria-pressed="false">One survey flight at Jasper Ridge</button></div>
+<div id="map" aria-label="Map of fire perimeters near Stanford and an example survey flight at Jasper Ridge"></div>
+<div class="maplegend"><span><i class="sw fire"></i>Wildfire, 2000–2024</span><span><i class="sw rx"></i>Prescribed burn</span><span><i class="sw line"></i>Jasper Ridge Biological Preserve</span><span><i class="sw ring"></i>1 km line-of-sight radius</span><span><i class="sw plot"></i>2 ha survey plot</span><span><i class="sw path"></i>Flight path</span></div>
+<p class="small">Wildfire perimeters: CAL FIRE historic fire perimeters. Prescribed burns: NIFC interagency fire perimeter history. Preserve boundary: OpenStreetMap.
+The take-off point and plot are placed for scale only; the real plot will be chosen with the preserve.</p></section>
 <section><h2>Operating radius, range and endurance</h2>
 <table class="plain"><thead><tr><th>Term</th><th class="num">Ours</th><th>What sets it</th></tr></thead><tbody>
 <tr><td>Operating radius: how far from the take-off point</td><td class="num">about 1 km</td><td>FAA rule 14 CFR 107.31: the pilot or an observer must see the drone at all times
@@ -52,6 +61,6 @@ Links live fuel moisture to how shrubs manage water through the day and season.<
 <li>How far and how long the Jasper Ridge drone flights run, from the lab that flies there.</li>
 <li>Whether 15 minutes over 2 ha is enough once the spot sensor's hover points are planned.</li>
 <li>Whether the preserve allows take-off within 1 km of the plots we want.</li>
-</ul></section></main>
+</ul></section><script type="module" src="assets/mission_map.js"></script></main>
 <footer class="collar foot"><span>Designed in CAD, not yet built or flown. Numbers from the calculation sheets, updated 17 Nov 2026.</span>
 <a href="https://github.com/Stanford-SkyRunners/ridgeback-design">Source on GitHub</a></footer></div></body></html>

@@ -90,13 +90,15 @@ for sk, (sname, col) in SYSTEMS.items():
         rows.append(f'<tr id="row-{p["id"]}" data-id="{p["id"]}" tabindex="0"><td>{E(p["name"])}</td><td class="num">{p["qty"]}</td><td>{E(p["status"])}</td>'
                     f'<td class="num">{price}</td><td class="num">{p["mass"]:,.0f} g</td><td>{b}</td></tr>')
 index_body = f"""
-<section class="lead"><h1>The drone, part by part</h1>
+<section class="lead"><h1>Inside the drone</h1>
 <p>Our own 2.24 m VTOL drone for measuring how much water chaparral shrubs lose between dawn and midday, for planning prescribed burns.
 Click any part on the drone or in the list to see what it does, why we chose it, what it connects to and where to buy it.</p></section>
 <section class="explorer">
-  <div class="viewer"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div>
+  <div class="viewer"><div class="viewbar"><div class="mapbar" role="group" aria-label="Flight mode"><button type="button" data-mode="hover">Hover</button><button type="button" data-mode="cruise">Cruise</button><button type="button" data-mode="still">Still</button></div>
+  <button type="button" id="reset" class="plainbtn">Whole drone</button></div>
+  <div class="viewwrap"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div><div id="tip" class="tip" hidden></div></div>
   <div class="legend">{''.join(f'<span><i style="--c:{c}"></i>{E(n)}</span>' for k, (n, c) in SYSTEMS.items())}</div>
-  <p class="hint">Drag to turn, scroll to zoom. Parts are drawn at their CAD positions; electronics are shown as their outline boxes.</p></div>
+  <p class="hint">Drag to turn, scroll to zoom. Hover spins the lift propellers; Cruise parks them along the booms and runs the pusher. Every part sits at its CAD position and size.</p></div>
   <aside id="detail" class="detail" aria-live="polite"><h2>Six systems</h2>
   <p>Pick a part on the drone or below; it turns purple and lines show what it is wired or bolted to.</p>
   {''.join(f'<h3><span class="key" style="--c:{SYSTEMS[k][1]}"></span>{E(SYSTEMS[k][0])}</h3><p>{E(t)}</p>' for k, t in [
@@ -121,6 +123,15 @@ mission_body = f"""
 <section class="lead"><h1>Mission and range</h1>
 <p>We plan around an operating radius of about 1 km, set by the rule that the drone must stay in sight.
 So the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
+<section class="mapsec"><h2>Where fire meets our flights</h2>
+<p>Every wildfire over 50 acres since 2000 within about 40 km of Stanford, and the prescribed burns on record. In August 2020 the CZU Lightning Complex
+burned 86,553 acres of the Santa Cruz Mountains, about 25 km from Jasper Ridge. Prescribed burns are the tool for lowering that risk, and they
+are planned around how dry the living plants are.</p>
+<div class="mapbar" role="group" aria-label="Map view"><button type="button" data-view="region" aria-pressed="true">Fires since 2000</button><button type="button" data-view="site" aria-pressed="false">One survey flight at Jasper Ridge</button></div>
+<div id="map" aria-label="Map of fire perimeters near Stanford and an example survey flight at Jasper Ridge"></div>
+<div class="maplegend"><span><i class="sw fire"></i>Wildfire, 2000–2024</span><span><i class="sw rx"></i>Prescribed burn</span><span><i class="sw line"></i>Jasper Ridge Biological Preserve</span><span><i class="sw ring"></i>1 km line-of-sight radius</span><span><i class="sw plot"></i>2 ha survey plot</span><span><i class="sw path"></i>Flight path</span></div>
+<p class="small">Wildfire perimeters: CAL FIRE historic fire perimeters. Prescribed burns: NIFC interagency fire perimeter history. Preserve boundary: OpenStreetMap.
+The take-off point and plot are placed for scale only; the real plot will be chosen with the preserve.</p></section>
 <section><h2>Operating radius, range and endurance</h2>
 <table class="plain"><thead><tr><th>Term</th><th class="num">Ours</th><th>What sets it</th></tr></thead><tbody>
 <tr><td>Operating radius: how far from the take-off point</td><td class="num">about 1 km</td><td>FAA rule 14 CFR 107.31: the pilot or an observer must see the drone at all times
@@ -168,7 +179,10 @@ Links live fuel moisture to how shrubs manage water through the day and season.<
 <li>Whether 15 minutes over 2 ha is enough once the spot sensor's hover points are planned.</li>
 <li>Whether the preserve allows take-off within 1 km of the plots we want.</li>
 </ul></section>"""
-(ROOT / "docs/mission.html").write_text(page("Ridgeback mission and range", "mission.html", mission_body))
+leaflet = ('<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">'
+           '<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>')
+mission_body += '<script type="module" src="assets/mission_map.js"></script>'
+(ROOT / "docs/mission.html").write_text(page("Ridgeback mission and range", "mission.html", mission_body, leaflet))
 
 # ------------------------------------------------------------------ calculations with rendered equations
 def step(title, why, tex, numbers, result, where):
@@ -187,7 +201,7 @@ calc_body = "".join([
     step("2. Stall speed", "The slowest the wing can fly. The wing's maximum lift coefficient is 0.9 times the SD7037 airfoil's (Raymer).",
          r"V_s = \sqrt{\dfrac{2W}{\rho\, S\, C_{L,\max}}}", rf"V_s = \sqrt{{\dfrac{{2 \times {W:.1f}\ \text{{N}}}}{{{rho:.3f}\ \text{{kg/m}}^3 \times {S:.2f}\ \text{{m}}^2 \times {CLmax:.3f}}}}}",
          f"V<sub>s</sub> = {Vs:.1f} m/s, against the 15 m/s we wanted.", sheet("03_Aerodynamics", "Aero_Cruise")),
-    step("3. Drag of the whole drone", "Added up part by part: skin friction on the wing, tail, fuselage, booms and nacelles, and pressure drag on the motors, feet and stopped propellers.",
+    step("3. Drag of the whole drone", "Summed over every component: skin friction on the wing, tail, fuselage, booms and nacelles, and pressure drag on the motors, feet and stopped propellers.",
          r"C_{D0} = \dfrac{\sum C_f\, FF\, Q\, S_{wet} + \sum C_d\, A_{front}}{S}", rf"C_{{D0}} = {CD0:.4f}",
          "The motors, landing feet and stopped propellers make about 45 % of it.", sheet("03_Aerodynamics", "Drag_Buildup")),
     step("4. Loiter speed and drag", "The drone loiters at 1.3 times the stall speed, which here is faster than its minimum-power speed.",

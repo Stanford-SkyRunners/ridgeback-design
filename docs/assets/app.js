@@ -1,75 +1,189 @@
-// Drone explorer: click a part on the model or in the table; the model highlights it and draws its connections.
+// Drone explorer. Airframe = the CAD meshes. Bought parts = shapes built at each part's CAD position and size.
+// Click a part (or a table row): it turns purple, the camera moves to it, lines show what it connects to.
+// Flight modes: Hover spins the lift propellers; Cruise parks them along the booms and spins the pusher.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const data = await (await fetch('assets/parts.json')).json();
 const parts = Object.fromEntries(data.parts.map(p => [p.id, p]));
-const nodeToPart = {};
-const prefixes = [];
-data.parts.forEach(p => p.nodes.forEach(n => { if (n.endsWith('*')) prefixes.push([n.slice(0, -1), p.id]); else nodeToPart[n] = p.id; }));
-const lookup = n => nodeToPart[n] || (prefixes.find(([pre]) => n.startsWith(pre)) || [])[1];
+const exact = {}, prefixes = [];
+data.parts.forEach(p => p.nodes.forEach(n => n.endsWith('*') ? prefixes.push([n.slice(0, -1), p.id]) : (exact[n] = p.id)));
+const lookup = n => exact[n] || (prefixes.find(([pre]) => n.startsWith(pre)) || [])[1];
 const css = getComputedStyle(document.documentElement);
 const PURPLE = new THREE.Color(css.getPropertyValue('--purple').trim() || '#7b3fa0');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const el = document.getElementById('view');
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 el.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 50);
-camera.position.set(-2.4, 1.9, 2.6);
+const camera = new THREE.PerspectiveCamera(30, 1, 0.02, 60);
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true; controls.target.set(0.25, 0, 0);
-scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8678, 2.2));
-const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(-3, 5, 2); scene.add(sun);
+controls.enableDamping = true;
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8678, 2.0));
+const sun = new THREE.DirectionalLight(0xffffff, 1.8); sun.position.set(-3, 6, 2); scene.add(sun);
+const root = new THREE.Group(); root.rotation.x = -Math.PI / 2; scene.add(root);   // CAD: x aft, y right, z up
 
-const root = new THREE.Group(); root.rotation.x = -Math.PI / 2; scene.add(root); // CAD z up -> screen up
-const meshesByPart = {}; const pickables = []; const base = new Map();
+const meshesByPart = {}, pickables = [], base = new Map();
+function register(mesh, pid, sys, opacity = 1) {
+  const col = new THREE.Color(data.systems[sys].color);
+  mesh.material = new THREE.MeshStandardMaterial({ color: col, roughness: 0.75, metalness: sys === 'airframe' ? 0 : 0.15, transparent: true, opacity });
+  base.set(mesh, { color: col.clone(), opacity });
+  mesh.userData.sys = sys;
+  if (pid) { mesh.userData.pid = pid; (meshesByPart[pid] ||= []).push(mesh); pickables.push(mesh); }
+}
+
+// ---------- shapes for bought parts, built inside a box (centre c, size s, metres, CAD axes)
+const M = (g) => new THREE.Mesh(g);
+const cylZ = (r, h) => { const g = new THREE.CylinderGeometry(r, r, h, 40); g.rotateX(Math.PI / 2); return g; };
+const cylX = (r, h) => { const g = new THREE.CylinderGeometry(r, r, h, 40); g.rotateZ(Math.PI / 2); return g; };
+function blade(len, chord, thick) {
+  const sh = new THREE.Shape();
+  sh.moveTo(0, -chord * 0.35); sh.quadraticCurveTo(len * 0.25, -chord * 0.6, len * 0.92, -chord * 0.22);
+  sh.quadraticCurveTo(len, 0, len * 0.92, chord * 0.18); sh.quadraticCurveTo(len * 0.3, chord * 0.5, 0, chord * 0.3); sh.closePath();
+  return new THREE.ExtrudeGeometry(sh, { depth: thick, bevelEnabled: false });
+}
+const builders = {
+  motor(c, s) {                       // vertical outrunner: stator base, spinning bell, shaft
+    const g = new THREE.Group(), r = Math.min(s.x, s.y) / 2, h = s.z;
+    const b = M(cylZ(r * 0.92, h * 0.28)); b.position.z = -h * 0.36; g.add(b);
+    const bell = M(cylZ(r, h * 0.62)); bell.position.z = 0.05 * h; g.add(bell);
+    const cap = M(cylZ(r * 0.55, h * 0.1)); cap.position.z = h * 0.41; g.add(cap);
+    const sh = M(cylZ(r * 0.12, h * 0.35)); sh.position.z = h * 0.6; g.add(sh);
+    return g;
+  },
+  pusherMotor(c, s) {                 // horizontal outrunner along x
+    const g = new THREE.Group(), r = Math.min(s.y, s.z) / 2, L = s.x;
+    const b = M(cylX(r * 0.95, L * 0.3)); b.position.x = -L * 0.33; g.add(b);
+    const bell = M(cylX(r, L * 0.6)); bell.position.x = L * 0.12; g.add(bell);
+    const sh = M(cylX(r * 0.12, L * 0.5)); sh.position.x = L * 0.55; g.add(sh);
+    return g;
+  },
+  prop(c, s, axis) {                  // two-blade propeller; spins about z (lift) or x (pusher)
+    const g = new THREE.Group(), D = axis === 'x' ? Math.max(s.y, s.z) : Math.max(s.x, s.y), R = D / 2;
+    for (const k of [0, 1]) {
+      const m = M(blade(R, D * 0.085, 0.004)); m.rotation.z = k * Math.PI; g.add(m);
+    }
+    const hub = M(cylZ(D * 0.03, 0.012)); g.add(hub);
+    if (axis === 'x') g.rotation.y = Math.PI / 2;
+    g.userData.spin = axis;
+    return g;
+  },
+  esc(c, s) {                         // speed controller with heatsink fins
+    const g = new THREE.Group();
+    g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z * 0.55)));
+    const n = 7;
+    for (let i = 0; i < n; i++) {
+      const f = M(new THREE.BoxGeometry(s.x * 0.9, s.y * 0.06, s.z * 0.45));
+      f.position.set(0, -s.y / 2 + s.y * (i + 0.5) / n, s.z * 0.5); g.add(f);
+    }
+    return g;
+  },
+  battery(c, s) {                     // 6 x 6 cells, standing
+    const g = new THREE.Group(), n = 6, dx = s.x / n, dy = s.y / n, r = Math.min(dx, dy) * 0.47;
+    const geo = cylZ(r, s.z * 0.95);
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      const m = M(geo); m.position.set(-s.x / 2 + dx * (i + 0.5), -s.y / 2 + dy * (j + 0.5), 0); g.add(m);
+    }
+    return g;
+  },
+  board(c, s) {                       // flight controller or power module: body, top plate, connectors
+    const g = new THREE.Group();
+    g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z * 0.8)));
+    const top = M(new THREE.BoxGeometry(s.x * 0.8, s.y * 0.7, s.z * 0.2)); top.position.z = s.z * 0.45; g.add(top);
+    for (let i = 0; i < 4; i++) { const k = M(new THREE.BoxGeometry(s.x * 0.08, s.y * 0.12, s.z * 0.3)); k.position.set(-s.x / 2 - s.x * 0.03, -s.y * 0.3 + i * s.y * 0.2, 0); g.add(k); }
+    return g;
+  },
+  gps(c, s) { const g = new THREE.Group(), r = Math.min(s.x, s.y) / 2; g.add(M(cylZ(r, s.z * 0.7))); const d = M(new THREE.SphereGeometry(r * 0.8, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2)); d.rotation.x = Math.PI / 2; d.scale.z = 0.35; d.position.z = s.z * 0.3; g.add(d); return g; },
+  radio(c, s) { const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z))); const a = M(cylZ(0.003, 0.09)); a.position.set(s.x * 0.35, 0, s.z / 2 + 0.045); g.add(a); return g; },
+  pitot(c, s) { const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z))); const t = M(cylX(0.003, 0.16)); t.position.set(-s.x / 2 - 0.08, 0, 0); g.add(t); return g; },
+  servo(c, s) { const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z))); const h = M(new THREE.BoxGeometry(s.x * 0.15, s.y * 0.55, s.z * 0.25)); h.position.set(s.x * 0.3, s.y * 0.3, s.z * 0.55); g.add(h); return g; },
+  box(c, s) { return M(new THREE.BoxGeometry(s.x, s.y, s.z)); },
+};
+function builderFor(node) {
+  if (node.startsWith('motor_MN5008')) return ['motor'];
+  if (node.startsWith('motor_pusher')) return ['pusherMotor'];
+  if (node.startsWith('prop_P18')) return ['prop', 'z'];
+  if (node.startsWith('prop_pusher')) return ['prop', 'x'];
+  if (node.startsWith('esc_')) return ['esc'];
+  if (node.startsWith('battery')) return ['battery'];
+  if (node.startsWith('pixhawk') || node.startsWith('power_module')) return ['board'];
+  if (node.startsWith('gnss')) return ['gps'];
+  if (node.startsWith('telemetry') || node.startsWith('rc_receiver')) return ['radio'];
+  if (node.startsWith('airspeed')) return ['pitot'];
+  if (node.startsWith('servo_aileron') || node.startsWith('servo_rudder')) return ['servo'];
+  return null;
+}
+
+// ---------- load the CAD model and swap placeholders for shapes
 const gltf = await new GLTFLoader().loadAsync('assets/ridgeback.glb');
 root.add(gltf.scene);
+const spinning = [];
+const swaps = [];
 gltf.scene.traverse(o => {
   if (!o.isMesh) return;
-  if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals();
-  const raw = o.name || o.parent?.name || '';            // GLTFLoader turns ':' into '_'
+  const raw = o.name || o.parent?.name || '';            // the loader strips ':' from node names
   const isAir = /^airframe/.test(raw);
-  const name = raw.replace(/^(part|airframe)[_:]?/, "");
-  const full = isAir ? 'airframe:' + name : name;
-  const pid = lookup(full) || lookup(name);
-  if (full === 'airframe:prop') { o.visible = false; return; }
+  const node = raw.replace(/^(part|airframe)[_:]?/, '');
+  if (isAir && node === 'prop') { o.visible = false; return; }
+  const pid = lookup(isAir ? 'airframe:' + node : node);
   const sys = pid ? parts[pid].system : 'airframe';
-  o.userData.sys = sys;
-  const col = new THREE.Color(data.systems[sys].color);
-  o.material = new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, metalness: 0.0, flatShading: sys !== 'airframe', transparent: true, opacity: sys === 'airframe' ? 0.92 : 1 });
-  if (name.startsWith('prop_')) { o.material.opacity = 0.35; o.material.depthWrite = false; o.userData.disc = true; }
-  base.set(o, { color: col.clone(), opacity: o.material.opacity });
-  if (pid) { (meshesByPart[pid] ||= []).push(o); pickables.push(o); o.userData.pid = pid; }
+  const bf = !isAir && builderFor(node);
+  if (bf) swaps.push([o, node, pid, sys, bf]);
+  else { if (!o.geometry.attributes.normal) o.geometry.computeVertexNormals(); register(o, pid, sys, sys === 'airframe' ? 0.9 : 1); }
 });
-const box = new THREE.Box3().setFromObject(root); const c = box.getCenter(new THREE.Vector3());
-controls.target.copy(c); camera.position.copy(c).add(new THREE.Vector3(-1.75, 2.35, -1.55));
+for (const [o, node, pid, sys, [kind, axis]] of swaps) {
+  o.geometry.computeBoundingBox();
+  const bb = o.geometry.boundingBox, c = bb.getCenter(new THREE.Vector3()), s = bb.getSize(new THREE.Vector3());
+  const obj = builders[kind](c, s, axis);
+  obj.position.copy(c); obj.userData.node = node;
+  root.add(obj); o.visible = false;
+  obj.traverse(m => { if (m.isMesh) register(m, pid, sys, kind === 'prop' ? 0.85 : 1); });
+  if (obj.userData.spin) spinning.push(obj);
+}
 
-const centerOf = pid => { const b = new THREE.Box3(); (meshesByPart[pid] || []).forEach(m => b.expandByObject(m)); return b.isEmpty() ? null : b.getCenter(new THREE.Vector3()); };
-let lines = null;
+// ---------- camera framing and fly-to
+const all = new THREE.Box3().setFromObject(root), home = all.getCenter(new THREE.Vector3());
+const homePos = home.clone().add(new THREE.Vector3(-1.75, 2.35, -1.55));
+controls.target.copy(home); camera.position.copy(homePos);
+let fly = null;
+function flyTo(target, dist) {
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  const to = { t: target.clone(), p: target.clone().add(dir.multiplyScalar(dist)) };
+  if (reduce) { controls.target.copy(to.t); camera.position.copy(to.p); return; }
+  fly = { from: { t: controls.target.clone(), p: camera.position.clone() }, to, k: 0 };
+}
+
+// ---------- selection
+const boxOf = pid => { const b = new THREE.Box3(); (meshesByPart[pid] || []).forEach(m => b.expandByObject(m)); return b; };
+let lines = null, selected = null;
 function select(pid, fromHash = false) {
+  selected = pid || null;
   base.forEach((b, m) => {
     m.material.color.copy(b.color); m.material.emissive.set(0x000000); m.material.depthTest = true; m.renderOrder = 0;
     m.material.opacity = !pid ? b.opacity : (m.userData.sys === 'airframe' && m.userData.pid !== pid ? 0.14 : Math.min(b.opacity, 0.3));
   });
-  if (lines) { scene.remove(lines); lines = null; }
+  if (lines) { scene.remove(lines); lines.geometry.dispose(); lines = null; }
   document.querySelectorAll('tr[data-id]').forEach(r => r.classList.toggle('sel', r.dataset.id === pid));
-  if (!pid) return;
-  const p = parts[pid]; const pts = [];
+  if (!pid) { flyTo(home, homePos.distanceTo(home)); return; }
+  const p = parts[pid], pts = [];
   const ctr = m => new THREE.Box3().setFromObject(m).getCenter(new THREE.Vector3());
+  const groupsOf = id => { const seen = new Map(); (meshesByPart[id] || []).forEach(m => { let g = m; while (g.parent && g.parent !== root && g.parent !== gltf.scene) g = g.parent; seen.set(g, true); }); return [...seen.keys()]; };
   p.connects.forEach(([to]) => {
-    const targets = (meshesByPart[to] || []).map(m => { m.material.opacity = base.get(m).opacity; return ctr(m); });
-    (meshesByPart[pid] || []).forEach(m => {            // one line from each copy of this part to the nearest connected part
-      const a = ctr(m); let best = null, d = Infinity;
+    (meshesByPart[to] || []).forEach(m => { m.material.opacity = base.get(m).opacity; });
+    const targets = groupsOf(to).map(ctr);
+    groupsOf(pid).forEach(g => {                        // one line from each copy of this part to its nearest connected part
+      const a = ctr(g); let best = null, d = Infinity;
       targets.forEach(t => { const dd = a.distanceTo(t); if (dd < d) { d = dd; best = t; } });
       if (best && d > 1e-4) pts.push(a, best);
     });
   });
-  (meshesByPart[pid] || []).forEach(m => { m.material.color.copy(PURPLE); m.material.emissive.copy(PURPLE).multiplyScalar(0.75); m.material.opacity = 1; m.material.depthTest = false; m.renderOrder = 10; });
-  if (pts.length) { const lm = new THREE.LineBasicMaterial({ color: PURPLE, depthTest: false }); lines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), lm); lines.renderOrder = 11; scene.add(lines); }
+  (meshesByPart[pid] || []).forEach(m => { m.material.color.copy(PURPLE); m.material.opacity = 1; m.material.depthTest = false; m.renderOrder = 10; });
+  if (pts.length) { lines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: PURPLE, depthTest: false })); lines.renderOrder = 11; scene.add(lines); }
+  const b = boxOf(pid), size = b.getSize(new THREE.Vector3()).length();
+  flyTo(b.getCenter(new THREE.Vector3()), Math.max(0.7, Math.min(3.4, size * 3.4)));
   showDetail(p);
   if (!fromHash) history.replaceState(null, '', '#' + pid);
 }
@@ -82,24 +196,61 @@ function showDetail(p) {
    <div class="meta"><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}. ${esc(p.status)}. ${p.qty} × ${price}${price ? ', ' : ''}${p.mass} g each.</div>
    <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}
-   ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}<p class="small"><a href="#row-${p.id}" data-row="${p.id}">Show in the parts table</a></p>`;
+   ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}
+   <p class="small"><a href="#row-${p.id}">Show in the parts table</a></p>`;
   document.querySelectorAll('#detail [data-go]').forEach(b => b.addEventListener('click', () => select(b.dataset.go)));
 }
 document.querySelectorAll('tr[data-id]').forEach(r => {
-  const go = () => { select(r.dataset.id); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  const go = () => { select(r.dataset.id); el.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); };
   r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
 });
-const ray = new THREE.Raycaster(); const ptr = new THREE.Vector2(); let down = null;
-renderer.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
-renderer.domElement.addEventListener('pointerup', e => {
-  if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
+
+// ---------- picking and hover label
+const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(), tip = document.getElementById('tip');
+let down = null;
+const pick = e => {
   const r = renderer.domElement.getBoundingClientRect();
   ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-  ray.setFromCamera(ptr, camera); const hit = ray.intersectObjects(pickables, false).find(h => !h.object.userData.disc);
-  select(hit ? hit.object.userData.pid : null);
+  ray.setFromCamera(ptr, camera);
+  const hit = ray.intersectObjects(pickables, false).find(h => h.object.visible);
+  return hit ? hit.object.userData.pid : null;
+};
+renderer.domElement.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener('pointerup', e => { if (down && Math.hypot(e.clientX - down[0], e.clientY - down[1]) < 5) select(pick(e)); });
+renderer.domElement.addEventListener('pointermove', e => {
+  if (e.buttons) { tip.hidden = true; return; }
+  const pid = pick(e); const r = el.getBoundingClientRect();
+  if (pid) { tip.textContent = parts[pid].name; tip.style.left = (e.clientX - r.left + 14) + 'px'; tip.style.top = (e.clientY - r.top + 10) + 'px'; tip.hidden = false; renderer.domElement.style.cursor = 'pointer'; }
+  else { tip.hidden = true; renderer.domElement.style.cursor = ''; }
 });
+renderer.domElement.addEventListener('pointerleave', () => { tip.hidden = true; });
+
+// ---------- flight modes
+let mode = reduce ? 'still' : 'hover';
+document.querySelectorAll('[data-mode]').forEach(b => {
+  b.setAttribute('aria-pressed', b.dataset.mode === mode);
+  b.addEventListener('click', () => { mode = b.dataset.mode; document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b)); });
+});
+document.getElementById('reset')?.addEventListener('click', () => select(null));
+
 function size() { const w = el.clientWidth, h = el.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
 new ResizeObserver(size).observe(el); size();
-renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+const clock = new THREE.Clock();
+renderer.setAnimationLoop(() => {
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+  for (const p of spinning) {
+    if (p.userData.spin === 'z') {
+      if (mode === 'hover') p.rotation.z += dt * 9;
+      else if (mode === 'cruise') p.rotation.z += (Math.round(p.rotation.z / Math.PI) * Math.PI - p.rotation.z) * Math.min(1, dt * 4); // park along the boom
+    } else if (mode === 'cruise') p.rotateOnAxis(new THREE.Vector3(0, 0, 1), dt * 12);
+  }
+  if (selected) { const k = 0.35 + 0.25 * Math.sin(t * 3); (meshesByPart[selected] || []).forEach(m => m.material.emissive.copy(PURPLE).multiplyScalar(k)); }
+  if (fly) {
+    fly.k = Math.min(1, fly.k + dt / 0.9); const e = fly.k < 0.5 ? 2 * fly.k * fly.k : 1 - Math.pow(-2 * fly.k + 2, 2) / 2;
+    controls.target.lerpVectors(fly.from.t, fly.to.t, e); camera.position.lerpVectors(fly.from.p, fly.to.p, e);
+    if (fly.k >= 1) fly = null;
+  }
+  controls.update(); renderer.render(scene, camera);
+});
 const fromHash = () => { const id = location.hash.slice(1); if (parts[id]) select(id, true); };
 addEventListener('hashchange', fromHash); fromHash();

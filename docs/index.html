@@ -3,13 +3,15 @@
 <body><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
 <span class="who">SkyRunners, Stanford Student Robotics</span></div><nav><a href="index.html" aria-current=page>Drone</a><a href="mission.html">Mission and range</a><a href="calculations.html">Calculations</a><a href="files.html">Sheets, code, CAD</a></nav></header>
 <main>
-<section class="lead"><h1>The drone, part by part</h1>
+<section class="lead"><h1>Inside the drone</h1>
 <p>Our own 2.24 m VTOL drone for measuring how much water chaparral shrubs lose between dawn and midday, for planning prescribed burns.
 Click any part on the drone or in the list to see what it does, why we chose it, what it connects to and where to buy it.</p></section>
 <section class="explorer">
-  <div class="viewer"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div>
+  <div class="viewer"><div class="viewbar"><div class="mapbar" role="group" aria-label="Flight mode"><button type="button" data-mode="hover">Hover</button><button type="button" data-mode="cruise">Cruise</button><button type="button" data-mode="still">Still</button></div>
+  <button type="button" id="reset" class="plainbtn">Whole drone</button></div>
+  <div class="viewwrap"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div><div id="tip" class="tip" hidden></div></div>
   <div class="legend"><span><i style="--c:#8a5a2b"></i>Power</span><span><i style="--c:#22221f"></i>Lift (hover)</span><span><i style="--c:#6b6b66"></i>Cruise (pusher)</span><span><i style="--c:#2f5d8a"></i>Flight control</span><span><i style="--c:#4e7a3a"></i>Control surfaces</span><span><i style="--c:#b9bcb4"></i>Airframe</span></div>
-  <p class="hint">Drag to turn, scroll to zoom. Parts are drawn at their CAD positions; electronics are shown as their outline boxes.</p></div>
+  <p class="hint">Drag to turn, scroll to zoom. Hover spins the lift propellers; Cruise parks them along the booms and runs the pusher. Every part sits at its CAD position and size.</p></div>
   <aside id="detail" class="detail" aria-live="polite"><h2>Six systems</h2>
   <p>Pick a part on the drone or below; it turns purple and lines show what it is wired or bolted to.</p>
   <h3><span class="key" style="--c:#8a5a2b"></span>Power</h3><p>Battery, power module and servo regulator: 648 Wh at 21.6 V, about 56 A in a hot hover.</p><h3><span class="key" style="--c:#22221f"></span>Lift (hover)</h3><p>Four motors, props and speed controllers that lift the drone off a hillside and land it.</p><h3><span class="key" style="--c:#6b6b66"></span>Cruise (pusher)</h3><p>The pusher that flies the drone on the wing over the plot.</p><h3><span class="key" style="--c:#2f5d8a"></span>Flight control</h3><p>Flight controller, GPS, airspeed, radios and Remote ID.</p><h3><span class="key" style="--c:#4e7a3a"></span>Control surfaces</h3><p>Four servos for the ailerons and the arch tail.</p><h3><span class="key" style="--c:#b9bcb4"></span>Airframe</h3><p>Printed wing, fuselage and tail on carbon tubes. Takeoff mass 8.80 kg.</p></aside>

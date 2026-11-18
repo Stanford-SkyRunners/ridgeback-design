@@ -75,3 +75,30 @@ pre{font:400 14px/1.5 "IBM Plex Mono",monospace;background:var(--paper);padding:
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 span.num{padding-right:0}
+/* mission map */
+#map{height:540px;border:1px solid var(--ink);background:#e9e7df}
+.mapbar{display:flex;gap:0;margin:8px 0 10px;border:1px solid var(--ink);width:max-content;max-width:100%;flex-wrap:wrap}
+.mapbar button{font:500 15px "Archivo";background:var(--paper);color:var(--ink);border:none;padding:7px 14px;cursor:pointer}
+.mapbar button+button{border-left:1px solid var(--ink)}
+.mapbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.maplegend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;margin:10px 0 6px}
+.sw{display:inline-block;width:20px;height:11px;margin-right:7px;vertical-align:-1px;border:1px solid var(--ink)}
+.sw.fire{background:color-mix(in srgb,var(--red) 35%,transparent);border-color:var(--red)}
+.sw.rx{background:color-mix(in srgb,var(--brown) 45%,transparent);border:1px dashed var(--brown)}
+.sw.line{background:none;border:none;border-top:2px solid var(--ink);height:0;vertical-align:3px}
+.sw.ring{background:none;border:none;border-top:2px dashed var(--blue);height:0;vertical-align:3px}
+.sw.plot{background:color-mix(in srgb,var(--green) 20%,transparent);border-color:var(--green)}
+.sw.path{background:none;border:none;border-top:2px solid var(--purple);height:0;vertical-align:3px}
+.leaflet-tooltip.maplabel{background:none;border:none;box-shadow:none;font:600 13px "Archivo";color:var(--ink);padding:0}
+.leaflet-tooltip.maplabel::before{display:none}
+.leaflet-container{font-family:"Archivo",sans-serif}
+@media (max-width:860px){#map{height:400px}}
+/* explorer controls */
+.viewbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--hair);flex-wrap:wrap}
+.viewbar .mapbar{margin:0}
+.plainbtn{font:500 15px "Archivo";background:none;border:none;color:var(--blue);text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:4px 0}
+.viewwrap{position:relative}
+.tip{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--ink);padding:3px 8px;font:500 13px "Archivo";white-space:nowrap}
+.leaflet-tooltip.maplabel.water{font:italic 400 14px "Archivo";color:#4f6f8f}
+.leaflet-tooltip.maplabel.quiet{font:400 13px "Archivo";color:var(--quiet);letter-spacing:.04em}
+.leaflet-tooltip.maplabel.fire{font:600 12.5px "Archivo";color:var(--red)}
