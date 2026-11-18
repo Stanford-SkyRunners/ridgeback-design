@@ -41,11 +41,40 @@ def sheet(name, tab=None):
 
 
 # ------------------------------------------------------------------ parts data for the browser
+g0 = 9.80665
+CALCS = {
+    "battery": dict(step="step-8", sheet=("04_Propulsion_Battery_Energy", "Mission_Energy"),
+        lines=[(r"E_{flight} = E_{hover} + E_{climb} + P\,(t_{survey} + t_{transit}) = %.0f\ \text{Wh}" % val("E_flight"), "energy for one 15-minute survey, 1 km out and back"),
+               (r"E_{pack,\,needed} = \dfrac{3 \times %.0f}{0.85 \times 0.8} = %.0f\ \text{Wh}" % (val("E_flight"), 3 * val("E_flight") / 0.68), "three flights, keeping the cells between 95 % and 10 % and 20 % in reserve"),
+               (r"%.0f\ \text{Wh needed} \;>\; 648\ \text{Wh in 6S6P}" % (3 * val("E_flight") / 0.68), "so the pack covers %.1f flights, not 3; a 7P pack would fail the hover-thrust rule (Battery_Options)" % val("flights_pack"))]),
+    "motor_lift": dict(step="step-7", sheet=("04_Propulsion_Battery_Energy", "Lift_Hover"),
+        lines=[(r"T_{hover} = \dfrac{m g}{4} = \dfrac{%.2f \times 9.81}{4} = %.1f\ \text{N per motor}" % (val("m_to"), val("m_to") * g0 / 4), "thrust each motor holds in a hover"),
+               (r"\dfrac{T}{W} = \dfrac{4\,T_{max}}{m g} = \dfrac{4 \times %.1f}{%.1f} = %.2f \;\geq\; 1.5" % (val("Tmax_hot"), val("m_to") * g0, val("TW_hot")), "hot day at 800 m, from T-Motor's test table")]),
+    "prop_lift": dict(step="step-7", sheet=("04_Propulsion_Battery_Energy", "Lift_Hover"),
+        lines=[(r"\dfrac{T}{W} = %.2f \;\text{on a hot day}" % val("TW_hot"), "the maker's thrust figures are for this exact propeller")]),
+    "esc_lift": dict(step="step-6", sheet=("04_Propulsion_Battery_Energy", "Lift_Hover"),
+        lines=[(r"I_{max} = \dfrac{P_{100\%%}}{V} = \dfrac{754\ \text{W}}{22.5\ \text{V}} = %.1f\ \text{A} \;<\; 40\ \text{A}" % val("I_full"), "full throttle, from the motor test table"),
+               (r"I_{hover} = %.1f\ \text{A}" % val("Imot_hot"), "hot-day hover, per motor")]),
+    "pm07": dict(step="step-6", sheet=("04_Propulsion_Battery_Energy", "Lift_Hover"),
+        lines=[(r"I_{pack} = \dfrac{P_{hover}}{V} = \dfrac{%.0f\ \text{W}}{21.6\ \text{V}} = %.0f\ \text{A} \;<\; 90\ \text{A}" % (val("Phov_hot"), val("Ipack_hot")), "hot-day hover through the power module")]),
+    "motor_pusher": dict(step="step-4", sheet=("04_Propulsion_Battery_Energy", "Pusher"),
+        lines=[(r"D = \tfrac12 \rho V^2 S\, C_D = %.1f\ \text{N}" % val("D_sl"), "drag at the loiter speed of %.0f m/s" % val("V_sl")),
+               (r"\dfrac{D}{T(V)} = \dfrac{%.1f}{%.0f} = %.2f" % (val("D_sl"), val("Tav_sl"), val("Tratio_sl")), "share of the pusher's thrust used in level flight (estimate)")]),
+    "wing": dict(step="step-2", sheet=("03_Aerodynamics", "Aero_Cruise"),
+        lines=[(r"V_s = \sqrt{\dfrac{2W}{\rho S C_{L,\max}}} = %.1f\ \text{m/s}" % val("Vs_sl"), "stall speed with 0.50 m² and the SD7037 airfoil"),
+               (r"V_{loiter} = 1.3\,V_s = %.1f\ \text{m/s}" % val("V_sl"), "loiter speed, kept above stall for turns and gusts")]),
+    "servos": dict(step=None, sheet=("05_Structure_and_Stability", "Structure_Stability"),
+        lines=[(r"\tau_{needed} = 2 \times M_{hinge} = 2 \times 2.34 = 4.7\ \text{kg·cm} \;<\; 7.5", "aileron at a 34 m/s dive, with a factor of 2")]),
+}
 pj = []
 for p in PARTS:
     q = dict(p)
     q["why"] = fill(p["why"]); q["job"] = fill(p["job"])
     q["systemName"], q["color"] = SYSTEMS[p["system"]]
+    if p["id"] in CALCS:
+        c = CALCS[p["id"]]
+        q["calc"] = [list(x) for x in c["lines"]]
+        q["calcStep"] = c["step"]; q["calcSheet"] = LINKS.get(c["sheet"][0]); q["calcSheetName"] = f"Sheet {c['sheet'][0][:2]}, tab {c['sheet'][1]}"
     pj.append(q)
 (ROOT / "docs/assets/parts.json").write_text(json.dumps(dict(parts=pj, systems={k: {"name": a, "color": b} for k, (a, b) in SYSTEMS.items()}), indent=1))
 
@@ -96,6 +125,7 @@ Click any part on the drone or in the list to see what it does, why we chose it,
 <section class="explorer">
   <div class="viewer"><div class="viewbar"><div class="mapbar" role="group" aria-label="Flight mode"><button type="button" data-mode="hover">Hover</button><button type="button" data-mode="cruise">Cruise</button><button type="button" data-mode="still">Still</button></div>
   <button type="button" id="reset" class="plainbtn">Whole drone</button></div>
+  <div class="picks" role="group" aria-label="Show a part"><span>Show:</span><button type="button" data-pick="battery">Battery</button><button type="button" data-pick="motor_lift">Lift motors</button><button type="button" data-pick="motor_pusher">Pusher</button><button type="button" data-pick="pixhawk">Flight controller</button><button type="button" data-pick="wing">Wing</button></div>
   <div class="viewwrap"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div><div id="tip" class="tip" hidden></div></div>
   <div class="legend">{''.join(f'<span><i style="--c:{c}"></i>{E(n)}</span>' for k, (n, c) in SYSTEMS.items())}</div>
   <p class="hint">Drag to turn, scroll to zoom. Hover spins the lift propellers; Cruise parks them along the booms and runs the pusher. Every part sits at its CAD position and size.</p></div>
@@ -116,10 +146,25 @@ Click any part on the drone or in the list to see what it does, why we chose it,
 <p class="small">Connectors, wire and solder for every joint are listed on {sheet('06_Electronics_BOM_Cost', 'Connectors_Wiring')}; the full parts list with duty and shipping on {sheet('06_Electronics_BOM_Cost', 'BOM_Cost')}.</p></section>
 <script type="importmap">{{"imports":{{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}}}</script>
 <script type="module" src="assets/app.js"></script>"""
-(ROOT / "docs/index.html").write_text(page("Ridgeback Scout", "index.html", index_body))
+katex_idx = ('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">'
+             '<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>')
+(ROOT / "docs/index.html").write_text(page("Ridgeback Scout", "index.html", index_body, katex_idx))
 
 # ------------------------------------------------------------------ mission and range
 mission_body = f"""
+<figure class="scene" aria-label="Sketch of one survey flight over a hillside">
+<svg viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" role="img">
+<image href="assets/contours.svg" x="0" y="-130" width="1600" height="900"/>
+<circle cx="560" cy="420" r="330" class="ring"/>
+<text x="560" y="78" class="sk" text-anchor="middle">1 km: the drone stays in sight</text>
+<rect x="690" y="250" width="150" height="150" class="plot"/>
+<path class="lines" d="{''.join(f"M{690 + i * 150 / 17:.1f},{250 if i % 2 == 0 else 400} L{690 + i * 150 / 17:.1f},{400 if i % 2 == 0 else 250} " for i in range(18))}"/>
+<path class="leg" d="M560,420 L690,400 M840,250 L560,420"/>
+<g class="to"><circle cx="560" cy="420" r="10"/><line x1="548" y1="408" x2="572" y2="432"/><line x1="572" y1="408" x2="548" y2="432"/></g>
+<text x="575" y="455" class="sk">take-off and landing</text>
+<text x="765" y="235" class="sk" text-anchor="middle">2 ha plot, 18 survey lines</text>
+<text x="1290" y="560" class="sk quiet" text-anchor="middle">sketch, not to scale</text>
+</svg></figure>
 <section class="lead"><h1>Mission and range</h1>
 <p>We plan around an operating radius of about 1 km, set by the rule that the drone must stay in sight.
 So the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
@@ -204,7 +249,8 @@ mission_body += '<script type="module" src="assets/mission_map.js"></script>'
 
 # ------------------------------------------------------------------ calculations with rendered equations
 def step(title, why, tex, numbers, result, where):
-    return (f'<section class="calc"><h2>{title}</h2><p>{why}</p><div class="eq">\\[{tex}\\]</div>'
+    sid = "step-" + title.split(".")[0]
+    return (f'<section class="calc" id="{sid}"><h2>{title}</h2><p>{why}</p><div class="eq">\\[{tex}\\]</div>'
             f'<div class="eq sub">\\[{numbers}\\]</div><p class="res">{result}</p><p class="small">In the sheets: {where}</p></section>')
 
 

@@ -187,6 +187,14 @@ function select(pid, fromHash = false) {
   showDetail(p);
   if (!fromHash) history.replaceState(null, '', '#' + pid);
 }
+function tex(t) { try { return window.katex ? katex.renderToString(t, { throwOnError: false }) : esc(t); } catch { return esc(t); } }
+function calcBlock(p) {
+  if (!p.calc) return '';
+  const lines = p.calc.map(([t, why]) => `<div class="line">${tex(t)}</div><p class="why">${esc(why)}</p>`).join('');
+  const links = [p.calcStep ? `<a href="calculations.html#${p.calcStep}">step ${p.calcStep.split('-')[1]} on the calculations page</a>` : '',
+                 p.calcSheet ? `<a href="${esc(p.calcSheet)}" target="_blank" rel="noopener">${esc(p.calcSheetName)}</a>` : esc(p.calcSheetName || '')].filter(Boolean).join(' and ');
+  return `<h3>The numbers behind it</h3><div class="calcbox">${lines}<p class="small">Worked out in ${links}.</p></div>`;
+}
 function esc(s) { return String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch])); }
 function showDetail(p) {
   const price = p.status.startsWith('reuse') ? 'owned' : (p.price ? `$${p.price.toFixed(2)} each` : '');
@@ -194,7 +202,7 @@ function showDetail(p) {
   const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
   document.getElementById('detail').innerHTML = `<h2>${esc(p.name)}</h2>
    <div class="meta"><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}. ${esc(p.status)}. ${p.qty} × ${price}${price ? ', ' : ''}${p.mass} g each.</div>
-   <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>
+   <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>${calcBlock(p)}
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}
    ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}
    <p class="small"><a href="#row-${p.id}">Show in the parts table</a></p>`;
@@ -232,6 +240,7 @@ document.querySelectorAll('[data-mode]').forEach(b => {
   b.addEventListener('click', () => { mode = b.dataset.mode; document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b)); });
 });
 document.getElementById('reset')?.addEventListener('click', () => select(null));
+document.querySelectorAll('[data-pick]').forEach(b => b.addEventListener('click', () => select(b.dataset.pick)));
 
 function size() { const w = el.clientWidth, h = el.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
 new ResizeObserver(size).observe(el); size();
