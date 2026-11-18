@@ -1,0 +1,75 @@
+/* Ridgeback Scout. Drawn like a survey map sheet: neat line, collar, legend, map colours with meaning.
+   brown = power (contour brown), ink = lift, grey = cruise, blue = flight control (water blue), green = surfaces (vegetation),
+   purple = the part you selected (map revision purple), red = a requirement we do not meet yet. */
+:root{--paper:#fbfaf6;--ink:#1c1c1a;--quiet:#5e5d57;--hair:#cfccc2;--brown:#8a5a2b;--veg:#e3ead6;--blue:#2f5d8a;--purple:#7b3fa0;--red:#b3261e;--green:#3f6b2f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#171715;--ink:#e9e7e0;--quiet:#a6a49c;--hair:#3a3934;--brown:#c48c57;--veg:#252c1f;--blue:#86afd9;--purple:#b98ad8;--red:#e8786a;--green:#9cc58a}}
+:root[data-theme="dark"]{--paper:#171715;--ink:#e9e7e0;--quiet:#a6a49c;--hair:#3a3934;--brown:#c48c57;--veg:#252c1f;--blue:#86afd9;--purple:#b98ad8;--red:#e8786a;--green:#9cc58a}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.55 "Archivo",system-ui,sans-serif;font-stretch:100%}
+a{color:var(--blue);text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible,[tabindex]:focus-visible,button:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
+.sheet{max-width:1180px;margin:20px auto;border:1.5px solid var(--ink);padding:0 28px}
+.collar{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--ink);padding:18px 0 10px}
+.mast{display:flex;flex-direction:column}
+.home{font:700 26px/1 "Archivo";font-stretch:75%;color:var(--ink);text-decoration:none;letter-spacing:.01em}
+.who{color:var(--quiet);font-size:14px;margin-top:4px}
+nav{display:flex;gap:20px;flex-wrap:wrap;font-size:15px}
+nav a{color:var(--ink);text-decoration:none;padding-bottom:2px;border-bottom:1.5px solid transparent}
+nav a:hover{border-bottom-color:var(--hair)}
+nav a[aria-current]{border-bottom-color:var(--ink);font-weight:600}
+.foot{border-bottom:none;border-top:1px solid var(--ink);font-size:13px;color:var(--quiet);padding:10px 0 14px;margin-top:40px;align-items:center}
+main section{margin:34px 0}
+h1{font:700 44px/1.05 "Archivo";font-stretch:75%;margin:0 0 12px;letter-spacing:-.005em}
+h2{font:600 22px/1.2 "Archivo";font-stretch:85%;margin:0 0 10px}
+p{max-width:70ch;margin:0 0 10px}
+.lead p{font-size:17.5px;max-width:64ch}
+.small{font-size:14px;color:var(--quiet)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th{text-align:left;font-weight:600;border-bottom:1px solid var(--ink);padding:7px 10px 6px 0;vertical-align:bottom}
+td{border-bottom:1px solid var(--hair);padding:7px 10px 7px 0;vertical-align:top}
+.num{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:14px;white-space:nowrap;padding-right:18px}
+th.num{font-family:inherit;font-size:15px}
+.status{max-width:760px}
+.status td.ok{color:var(--green);font-weight:600}
+.status td.no{color:var(--red);font-weight:600}
+.explorer{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:0;border:1px solid var(--ink)}
+.viewer{border-right:1px solid var(--ink);display:flex;flex-direction:column}
+#view{height:560px;background:var(--paper);cursor:grab;touch-action:none}
+#view:active{cursor:grabbing}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 14px;border-top:1px solid var(--hair);font-size:14px}
+.legend i,.key{display:inline-block;width:18px;height:10px;background:var(--c);margin-right:7px;vertical-align:0;border:1px solid var(--ink)}
+.hint{font-size:13px;color:var(--quiet);padding:0 14px 10px;margin:0}
+.detail{padding:16px 18px;overflow:auto;max-height:660px}
+.detail h2{font-size:21px}
+.detail h3{font:600 14px/1.3 "Archivo";color:var(--quiet);margin:16px 0 4px}
+.detail p{font-size:15px;margin:0 0 6px}
+.detail .meta{font-size:14px;color:var(--quiet);margin-bottom:8px}
+.detail ul{margin:0;padding-left:18px;font-size:15px}
+.detail button.link{background:none;border:none;padding:0;color:var(--blue);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.tablewrap{overflow-x:auto}
+table.parts tr[data-id]{cursor:pointer}
+table.parts tr[data-id]:hover td{background:var(--veg)}
+table.parts tr.sel td{background:var(--veg);box-shadow:inset 0 -1.5px 0 var(--purple)}
+table.parts tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--purple),inset 0 -1.5px 0 var(--purple)}
+tr.grp th{padding-top:18px;font-size:15px;border-bottom:1px solid var(--ink)}
+table.plain td:first-child{width:38%}
+ul.refs{padding-left:18px;max-width:74ch}ul.refs li{margin-bottom:10px}
+ul.plain{padding-left:18px}
+svg.day{width:100%;max-width:900px;height:auto;margin:6px 0 14px}
+svg.day .axis{stroke:var(--ink);stroke-width:1.5}svg.day .tick{stroke:var(--ink)}
+svg.day .t,svg.day .l{fill:var(--ink);font:400 13px "IBM Plex Mono",monospace;text-anchor:middle}
+svg.day .l{font-family:"Archivo";font-size:14px}
+svg.day .fl{fill:var(--purple)}
+.calc{border-top:1px solid var(--hair);padding-top:18px}
+.eq{overflow-x:auto;padding:4px 0;font-size:17px}
+.eq.sub{color:var(--quiet);font-size:15px}
+.res{font-weight:600}
+pre{font:400 14px/1.5 "IBM Plex Mono",monospace;background:var(--veg);padding:12px 14px;overflow-x:auto;border:1px solid var(--hair)}
+@media (max-width:860px){
+ .sheet{margin:0;border-left:none;border-right:none;padding:0 16px}
+ .explorer{grid-template-columns:1fr}.viewer{border-right:none;border-bottom:1px solid var(--ink)}
+ #view{height:420px}h1{font-size:34px}.detail{max-height:none}
+ table.plain td:first-child{width:auto}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}

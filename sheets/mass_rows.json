@@ -1,0 +1,2036 @@
+{
+"rows": [
+{
+"name": "boom_foot",
+"group": "boom",
+"kind": "print",
+"material": "TPU95A",
+"mass_g": 20.1,
+"cg": [
+-360.0,
+390.0,
+-237.1853550798504
+]
+},
+{
+"name": "boom_foot",
+"group": "boom",
+"kind": "print",
+"material": "TPU95A",
+"mass_g": 20.1,
+"cg": [
+549.0,
+390.0,
+-237.1853550798504
+]
+},
+{
+"name": "boom_foot",
+"group": "boom",
+"kind": "print",
+"material": "TPU95A",
+"mass_g": 20.1,
+"cg": [
+-360.0,
+-390.0,
+-237.1853550798504
+]
+},
+{
+"name": "boom_foot",
+"group": "boom",
+"kind": "print",
+"material": "TPU95A",
+"mass_g": 20.1,
+"cg": [
+549.0,
+-390.0,
+-237.1853550798504
+]
+},
+{
+"name": "boom_leg_fairing",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 19.3,
+"cg": [
+-358.6475140173236,
+390.0,
+-140.99999999999994
+]
+},
+{
+"name": "boom_leg_fairing",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 19.3,
+"cg": [
+550.3524859826764,
+390.0,
+-140.99999999999994
+]
+},
+{
+"name": "boom_leg_fairing",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 19.3,
+"cg": [
+-358.6475140173236,
+-390.0,
+-140.99999999999994
+]
+},
+{
+"name": "boom_leg_fairing",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 19.3,
+"cg": [
+550.3524859826764,
+-390.0,
+-140.99999999999994
+]
+},
+{
+"name": "boom_motor_plate",
+"group": "boom",
+"kind": "cnc",
+"material": "CF-plate",
+"mass_g": 13.8,
+"cg": [
+-360.0,
+390.0,
+3.499999999999999
+]
+},
+{
+"name": "boom_motor_plate",
+"group": "boom",
+"kind": "cnc",
+"material": "CF-plate",
+"mass_g": 13.8,
+"cg": [
+549.0,
+390.0,
+3.499999999999999
+]
+},
+{
+"name": "boom_motor_plate",
+"group": "boom",
+"kind": "cnc",
+"material": "CF-plate",
+"mass_g": 13.8,
+"cg": [
+-360.0,
+-390.0,
+3.499999999999999
+]
+},
+{
+"name": "boom_motor_plate",
+"group": "boom",
+"kind": "cnc",
+"material": "CF-plate",
+"mass_g": 13.8,
+"cg": [
+549.0,
+-390.0,
+3.499999999999999
+]
+},
+{
+"name": "boom_nacelle_half_in",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+-360.2965109572243,
+369.5508396753184,
+-41.196352759821245
+]
+},
+{
+"name": "boom_nacelle_half_in",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+548.7034890427757,
+369.5508396753184,
+-41.196352759821245
+]
+},
+{
+"name": "boom_nacelle_half_in",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+-360.2965109572243,
+-410.4491603246816,
+-41.196352759821245
+]
+},
+{
+"name": "boom_nacelle_half_in",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+548.7034890427757,
+-410.4491603246816,
+-41.196352759821245
+]
+},
+{
+"name": "boom_nacelle_half_out",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+-360.2965171206554,
+410.4491619179233,
+-41.19635592762597
+]
+},
+{
+"name": "boom_nacelle_half_out",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+548.7034828793446,
+410.4491619179233,
+-41.19635592762597
+]
+},
+{
+"name": "boom_nacelle_half_out",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+-360.2965171206554,
+-369.5508380820767,
+-41.19635592762597
+]
+},
+{
+"name": "boom_nacelle_half_out",
+"group": "boom",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 15.4,
+"cg": [
+548.7034828793446,
+-369.5508380820767,
+-41.19635592762597
+]
+},
+{
+"name": "boom_pylon_lower",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 56.5,
+"cg": [
+-360.00000008257484,
+390.0,
+-45.11060799618173
+]
+},
+{
+"name": "boom_pylon_lower",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 56.5,
+"cg": [
+548.9999999174252,
+390.0,
+-45.11060799618173
+]
+},
+{
+"name": "boom_pylon_lower",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 56.5,
+"cg": [
+-360.00000008257484,
+-390.0,
+-45.11060799618173
+]
+},
+{
+"name": "boom_pylon_lower",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 56.5,
+"cg": [
+548.9999999174252,
+-390.0,
+-45.11060799618173
+]
+},
+{
+"name": "boom_pylon_upper",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.0,
+"cg": [
+-360.4976326247049,
+390.00000000000887,
+-6.85142050594229
+]
+},
+{
+"name": "boom_pylon_upper",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.0,
+"cg": [
+548.5023673752951,
+390.00000000000887,
+-6.85142050594229
+]
+},
+{
+"name": "boom_pylon_upper",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.0,
+"cg": [
+-360.4976326247049,
+-389.99999999999113,
+-6.85142050594229
+]
+},
+{
+"name": "boom_pylon_upper",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.0,
+"cg": [
+548.5023673752951,
+-389.99999999999113,
+-6.85142050594229
+]
+},
+{
+"name": "boom_saddle_aft_L",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 50.3,
+"cg": [
+164.9993198506884,
+-390.0458533188379,
+-17.13214510635253
+]
+},
+{
+"name": "boom_saddle_aft_R",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 50.3,
+"cg": [
+164.9993198506884,
+390.0458533188379,
+-17.13214510635253
+]
+},
+{
+"name": "boom_saddle_fwd_L",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 50.0,
+"cg": [
+67.96243913608268,
+-390.0308474290157,
+-17.278252650882013
+]
+},
+{
+"name": "boom_saddle_fwd_R",
+"group": "boom",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 50.0,
+"cg": [
+67.96243913608268,
+390.0308474290157,
+-17.278252650882013
+]
+},
+{
+"name": "fuse_avionics_tray_A",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 37.2,
+"cg": [
+-250.03014014409985,
+-4.743508038635843e-16,
+-61.00000000000011
+]
+},
+{
+"name": "fuse_avionics_tray_B",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 33.1,
+"cg": [
+-250.0338645854446,
+-2.516353070777046e-16,
+-110.99999999999996
+]
+},
+{
+"name": "fuse_battery_stop",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 14.2,
+"cg": [
+18.03794212287805,
+-1.0201685000761912e-15,
+-86.9060216351885
+]
+},
+{
+"name": "fuse_battery_tray",
+"group": "fuselage",
+"kind": "cnc",
+"material": "CF-plate",
+"mass_g": 114.7,
+"cg": [
+23.49872560567386,
+2.597206925299929e-15,
+-100.75
+]
+},
+{
+"name": "fuse_firewall",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 23.7,
+"cg": [
+560.3971877642088,
+-3.9947359633539484e-16,
+-79.99999999999987
+]
+},
+{
+"name": "fuse_frame_F1",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 20.0,
+"cg": [
+-328.19517083059134,
+1.1096624725477516e-13,
+-74.09192636441892
+]
+},
+{
+"name": "fuse_frame_F2",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 32.7,
+"cg": [
+-171.42481364891086,
+1.0425423028850164e-14,
+-86.66619850337383
+]
+},
+{
+"name": "fuse_frame_F3",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 45.5,
+"cg": [
+35.000000000005535,
+5.833151132537955e-11,
+-58.01082326151751
+]
+},
+{
+"name": "fuse_frame_F4",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 38.7,
+"cg": [
+190.00000000000497,
+7.216418913590404e-11,
+-50.11660460146594
+]
+},
+{
+"name": "fuse_hatch_avionics",
+"group": "fuselage",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 12.5,
+"cg": [
+-253.05150589066128,
+-2.8635481685628963e-13,
+-4.39033034036509
+]
+},
+{
+"name": "fuse_hatch_battery",
+"group": "fuselage",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 11.9,
+"cg": [
+-90.00000000000006,
+-8.782670422060473e-15,
+-2.59959165018091
+]
+},
+{
+"name": "fuse_pusher_esc_tray",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 11.6,
+"cg": [
+466.20297564941075,
+-1.67260739040895e-11,
+-105.38698336259108
+]
+},
+{
+"name": "fuse_seg1",
+"group": "fuselage",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 83.0,
+"cg": [
+-249.29960519959786,
+-2.6999257436597067e-10,
+-83.30241582717714
+]
+},
+{
+"name": "fuse_seg2",
+"group": "fuselage",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 95.9,
+"cg": [
+-33.894393775896766,
+-2.3209540449969225e-10,
+-90.5713198708171
+]
+},
+{
+"name": "fuse_seg3",
+"group": "fuselage",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 98.9,
+"cg": [
+205.189658863484,
+2.0535084082398624e-11,
+-89.99833779303877
+]
+},
+{
+"name": "fuse_seg4",
+"group": "fuselage",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 68.0,
+"cg": [
+414.736845433452,
+-3.105629327800703e-11,
+-71.1057659650614
+]
+},
+{
+"name": "fuse_servo_reg_mount",
+"group": "fuselage",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 12.1,
+"cg": [
+386.30383958294334,
+-1.1202552074497498e-10,
+-120.88505402910091
+]
+},
+{
+"name": "misc_control_horn",
+"group": "misc",
+"kind": "print",
+"material": "PETG",
+"mass_g": 2.5,
+"cg": [
+180.9411525974026,
+800.0,
+3.979277267351468
+]
+},
+{
+"name": "misc_control_horn",
+"group": "misc",
+"kind": "print",
+"material": "PETG",
+"mass_g": 2.5,
+"cg": [
+180.9411525974026,
+-800.0,
+3.979277267351468
+]
+},
+{
+"name": "misc_gnss_pad_L",
+"group": "misc",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 7.0,
+"cg": [
+129.51189131546494,
+-200.37879555154544,
+24.499164662541023
+]
+},
+{
+"name": "misc_gnss_pad_R",
+"group": "misc",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 7.0,
+"cg": [
+129.51189131546494,
+200.37879555154547,
+24.499164662541023
+]
+},
+{
+"name": "tail_apex",
+"group": "tail",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 38.9,
+"cg": [
+886.4406563794657,
+4.595307120286245e-16,
+331.8071432555105
+]
+},
+{
+"name": "tail_panel1_L",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 18.8,
+"cg": [
+869.8669416294512,
+-302.2610031969975,
+61.422688608130606
+]
+},
+{
+"name": "tail_panel1_R",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 18.8,
+"cg": [
+869.8669416294545,
+302.2610031969996,
+61.422688608130805
+]
+},
+{
+"name": "tail_panel2_L",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 17.1,
+"cg": [
+870.6927141753036,
+-191.84504128243793,
+162.91226958402206
+]
+},
+{
+"name": "tail_panel2_R",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 17.1,
+"cg": [
+870.6927141753001,
+191.84504128243734,
+162.91226958402328
+]
+},
+{
+"name": "tail_panel3_L",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 16.7,
+"cg": [
+872.5787792262684,
+-81.63089011819473,
+264.64840912179835
+]
+},
+{
+"name": "tail_panel3_R",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 16.7,
+"cg": [
+872.5787792262661,
+81.63089011819498,
+264.64840912179704
+]
+},
+{
+"name": "tail_ruddervator1_L",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 4.8,
+"cg": [
+926.351304965259,
+-301.52818338960566,
+61.66629225574853
+]
+},
+{
+"name": "tail_ruddervator1_R",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 4.8,
+"cg": [
+926.351304965259,
+301.5281833896057,
+61.66629225574854
+]
+},
+{
+"name": "tail_ruddervator2_L",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 4.6,
+"cg": [
+926.9907777996126,
+-192.06652317168812,
+162.70782476459556
+]
+},
+{
+"name": "tail_ruddervator2_R",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 4.6,
+"cg": [
+926.9907777996126,
+192.0665231716881,
+162.70782476459559
+]
+},
+{
+"name": "tail_ruddervator3_L",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 4.3,
+"cg": [
+927.6305921799365,
+-82.58100328278319,
+263.7713815851234
+]
+},
+{
+"name": "tail_ruddervator3_R",
+"group": "tail",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 4.3,
+"cg": [
+927.6305921799365,
+82.58100328278321,
+263.7713815851234
+]
+},
+{
+"name": "tail_socket_L",
+"group": "tail",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 39.5,
+"cg": [
+898.846230368947,
+-382.358599383994,
+-12.946393725005274
+]
+},
+{
+"name": "tail_socket_R",
+"group": "tail",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 39.5,
+"cg": [
+898.8462303689469,
+382.35859938399375,
+-12.946393725005272
+]
+},
+{
+"name": "wing_aileron1_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 13.6,
+"cg": [
+181.96945348069264,
+-586.4442438666869,
+8.012775873511018
+]
+},
+{
+"name": "wing_aileron1_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 13.6,
+"cg": [
+181.96945348069264,
+586.4442438666866,
+8.012775873511018
+]
+},
+{
+"name": "wing_aileron2_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 7.2,
+"cg": [
+177.07855049809547,
+-764.1440533443074,
+8.531927269227205
+]
+},
+{
+"name": "wing_aileron2_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 7.2,
+"cg": [
+177.0785504980955,
+764.144053344307,
+8.531927269227205
+]
+},
+{
+"name": "wing_c0_front",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 44.0,
+"cg": [
+64.0438544300447,
+-8.91914593039356e-09,
+13.745221876970488
+]
+},
+{
+"name": "wing_c0_rear",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 40.8,
+"cg": [
+181.1915419528343,
+9.89186172990272e-09,
+9.057130747848989
+]
+},
+{
+"name": "wing_c1_front_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 30.6,
+"cg": [
+63.0852731335632,
+-171.94130296633014,
+13.54426268471833
+]
+},
+{
+"name": "wing_c1_front_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 30.6,
+"cg": [
+63.0852731335632,
+171.94130296633014,
+13.544262684718346
+]
+},
+{
+"name": "wing_c1_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 28.9,
+"cg": [
+174.94305028313718,
+-171.66924547206366,
+9.08355887295876
+]
+},
+{
+"name": "wing_c1_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 28.9,
+"cg": [
+174.94305028313718,
+171.66924547206366,
+9.08355887295876
+]
+},
+{
+"name": "wing_c2_front_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 27.9,
+"cg": [
+60.80826277929447,
+-313.64357699829463,
+13.632365667078563
+]
+},
+{
+"name": "wing_c2_front_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 27.9,
+"cg": [
+60.80826277929447,
+313.64357699829463,
+13.632365667078563
+]
+},
+{
+"name": "wing_c2_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 25.9,
+"cg": [
+167.76882975293566,
+-313.26622610491023,
+9.100144366140384
+]
+},
+{
+"name": "wing_c2_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 25.9,
+"cg": [
+167.76882975293478,
+313.26622610491086,
+9.100144366140382
+]
+},
+{
+"name": "wing_hp_c2_front_L",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.5,
+"cg": [
+68.17107412751085,
+-373.08653099988095,
+9.607707021184929
+]
+},
+{
+"name": "wing_hp_c2_front_R",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.5,
+"cg": [
+68.17107412751086,
+373.0865309998809,
+9.607707021184927
+]
+},
+{
+"name": "wing_hp_c2_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 18.8,
+"cg": [
+163.63576328909417,
+-372.96761364446996,
+9.066955855508485
+]
+},
+{
+"name": "wing_hp_c2_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 18.8,
+"cg": [
+163.63576328909414,
+372.96761364446985,
+9.066955855508484
+]
+},
+{
+"name": "wing_hp_o1_front_L",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.2,
+"cg": [
+68.14619946665489,
+-406.8389760772025,
+9.675195096335832
+]
+},
+{
+"name": "wing_hp_o1_front_R",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 22.2,
+"cg": [
+68.1461994666549,
+406.8389760772024,
+9.67519509633583
+]
+},
+{
+"name": "wing_hp_o1_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 18.1,
+"cg": [
+163.6856570703317,
+-406.7543570797815,
+9.090069832530354
+]
+},
+{
+"name": "wing_hp_o1_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "CF-PETG",
+"mass_g": 18.1,
+"cg": [
+163.68565707033162,
+406.7543570797815,
+9.090069832530348
+]
+},
+{
+"name": "wing_o1_front_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 20.6,
+"cg": [
+58.70660038420083,
+-447.3577168225567,
+13.646761345298408
+]
+},
+{
+"name": "wing_o1_front_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 20.6,
+"cg": [
+58.70660038420083,
+447.3577168225567,
+13.646761345298408
+]
+},
+{
+"name": "wing_o1_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 19.2,
+"cg": [
+159.5687964664794,
+-447.7598375306634,
+9.484330785530334
+]
+},
+{
+"name": "wing_o1_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 19.2,
+"cg": [
+159.56879646648017,
+447.7598375306632,
+9.484330785530318
+]
+},
+{
+"name": "wing_o2_front_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 32.8,
+"cg": [
+57.47208169569322,
+-590.7644901620034,
+13.316909339328795
+]
+},
+{
+"name": "wing_o2_front_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 32.8,
+"cg": [
+57.47208169569322,
+590.7644901620034,
+13.316909339328795
+]
+},
+{
+"name": "wing_o2_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 20.4,
+"cg": [
+130.0346833384963,
+-592.5613581093122,
+11.865616535327833
+]
+},
+{
+"name": "wing_o2_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 20.4,
+"cg": [
+130.03468333849625,
+592.5613581093118,
+11.86561653532782
+]
+},
+{
+"name": "wing_o3_front_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 30.1,
+"cg": [
+54.83257722856755,
+-776.4613190996733,
+13.401100254802795
+]
+},
+{
+"name": "wing_o3_front_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 30.1,
+"cg": [
+54.83257722856755,
+776.4613190996733,
+13.401100254802795
+]
+},
+{
+"name": "wing_o3_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 22.1,
+"cg": [
+122.16564700259224,
+-778.7699212947052,
+12.662192582415232
+]
+},
+{
+"name": "wing_o3_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 22.1,
+"cg": [
+122.16564700259218,
+778.7699212947047,
+12.662192582415225
+]
+},
+{
+"name": "wing_o4_front_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 36.0,
+"cg": [
+52.00712022115795,
+-990.9730583735507,
+34.76243440319829
+]
+},
+{
+"name": "wing_o4_front_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 36.0,
+"cg": [
+52.00712022115793,
+990.973058373551,
+34.762434403198284
+]
+},
+{
+"name": "wing_o4_rear_L",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 29.9,
+"cg": [
+130.60421193836112,
+-991.9282067570962,
+33.30818085561903
+]
+},
+{
+"name": "wing_o4_rear_R",
+"group": "wing",
+"kind": "print",
+"material": "LW-ASA",
+"mass_g": 29.9,
+"cg": [
+130.60421193836112,
+991.9282067570967,
+33.30818085561903
+]
+},
+{
+"name": "tube_spar_centre_21x19",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 38.955748904513435,
+"cg": [
+68.0,
+-2.487900550833685e-14,
+14.043578597227384
+]
+},
+{
+"name": "tube_spar_outer_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 48.30512864159666,
+"cg": [
+67.99999999999996,
+409.99999999999994,
+14.043578597227407
+]
+},
+{
+"name": "tube_spar_tip_inner_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 14.608405839192539,
+"cg": [
+68.00000000000001,
+745.0000000000001,
+14.043578597227391
+]
+},
+{
+"name": "tube_spar_tip_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 13.94373820356262,
+"cg": [
+68.00000000000001,
+987.5000000000003,
+34.76199883047202
+]
+},
+{
+"name": "tube_spar_outer_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 48.30512864159666,
+"cg": [
+67.99999999999996,
+-409.9999999999997,
+14.043578597227397
+]
+},
+{
+"name": "tube_spar_tip_inner_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 14.608405839192539,
+"cg": [
+68.00000000000001,
+-745.0,
+14.043578597227382
+]
+},
+{
+"name": "tube_spar_tip_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 13.94373820356262,
+"cg": [
+68.00000000000001,
+-987.5000000000003,
+34.76199883047202
+]
+},
+{
+"name": "tube_boom_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 191.7694129196935,
+"cg": [
+288.99999999999955,
+389.99999999999926,
+-19.99999999999997
+]
+},
+{
+"name": "tube_boom_sleeve_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 31.65154598491717,
+"cg": [
+250.0,
+390.0,
+-20.0
+]
+},
+{
+"name": "tube_boom_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 191.7694129196935,
+"cg": [
+288.99999999999955,
+-389.99999999999926,
+-19.99999999999997
+]
+},
+{
+"name": "tube_boom_sleeve_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 31.65154598491717,
+"cg": [
+250.0,
+-390.0,
+-20.0
+]
+},
+{
+"name": "rod_rear_centre",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 17.432697634769763,
+"cg": [
+160.00000000000006,
+4.788797911457415e-16,
+10.65526987788718
+]
+},
+{
+"name": "rod_rear_outer_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 12.270255284020658,
+"cg": [
+128.50000000000009,
+609.9999999999998,
+11.79945729757925
+]
+},
+{
+"name": "rod_rear_outer_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 12.270255284020658,
+"cg": [
+128.50000000000009,
+-609.9999999999998,
+11.799457297579247
+]
+},
+{
+"name": "rod_leg_0_-1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+-368.2500000000001,
+390.0,
+-139.00000000000003
+]
+},
+{
+"name": "rod_leg_0_1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+-351.7500000000001,
+390.0,
+-139.00000000000003
+]
+},
+{
+"name": "rod_leg_1_-1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+540.75,
+389.99999999999994,
+-139.0
+]
+},
+{
+"name": "rod_leg_1_1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+557.25,
+389.99999999999994,
+-139.0
+]
+},
+{
+"name": "rod_leg_2_-1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+-368.2500000000001,
+-390.0,
+-139.00000000000003
+]
+},
+{
+"name": "rod_leg_2_1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+-351.7500000000001,
+-390.0,
+-139.00000000000003
+]
+},
+{
+"name": "rod_leg_3_-1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+540.75,
+-389.99999999999994,
+-139.0
+]
+},
+{
+"name": "rod_leg_3_1",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 6.544565815958258,
+"cg": [
+557.25,
+-389.99999999999994,
+-139.0
+]
+},
+{
+"name": "tube_tail_spar_R",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 12.198018875725769,
+"cg": [
+867.5482339463084,
+195.64448889602946,
+159.4050871728958
+]
+},
+{
+"name": "tube_tail_spar_L",
+"group": "tube",
+"kind": "bought",
+"material": null,
+"mass_g": 12.198018875725769,
+"cg": [
+867.5482339463083,
+-195.6444888960296,
+159.40508717289583
+]
+},
+{
+"name": "motor_MN5008_0",
+"group": "motor",
+"kind": "bought",
+"material": null,
+"mass_g": 150.0,
+"cg": [
+-360.0,
+390.0,
+20.5
+]
+},
+{
+"name": "prop_P18_0",
+"group": "prop",
+"kind": "bought",
+"material": null,
+"mass_g": 31.0,
+"cg": [
+-360.0,
+390.0,
+44.0
+]
+},
+{
+"name": "esc_alpha40_0",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 54.5,
+"cg": [
+-302.75,
+390.0,
+-51.7
+]
+},
+{
+"name": "motor_MN5008_1",
+"group": "motor",
+"kind": "bought",
+"material": null,
+"mass_g": 150.0,
+"cg": [
+549.0,
+390.0,
+20.5
+]
+},
+{
+"name": "prop_P18_1",
+"group": "prop",
+"kind": "bought",
+"material": null,
+"mass_g": 31.0,
+"cg": [
+549.0,
+390.0,
+44.0
+]
+},
+{
+"name": "esc_alpha40_1",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 54.5,
+"cg": [
+606.25,
+390.0,
+-51.7
+]
+},
+{
+"name": "motor_MN5008_2",
+"group": "motor",
+"kind": "bought",
+"material": null,
+"mass_g": 150.0,
+"cg": [
+-360.0,
+-390.0,
+20.5
+]
+},
+{
+"name": "prop_P18_2",
+"group": "prop",
+"kind": "bought",
+"material": null,
+"mass_g": 31.0,
+"cg": [
+-360.0,
+-390.0,
+44.0
+]
+},
+{
+"name": "esc_alpha40_2",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 54.5,
+"cg": [
+-302.75,
+-390.0,
+-51.7
+]
+},
+{
+"name": "motor_MN5008_3",
+"group": "motor",
+"kind": "bought",
+"material": null,
+"mass_g": 150.0,
+"cg": [
+549.0,
+-390.0,
+20.5
+]
+},
+{
+"name": "prop_P18_3",
+"group": "prop",
+"kind": "bought",
+"material": null,
+"mass_g": 31.0,
+"cg": [
+549.0,
+-390.0,
+44.0
+]
+},
+{
+"name": "esc_alpha40_3",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 54.5,
+"cg": [
+606.25,
+-390.0,
+-51.7
+]
+},
+{
+"name": "motor_pusher_AT3520",
+"group": "motor",
+"kind": "bought",
+"material": null,
+"mass_g": 221.0,
+"cg": [
+591.0,
+-1.652710916650064e-16,
+-80.0
+]
+},
+{
+"name": "prop_pusher_12x6E",
+"group": "prop",
+"kind": "bought",
+"material": null,
+"mass_g": 28.0,
+"cg": [
+627.0,
+-2.404252915651544e-15,
+-80.00000000000001
+]
+},
+{
+"name": "esc_pusher_alpha40",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 54.5,
+"cg": [
+472.0,
+-3.3376544641965783e-16,
+-92.65
+]
+},
+{
+"name": "servo_regulator_PLACEHOLDER",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 20.0,
+"cg": [
+392.0,
+-1.3158198810372226e-17,
+-106.0
+]
+},
+{
+"name": "battery_6S6P_P50B",
+"group": "battery",
+"kind": "bought",
+"material": null,
+"mass_g": 2720.0,
+"cg": [
+-58.0,
+-6.063298011819523e-16,
+-62.5
+]
+},
+{
+"name": "pixhawk_6C",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 59.0,
+"cg": [
+-254.99999999999997,
+1.3514583379490644e-17,
+-50.8
+]
+},
+{
+"name": "telemetry_radio",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 30.0,
+"cg": [
+-270.0,
+3.260499133790936e-16,
+-101.0
+]
+},
+{
+"name": "rc_receiver",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 6.0,
+"cg": [
+-215.0,
+35.0,
+-104.0
+]
+},
+{
+"name": "remote_id_ruko_R111S",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 13.5,
+"cg": [
+-215.0,
+-35.0,
+-102.0
+]
+},
+{
+"name": "power_module_PM07",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 25.0,
+"cg": [
+-130.0,
+-2.6122894697062506e-17,
+-111.5
+]
+},
+{
+"name": "airspeed_sensor",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 15.0,
+"cg": [
+-330.0,
+2.960594732333751e-17,
+-51.0
+]
+},
+{
+"name": "gnss_M9N",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 32.0,
+"cg": [
+125.0,
+200.0,
+34.29179489311049
+]
+},
+{
+"name": "servo_aileron_R",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 23.0,
+"cg": [
+126.39265422077922,
+800.0,
+11.846300290728642
+]
+},
+{
+"name": "servo_ruddervator_R",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 23.0,
+"cg": [
+887.9973904746914,
+299.78874633650224,
+59.189201994085465
+]
+},
+{
+"name": "servo_aileron_L",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 23.0,
+"cg": [
+126.39265422077922,
+-800.0,
+11.846300290728642
+]
+},
+{
+"name": "servo_ruddervator_L",
+"group": "avionics",
+"kind": "bought",
+"material": null,
+"mass_g": 23.0,
+"cg": [
+887.9973904746914,
+-299.78874633650213,
+59.18920199408543
+]
+},
+{
+"name": "wiring_harness",
+"group": "lump",
+"kind": "bought",
+"material": null,
+"mass_g": 300.0,
+"cg": [
+40.0,
+0.0,
+-90.0
+]
+},
+{
+"name": "hardware_inserts_bolts",
+"group": "lump",
+"kind": "bought",
+"material": null,
+"mass_g": 150.0,
+"cg": [
+94.0,
+0.0,
+-40.0
+]
+},
+{
+"name": "epoxy_bond_lines",
+"group": "lump",
+"kind": "bought",
+"material": null,
+"mass_g": 200.0,
+"cg": [
+120.0,
+0.0,
+0.0
+]
+}
+],
+"cut": [
+[
+"CF tube spar, centre (HaoZhong 21/19)",
+21,
+1.0,
+400.0,
+1
+],
+[
+"CF tube spar, outer",
+17.0,
+1.0,
+620.0,
+2
+],
+[
+"CF tube spar, tip inner",
+13.0,
+1.0,
+250.0,
+2
+],
+[
+"CF tube spar, tip",
+13.0,
+1.0,
+238.62525379315008,
+2
+],
+[
+"CF tube boom (two 1 m pieces per boom, bonded)",
+30,
+1.0,
+1358.0,
+2
+],
+[
+"CF tube boom joint sleeve [A length]",
+27,
+1.0,
+250,
+2
+],
+[
+"CF tube rear rod, centre",
+6,
+1.0,
+716.0,
+1
+],
+[
+"CF tube rear rod, outer",
+6,
+1.0,
+503.9669113422803,
+2
+],
+[
+"CF tube landing leg",
+8,
+1.0,
+192.0,
+8
+],
+[
+"CF tube tail spar",
+6,
+1.0,
+501.0,
+2
+],
+[
+"CF rod aileron joiner",
+3,
+null,
+361.0,
+2
+],
+[
+"Glass/CF rod ruddervator joiner",
+3,
+null,
+446.0,
+2
+],
+[
+"Printed shim, 17/15 end inside the 21/19",
+19,
+1.0,
+100,
+2
+],
+[
+"Printed shim, 13/11 end inside the 17/15",
+15,
+1.0,
+100,
+2
+]
+]
+}

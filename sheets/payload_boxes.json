@@ -1,0 +1,67 @@
+{
+ "Jetson Orin Nano dev kit (with fan)": {
+  "dims": [
+   100,
+   79,
+   31
+  ],
+  "c": [
+   110,
+   0,
+   -84.0
+  ],
+  "down": false
+ },
+ "Lepton 3.5 + PureThermal 3 (thermal)": {
+  "dims": [
+   40,
+   30,
+   22
+  ],
+  "c": [
+   60,
+   -35,
+   -126
+  ],
+  "down": true
+ },
+ "Colour camera (global shutter)": {
+  "dims": [
+   38,
+   38,
+   28
+  ],
+  "c": [
+   60,
+   30,
+   -124
+  ],
+  "down": true
+ },
+ "1610 nm spot sensor (lens + photodiode board)": {
+  "dims": [
+   50,
+   40,
+   45
+  ],
+  "c": [
+   125,
+   0,
+   -125
+  ],
+  "down": true
+ },
+ "SWIR scanner (future, mirror + lens + diodes)": {
+  "dims": [
+   120,
+   80,
+   70
+  ],
+  "c": [
+   275,
+   0,
+   -110
+  ],
+  "down": true
+ }
+}

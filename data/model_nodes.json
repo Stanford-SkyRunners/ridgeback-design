@@ -1,0 +1,513 @@
+{
+ "airframe_faces": {
+  "fuselage": 8000,
+  "shell": 8000,
+  "prop": 320,
+  "wing": 61786,
+  "booms": 37510,
+  "tail": 23692
+ },
+ "parts": [
+  {
+   "node": "tube_spar_centre_21x19",
+   "group": "tube",
+   "mass_g": 38.955748904513435,
+   "center_mm": [
+    68.0,
+    -0.0,
+    14.0
+   ]
+  },
+  {
+   "node": "tube_spar_outer_R",
+   "group": "tube",
+   "mass_g": 48.30512864159666,
+   "center_mm": [
+    68.0,
+    410.0,
+    14.0
+   ]
+  },
+  {
+   "node": "tube_spar_tip_inner_R",
+   "group": "tube",
+   "mass_g": 14.608405839192539,
+   "center_mm": [
+    68.0,
+    745.0,
+    14.0
+   ]
+  },
+  {
+   "node": "tube_spar_tip_R",
+   "group": "tube",
+   "mass_g": 13.94373820356262,
+   "center_mm": [
+    68.0,
+    987.5,
+    34.8
+   ]
+  },
+  {
+   "node": "tube_spar_outer_L",
+   "group": "tube",
+   "mass_g": 48.30512864159666,
+   "center_mm": [
+    68.0,
+    -410.0,
+    14.0
+   ]
+  },
+  {
+   "node": "tube_spar_tip_inner_L",
+   "group": "tube",
+   "mass_g": 14.608405839192539,
+   "center_mm": [
+    68.0,
+    -745.0,
+    14.0
+   ]
+  },
+  {
+   "node": "tube_spar_tip_L",
+   "group": "tube",
+   "mass_g": 13.94373820356262,
+   "center_mm": [
+    68.0,
+    -987.5,
+    34.8
+   ]
+  },
+  {
+   "node": "tube_boom_R",
+   "group": "tube",
+   "mass_g": 191.7694129196935,
+   "center_mm": [
+    289.0,
+    390.0,
+    -20.0
+   ]
+  },
+  {
+   "node": "tube_boom_L",
+   "group": "tube",
+   "mass_g": 191.7694129196935,
+   "center_mm": [
+    289.0,
+    -390.0,
+    -20.0
+   ]
+  },
+  {
+   "node": "rod_rear_centre",
+   "group": "tube",
+   "mass_g": 17.432697634769763,
+   "center_mm": [
+    160.0,
+    0.0,
+    10.7
+   ]
+  },
+  {
+   "node": "rod_rear_outer_R",
+   "group": "tube",
+   "mass_g": 12.270255284020658,
+   "center_mm": [
+    128.5,
+    610.0,
+    11.8
+   ]
+  },
+  {
+   "node": "rod_rear_outer_L",
+   "group": "tube",
+   "mass_g": 12.270255284020658,
+   "center_mm": [
+    128.5,
+    -610.0,
+    11.8
+   ]
+  },
+  {
+   "node": "rod_leg_0_-1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    -368.3,
+    390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_0_1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    -351.8,
+    390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_1_-1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    540.8,
+    390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_1_1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    557.2,
+    390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_2_-1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    -368.3,
+    -390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_2_1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    -351.8,
+    -390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_3_-1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    540.8,
+    -390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "rod_leg_3_1",
+   "group": "tube",
+   "mass_g": 6.544565815958258,
+   "center_mm": [
+    557.2,
+    -390.0,
+    -139.0
+   ]
+  },
+  {
+   "node": "tube_tail_spar_R",
+   "group": "tube",
+   "mass_g": 12.198018875725769,
+   "center_mm": [
+    867.5,
+    195.6,
+    159.4
+   ]
+  },
+  {
+   "node": "tube_tail_spar_L",
+   "group": "tube",
+   "mass_g": 12.198018875725769,
+   "center_mm": [
+    867.5,
+    -195.6,
+    159.4
+   ]
+  },
+  {
+   "node": "motor_MN5008_0",
+   "group": "motor",
+   "mass_g": 150,
+   "center_mm": [
+    -360.0,
+    390.0,
+    20.5
+   ]
+  },
+  {
+   "node": "prop_P18_0",
+   "group": "prop",
+   "mass_g": 31,
+   "center_mm": [
+    -360.0,
+    390.0,
+    44.0
+   ]
+  },
+  {
+   "node": "esc_alpha40_0",
+   "group": "avionics",
+   "mass_g": 54.5,
+   "center_mm": [
+    -302.8,
+    390.0,
+    -51.7
+   ]
+  },
+  {
+   "node": "motor_MN5008_1",
+   "group": "motor",
+   "mass_g": 150,
+   "center_mm": [
+    549.0,
+    390.0,
+    20.5
+   ]
+  },
+  {
+   "node": "prop_P18_1",
+   "group": "prop",
+   "mass_g": 31,
+   "center_mm": [
+    549.0,
+    390.0,
+    44.0
+   ]
+  },
+  {
+   "node": "esc_alpha40_1",
+   "group": "avionics",
+   "mass_g": 54.5,
+   "center_mm": [
+    606.2,
+    390.0,
+    -51.7
+   ]
+  },
+  {
+   "node": "motor_MN5008_2",
+   "group": "motor",
+   "mass_g": 150,
+   "center_mm": [
+    -360.0,
+    -390.0,
+    20.5
+   ]
+  },
+  {
+   "node": "prop_P18_2",
+   "group": "prop",
+   "mass_g": 31,
+   "center_mm": [
+    -360.0,
+    -390.0,
+    44.0
+   ]
+  },
+  {
+   "node": "esc_alpha40_2",
+   "group": "avionics",
+   "mass_g": 54.5,
+   "center_mm": [
+    -302.8,
+    -390.0,
+    -51.7
+   ]
+  },
+  {
+   "node": "motor_MN5008_3",
+   "group": "motor",
+   "mass_g": 150,
+   "center_mm": [
+    549.0,
+    -390.0,
+    20.5
+   ]
+  },
+  {
+   "node": "prop_P18_3",
+   "group": "prop",
+   "mass_g": 31,
+   "center_mm": [
+    549.0,
+    -390.0,
+    44.0
+   ]
+  },
+  {
+   "node": "esc_alpha40_3",
+   "group": "avionics",
+   "mass_g": 54.5,
+   "center_mm": [
+    606.2,
+    -390.0,
+    -51.7
+   ]
+  },
+  {
+   "node": "motor_pusher_AT3520",
+   "group": "motor",
+   "mass_g": 221,
+   "center_mm": [
+    591.0,
+    -0.0,
+    -80.0
+   ]
+  },
+  {
+   "node": "prop_pusher_12x6E",
+   "group": "prop",
+   "mass_g": 28,
+   "center_mm": [
+    627.0,
+    -0.0,
+    -80.0
+   ]
+  },
+  {
+   "node": "esc_pusher_alpha40",
+   "group": "avionics",
+   "mass_g": 54.5,
+   "center_mm": [
+    472.0,
+    -0.0,
+    -92.7
+   ]
+  },
+  {
+   "node": "servo_regulator_PLACEHOLDER",
+   "group": "avionics",
+   "mass_g": 20,
+   "center_mm": [
+    392.0,
+    -0.0,
+    -106.0
+   ]
+  },
+  {
+   "node": "battery_6S6P_P50B",
+   "group": "battery",
+   "mass_g": 2720,
+   "center_mm": [
+    -58.0,
+    -0.0,
+    -62.5
+   ]
+  },
+  {
+   "node": "pixhawk_6C",
+   "group": "avionics",
+   "mass_g": 59,
+   "center_mm": [
+    -255.0,
+    0.0,
+    -50.8
+   ]
+  },
+  {
+   "node": "telemetry_radio",
+   "group": "avionics",
+   "mass_g": 30,
+   "center_mm": [
+    -270.0,
+    0.0,
+    -101.0
+   ]
+  },
+  {
+   "node": "rc_receiver",
+   "group": "avionics",
+   "mass_g": 6,
+   "center_mm": [
+    -215.0,
+    35.0,
+    -104.0
+   ]
+  },
+  {
+   "node": "remote_id_ruko_R111S",
+   "group": "avionics",
+   "mass_g": 13.5,
+   "center_mm": [
+    -215.0,
+    -35.0,
+    -102.0
+   ]
+  },
+  {
+   "node": "power_module_PM07",
+   "group": "avionics",
+   "mass_g": 25,
+   "center_mm": [
+    -130.0,
+    -0.0,
+    -111.5
+   ]
+  },
+  {
+   "node": "airspeed_sensor",
+   "group": "avionics",
+   "mass_g": 15,
+   "center_mm": [
+    -330.0,
+    0.0,
+    -51.0
+   ]
+  },
+  {
+   "node": "gnss_M9N",
+   "group": "avionics",
+   "mass_g": 32,
+   "center_mm": [
+    125.0,
+    200.0,
+    34.3
+   ]
+  },
+  {
+   "node": "servo_aileron_R",
+   "group": "avionics",
+   "mass_g": 23,
+   "center_mm": [
+    126.4,
+    800.0,
+    11.8
+   ]
+  },
+  {
+   "node": "servo_ruddervator_R",
+   "group": "avionics",
+   "mass_g": 23,
+   "center_mm": [
+    888.0,
+    299.8,
+    59.2
+   ]
+  },
+  {
+   "node": "servo_aileron_L",
+   "group": "avionics",
+   "mass_g": 23,
+   "center_mm": [
+    126.4,
+    -800.0,
+    11.8
+   ]
+  },
+  {
+   "node": "servo_ruddervator_L",
+   "group": "avionics",
+   "mass_g": 23,
+   "center_mm": [
+    888.0,
+    -299.8,
+    59.2
+   ]
+  }
+ ],
+ "frame": "CAD: x aft, y right, z up, metres in the GLB"
+}

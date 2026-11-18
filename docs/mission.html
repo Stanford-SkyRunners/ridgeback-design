@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ridgeback mission and range</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"></head>
+<body><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
+<span class="who">SkyRunners, Stanford Student Robotics</span></div><nav><a href="index.html">Drone</a><a href="mission.html" aria-current=page>Mission and range</a><a href="calculations.html">Calculations</a><a href="files.html">Sheets, code, CAD</a></nav></header>
+<main>
+<section class="lead"><h1>Mission and range</h1>
+<p>How far the drone flies, how long, and why. The short answer: we may only fly as far as we can see it, about 1 km,
+so the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
+<section><h2>Three distances, one limit</h2>
+<table class="plain"><thead><tr><th>Term</th><th class="num">Ours</th><th>What sets it</th></tr></thead><tbody>
+<tr><td>Operating radius: how far from the take-off point</td><td class="num">about 1 km</td><td>FAA rule 14 CFR 107.31: the pilot or an observer must see the drone at all times
+(<a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-107/subpart-B/section-107.31" target="_blank" rel="noopener">text of the rule</a>). Farther needs an FAA waiver.</td></tr>
+<tr><td>Range: distance on one charge</td><td class="num">71 km</td><td>Loiter speed × loiter time. We never get near it.</td></tr>
+<tr><td>Endurance: time in the air</td><td class="num">59 min</td><td>Battery energy against drag. This is the number that matters for the mission.</td></tr>
+</tbody></table></section>
+<section><h2>A field day</h2>
+<p>Water loss shows up as the difference between dawn and midday, so one field day is three flights on one charge, each about 15 minutes over the same
+2 ha plot of chaparral within 1 km of the take-off point.</p>
+<svg class="day" viewBox="0 0 900 120" role="img" aria-label="Three flights: pre-dawn, mid-morning, midday">
+<line x1="40" y1="70" x2="860" y2="70" class="axis"/>
+<line x1="40" y1="64" x2="40" y2="76" class="tick"/><text x="40" y="96" class="t">5:00</text><line x1="177" y1="64" x2="177" y2="76" class="tick"/><text x="177" y="96" class="t">7:00</text><line x1="313" y1="64" x2="313" y2="76" class="tick"/><text x="313" y="96" class="t">9:00</text><line x1="450" y1="64" x2="450" y2="76" class="tick"/><text x="450" y="96" class="t">11:00</text><line x1="587" y1="64" x2="587" y2="76" class="tick"/><text x="587" y="96" class="t">13:00</text><line x1="723" y1="64" x2="723" y2="76" class="tick"/><text x="723" y="96" class="t">15:00</text><line x1="860" y1="64" x2="860" y2="76" class="tick"/><text x="860" y="96" class="t">17:00</text>
+<rect x="91" y="48" width="17" height="22" class="fl"/><text x="99" y="38" class="l">pre-dawn</text>
+<rect x="330" y="48" width="17" height="22" class="fl"/><text x="338" y="38" class="l">mid-morning</text>
+<rect x="535" y="48" width="17" height="22" class="fl"/><text x="543" y="38" class="l">midday</text>
+</svg>
+<table class="plain"><tbody>
+<tr><td>Plot</td><td>2 ha of chaparral plus a 50 m buffer: 18 lines of 240 m, about 7 minutes at 19 m/s, plus hovering for the spot sensor</td></tr>
+<tr><td>Energy per flight</td><td class="num">161 Wh (hover, climb, 15 min survey, 1 km out and back)</td></tr>
+<tr><td>Usable energy per charge</td><td class="num">441 Wh, keeping 20 % in reserve</td></tr>
+<tr><td>Flights per charge</td><td class="num">2.7, against the 3 we need</td></tr>
+</tbody></table>
+<p class="small">Numbers from <a href="https://docs.google.com/spreadsheets/d/1V8LwVWhRKRFVtKQEG3lDbfliYLIKFiTxkyE6yRAerls/edit" target="_blank" rel="noopener">Sheet 04, tab Mission_Energy</a>. The plot size and flight plan come from our field-day plan (base station document, October 2026).</p></section>
+<section><h2>Why dawn and midday, and why 15 minutes</h2>
+<ul class="refs">
+<li><a href="https://bg.copernicus.org/articles/20/1789/2023/" target="_blank" rel="noopener">Humphrey and Frankenberg, Biogeosciences 20:1789 (2023)</a>.
+Measured canopy water continuously under an oak: about 28 % of the pre-dawn water was gone by midday. A single daily measurement at the wrong hour misses this.</li>
+<li><a href="https://doi.org/10.3390/rs11161853" target="_blank" rel="noopener">Easterday et al., Remote Sensing 11:1853 (2019)</a>.
+Flew a small drone over coyote brush in the Bay Area at different times of day; water stress separated best at low altitude in the early morning.</li>
+<li><a href="https://gacc.nifc.gov/rmcc/predictive/fuels_fire-danger/live_fm/Live_moisture_sampling_procedures.pdf" target="_blank" rel="noopener">Live fuel moisture sampling procedures, NIFC</a>.
+Fire agencies clip plants between 11:00 and 16:00. Our midday flight matches that window, so our numbers can be compared with theirs.</li>
+<li><a href="https://doi.org/10.1186/s42408-025-00385-0" target="_blank" rel="noopener">Brown, Jolly et al., Fire Ecology (2025)</a>.
+Links live fuel moisture to how shrubs manage water through the day and season.</li>
+<li><a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-107/subpart-B/section-107.31" target="_blank" rel="noopener">14 CFR 107.31</a>, visual line of sight, which sets our 1 km radius.</li>
+</ul></section>
+<section><h2>People we talked to</h2>
+<table class="plain"><tbody>
+<tr><td>A Stanford geophysics lab that flies a thermal drone at Jasper Ridge</td><td>Video call on 16 Nov about their camera and flights. Their typical flight distance and duration: still to ask.</td></tr>
+<tr><td>A UNLV researcher who flew a SWIR hyperspectral camera on a drone</td><td>Offered to share what they learned setting it up and flying it.</td></tr>
+<tr><td>Jasper Ridge Biological Preserve research staff</td><td>A camera bought for field work fits their student research grant; meeting to be set up. Flight permission at the preserve goes through them.</td></tr>
+</tbody></table>
+<p class="small">Names left out on purpose on this public page.</p></section>
+<section><h2>Still to find out</h2>
+<ul class="plain">
+<li>How far and how long the Jasper Ridge drone flights run, from the lab that flies there.</li>
+<li>Whether 15 minutes over 2 ha is enough once the spot sensor's hover points are planned.</li>
+<li>Whether the preserve allows take-off within 1 km of the plots we want.</li>
+</ul></section></main>
+<footer class="collar foot"><span>Designed in CAD, not yet built or flown. Numbers from the calculation sheets, updated 17 Nov 2026.</span>
+<a href="https://github.com/Stanford-SkyRunners/ridgeback-design">Source on GitHub</a></footer></div></body></html>
