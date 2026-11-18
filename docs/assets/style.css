@@ -60,16 +60,18 @@ svg.day{width:100%;max-width:900px;height:auto;margin:6px 0 14px}
 svg.day .axis{stroke:var(--ink);stroke-width:1.5}svg.day .tick{stroke:var(--ink)}
 svg.day .t,svg.day .l{fill:var(--ink);font:400 13px "IBM Plex Mono",monospace;text-anchor:middle}
 svg.day .l{font-family:"Archivo";font-size:14px}
-svg.day .fl{fill:var(--purple)}
+svg.day .fl{fill:var(--ink)}
 .calc{border-top:1px solid var(--hair);padding-top:18px}
 .eq{overflow-x:auto;padding:4px 0;font-size:17px}
+.eq .katex-display{text-align:left;margin:.4em 0}
 .eq.sub{color:var(--quiet);font-size:15px}
 .res{font-weight:600}
-pre{font:400 14px/1.5 "IBM Plex Mono",monospace;background:var(--veg);padding:12px 14px;overflow-x:auto;border:1px solid var(--hair)}
+pre{font:400 14px/1.5 "IBM Plex Mono",monospace;background:var(--paper);padding:12px 14px;overflow-x:auto;border:1px solid var(--hair)}
 @media (max-width:860px){
  .sheet{margin:0;border-left:none;border-right:none;padding:0 16px}
  .explorer{grid-template-columns:1fr}.viewer{border-right:none;border-bottom:1px solid var(--ink)}
- #view{height:420px}h1{font-size:34px}.detail{max-height:none}
+ #view{height:clamp(240px,55svh,420px)}h1{font-size:34px}.detail{max-height:none}
  table.plain td:first-child{width:auto}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+span.num{padding-right:0}

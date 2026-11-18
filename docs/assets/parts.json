@@ -23,7 +23,7 @@
      "$9.99 each"
     ]
    ],
-   "job": "Stores the energy for a whole field day. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
+   "job": "Powers the drone: an estimated 2.7 survey flights per charge. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
    "why": "648 Wh in 2.72 kg. In a hot-day hover each cell carries 9.3 A, against a 60 A rating. It gives 59 min of loiter with 20 % left, or 2.7 survey flights per charge.",
    "connects": [
     [

@@ -72,7 +72,7 @@ def status_row():
             ("Stall speed, clean wing", f"{val('Vs_sl'):.1f} m/s", "at most 15 m/s", val("Vs_sl") <= 15),
             ("Aircraft cost", f"${val('cost_total'):,.0f}", "at most $3,000", val("cost_total") <= 3000)]
     tr = "".join(f'<tr><td>{a}</td><td class="num">{b}</td><td>{c}</td><td class="{"ok" if ok else "no"}">{"meets it" if ok else "short"}</td></tr>' for a, b, c, ok in rows)
-    return f'<table class="status"><thead><tr><th>Requirement</th><th class="num">Now</th><th>Needs</th><th></th></tr></thead><tbody>{tr}</tbody></table>'
+    return f'<table class="status"><thead><tr><th>Requirement</th><th class="num">Estimate</th><th>Target</th><th>Result</th></tr></thead><tbody>{tr}</tbody></table>'
 
 
 # ------------------------------------------------------------------ index: the drone explorer
@@ -87,14 +87,12 @@ for sk, (sname, col) in SYSTEMS.items():
         price = "owned" if p["status"].startswith("reuse") else (f"${p['price']:,.2f}" if p["price"] else "")
         buy = p["buy"][0] if p["buy"] else None
         b = f'<a href="{E(buy[1])}" target="_blank" rel="noopener">{E(buy[0].split(" (")[0])}</a>' if buy else ""
-        rows.append(f'<tr data-id="{p["id"]}" tabindex="0"><td>{E(p["name"])}</td><td class="num">{p["qty"]}</td><td>{E(p["status"])}</td>'
+        rows.append(f'<tr id="row-{p["id"]}" data-id="{p["id"]}" tabindex="0"><td>{E(p["name"])}</td><td class="num">{p["qty"]}</td><td>{E(p["status"])}</td>'
                     f'<td class="num">{price}</td><td class="num">{p["mass"]:,.0f} g</td><td>{b}</td></tr>')
 index_body = f"""
 <section class="lead"><h1>The drone, part by part</h1>
 <p>Our own 2.24 m VTOL drone for measuring how much water chaparral shrubs lose between dawn and midday, for planning prescribed burns.
-Four rotors lift it off a hillside; a pusher and the wing carry it on the survey. Click any part on the drone or in the list to see what it does,
-why we chose it, what it connects to and where to buy it.</p></section>
-{status_row()}
+Click any part on the drone or in the list to see what it does, why we chose it, what it connects to and where to buy it.</p></section>
 <section class="explorer">
   <div class="viewer"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div>
   <div class="legend">{''.join(f'<span><i style="--c:{c}"></i>{E(n)}</span>' for k, (n, c) in SYSTEMS.items())}</div>
@@ -109,8 +107,9 @@ why we chose it, what it connects to and where to buy it.</p></section>
     ("surfaces", "Four servos for the ailerons and the arch tail."),
     ("airframe", f"Printed wing, fuselage and tail on carbon tubes. Takeoff mass {val('m_to'):.2f} kg.")])}</aside>
 </section>
+<section><h2>Requirements</h2>{status_row()}</section>
 <section><h2>Every part</h2>
-<div class="tablewrap"><table class="parts"><thead><tr><th>Part</th><th class="num">Qty</th><th>Status</th><th class="num">Each</th><th class="num">Mass each</th><th>Buy</th></tr></thead>
+<div class="tablewrap"><table class="parts"><thead><tr><th>Part</th><th class="num">Qty</th><th>Status</th><th class="num">Unit price</th><th class="num">Mass each</th><th>Buy</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
 <p class="small">Connectors, wire and solder for every joint are listed on {sheet('06_Electronics_BOM_Cost', 'Connectors_Wiring')}; the full parts list with duty and shipping on {sheet('06_Electronics_BOM_Cost', 'BOM_Cost')}.</p></section>
 <script type="importmap">{{"imports":{{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}}}</script>
@@ -120,30 +119,28 @@ why we chose it, what it connects to and where to buy it.</p></section>
 # ------------------------------------------------------------------ mission and range
 mission_body = f"""
 <section class="lead"><h1>Mission and range</h1>
-<p>How far the drone flies, how long, and why. The short answer: we may only fly as far as we can see it, about 1 km,
-so the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
-<section><h2>Three distances, one limit</h2>
+<p>We plan around an operating radius of about 1 km, set by the rule that the drone must stay in sight.
+So the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
+<section><h2>Operating radius, range and endurance</h2>
 <table class="plain"><thead><tr><th>Term</th><th class="num">Ours</th><th>What sets it</th></tr></thead><tbody>
 <tr><td>Operating radius: how far from the take-off point</td><td class="num">about 1 km</td><td>FAA rule 14 CFR 107.31: the pilot or an observer must see the drone at all times
-(<a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-107/subpart-B/section-107.31" target="_blank" rel="noopener">text of the rule</a>). Farther needs an FAA waiver.</td></tr>
-<tr><td>Range: distance on one charge</td><td class="num">{val('range_km'):.0f} km</td><td>Loiter speed × loiter time. We never get near it.</td></tr>
+(<a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-107/subpart-B/section-107.31" target="_blank" rel="noopener">text of the rule</a>). The rule sets no distance; 1 km is how far we expect to see a 2.2 m drone reliably.</td></tr>
+<tr><td>Range: distance on one charge</td><td class="num">{val('range_km'):.0f} km</td><td>Loiter speed × loiter time.</td></tr>
 <tr><td>Endurance: time in the air</td><td class="num">{val('tloit_sl'):.0f} min</td><td>Battery energy against drag. This is the number that matters for the mission.</td></tr>
 </tbody></table></section>
 <section><h2>A field day</h2>
-<p>Water loss shows up as the difference between dawn and midday, so one field day is three flights on one charge, each about 15 minutes over the same
-2 ha plot of chaparral within 1 km of the take-off point.</p>
+<p>Water loss shows up as the difference between dawn and midday. We target three 15-minute surveys of the same 2 ha chaparral plot on one charge,
+within 1 km of the take-off point. The current estimate is {val('flights_pack'):.1f} flights per charge.</p>
 <svg class="day" viewBox="0 0 900 120" role="img" aria-label="Three flights: pre-dawn, mid-morning, midday">
 <line x1="40" y1="70" x2="860" y2="70" class="axis"/>
 {''.join(f'<line x1="{x}" y1="64" x2="{x}" y2="76" class="tick"/><text x="{x}" y="96" class="t">{h}</text>' for x, h in [(40, "5:00"), (177, "7:00"), (313, "9:00"), (450, "11:00"), (587, "13:00"), (723, "15:00"), (860, "17:00")])}
-<rect x="91" y="48" width="17" height="22" class="fl"/><text x="99" y="38" class="l">pre-dawn</text>
-<rect x="330" y="48" width="17" height="22" class="fl"/><text x="338" y="38" class="l">mid-morning</text>
-<rect x="535" y="48" width="17" height="22" class="fl"/><text x="543" y="38" class="l">midday</text>
+{''.join(f'<rect x="{40 + (h - 5) * 68.33:.0f}" y="48" width="{0.25 * 68.33:.0f}" height="22" class="fl"/><text x="{40 + (h - 5 + 0.125) * 68.33:.0f}" y="38" class="l">{lab}</text>' for h, lab in [(6.25, "pre-dawn, 6:15"), (9.75, "mid-morning, 9:45"), (12.75, "midday, 12:45")])}
 </svg>
 <table class="plain"><tbody>
 <tr><td>Plot</td><td>2 ha of chaparral plus a 50 m buffer: 18 lines of 240 m, about 7 minutes at 19 m/s, plus hovering for the spot sensor</td></tr>
-<tr><td>Energy per flight</td><td class="num">{val('E_flight'):.0f} Wh (hover, climb, 15 min survey, 1 km out and back)</td></tr>
-<tr><td>Usable energy per charge</td><td class="num">{val('E_use'):.0f} Wh, keeping 20 % in reserve</td></tr>
-<tr><td>Flights per charge</td><td class="num">{val('flights_pack'):.1f}, against the 3 we need</td></tr>
+<tr><td>Energy per flight</td><td><span class="num">{val('E_flight'):.0f} Wh</span>: hover, climb, 15 min survey, 1 km out and back</td></tr>
+<tr><td>Usable energy per charge</td><td><span class="num">{val('E_use'):.0f} Wh</span>, keeping 20 % in reserve</td></tr>
+<tr><td>Flights per charge</td><td><span class="num">{val('flights_pack'):.1f}</span>, against the 3 we target</td></tr>
 </tbody></table>
 <p class="small">Numbers from {sheet('04_Propulsion_Battery_Energy', 'Mission_Energy')}. The plot size and flight plan come from our field-day plan (base station document, October 2026).</p></section>
 <section><h2>Why dawn and midday, and why 15 minutes</h2>
@@ -188,13 +185,13 @@ calc_body = "".join([
     step("1. Weight", "Everything the rotors and the wing must carry: the CAD parts plus the sensor payload.",
          r"W = m\,g", rf"W = {m:.2f}\ \text{{kg}} \times 9.81\ \text{{m/s}}^2", f"W = {W:.1f} N", sheet("02_Mass_and_CG", "Mass_CG")),
     step("2. Stall speed", "The slowest the wing can fly. The wing's maximum lift coefficient is 0.9 times the SD7037 airfoil's (Raymer).",
-         r"V_s = \sqrt{\dfrac{2W}{\rho\, S\, C_{L,\max}}}", rf"V_s = \sqrt{{\dfrac{{2 \times {W:.1f}}}{{{rho:.3f} \times {S:.2f} \times {CLmax:.3f}}}}}",
+         r"V_s = \sqrt{\dfrac{2W}{\rho\, S\, C_{L,\max}}}", rf"V_s = \sqrt{{\dfrac{{2 \times {W:.1f}\ \text{{N}}}}{{{rho:.3f}\ \text{{kg/m}}^3 \times {S:.2f}\ \text{{m}}^2 \times {CLmax:.3f}}}}}",
          f"V<sub>s</sub> = {Vs:.1f} m/s, against the 15 m/s we wanted.", sheet("03_Aerodynamics", "Aero_Cruise")),
     step("3. Drag of the whole drone", "Added up part by part: skin friction on the wing, tail, fuselage, booms and nacelles, and pressure drag on the motors, feet and stopped propellers.",
          r"C_{D0} = \dfrac{\sum C_f\, FF\, Q\, S_{wet} + \sum C_d\, A_{front}}{S}", rf"C_{{D0}} = {CD0:.4f}",
          "The motors, landing feet and stopped propellers make about 45 % of it.", sheet("03_Aerodynamics", "Drag_Buildup")),
     step("4. Loiter speed and drag", "The drone loiters at 1.3 times the stall speed, which here is faster than its minimum-power speed.",
-         r"V = 1.3\,V_s,\qquad C_L = \dfrac{2W}{\rho V^2 S},\qquad C_D = C_{D0} + K C_L^2,\qquad D = \tfrac12 \rho V^2 S\, C_D",
+         r"\begin{aligned} V &= 1.3\,V_s \\ C_L &= \dfrac{2W}{\rho V^2 S} \\ C_D &= C_{D0} + K C_L^2 \\ D &= \tfrac12 \rho V^2 S\, C_D \end{aligned}",
          rf"V = {V:.1f},\quad C_L = {CL:.3f},\quad C_D = {CD0:.4f} + {K:.4f}\times{CL:.3f}^2 = {CD:.4f}",
          f"Drag D = {D:.1f} N at {V:.1f} m/s.", sheet("03_Aerodynamics", "Aero_Cruise")),
     step("5. Loiter power", "Thrust power through the pusher (efficiency η = 0.55, assumed), plus 20 W for the electronics.",
@@ -212,7 +209,7 @@ calc_body = "".join([
          rf"E_u = 648 \times 0.85 \times 0.8 = {val('E_use'):.0f}\ \text{{Wh}},\quad n = \dfrac{{{val('E_use'):.0f}}}{{{val('E_flight'):.0f}}}",
          f"{val('flights_pack'):.1f} flights per charge; loiter time {val('tloit_sl'):.0f} min.", sheet("04_Propulsion_Battery_Energy", "Mission_Energy")),
     step("9. Range", "Distance on one charge at loiter speed. Shown to make the point that it never limits us.",
-         r"\text{range} = V\, t_{loiter}", rf"\text{{range}} = {V:.1f}\ \text{{m/s}} \times {val('tloit_sl'):.0f}\ \text{{min}}",
+         r"\text{range} = V\, t_{loiter}", rf"\text{{range}} = {V:.1f}\ \text{{m/s}} \times {val('tloit_sl') * 60:,.0f}\ \text{{s}}",
          f"{val('range_km'):.0f} km, against a 1 km operating radius.", sheet("04_Propulsion_Battery_Energy", "Mission_Energy")),
 ])
 katex = ('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">'

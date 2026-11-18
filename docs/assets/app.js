@@ -41,7 +41,7 @@ gltf.scene.traverse(o => {
   o.userData.sys = sys;
   const col = new THREE.Color(data.systems[sys].color);
   o.material = new THREE.MeshStandardMaterial({ color: col, roughness: 0.85, metalness: 0.0, flatShading: sys !== 'airframe', transparent: true, opacity: sys === 'airframe' ? 0.92 : 1 });
-  if (name.startsWith('prop_')) { o.material.opacity = 0.35; o.material.depthWrite = false; }
+  if (name.startsWith('prop_')) { o.material.opacity = 0.35; o.material.depthWrite = false; o.userData.disc = true; }
   base.set(o, { color: col.clone(), opacity: o.material.opacity });
   if (pid) { (meshesByPart[pid] ||= []).push(o); pickables.push(o); o.userData.pid = pid; }
 });
@@ -80,9 +80,9 @@ function showDetail(p) {
   const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
   document.getElementById('detail').innerHTML = `<h2>${esc(p.name)}</h2>
    <div class="meta"><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}. ${esc(p.status)}. ${p.qty} × ${price}${price ? ', ' : ''}${p.mass} g each.</div>
-   <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why this part, and why it will work</h3><p>${esc(p.why)}</p>
+   <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}
-   ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}`;
+   ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}<p class="small"><a href="#row-${p.id}" data-row="${p.id}">Show in the parts table</a></p>`;
   document.querySelectorAll('#detail [data-go]').forEach(b => b.addEventListener('click', () => select(b.dataset.go)));
 }
 document.querySelectorAll('tr[data-id]').forEach(r => {
@@ -95,7 +95,7 @@ renderer.domElement.addEventListener('pointerup', e => {
   if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 5) return;
   const r = renderer.domElement.getBoundingClientRect();
   ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-  ray.setFromCamera(ptr, camera); const hit = ray.intersectObjects(pickables, false).find(h => h.object.material.opacity > 0.3 || true);
+  ray.setFromCamera(ptr, camera); const hit = ray.intersectObjects(pickables, false).find(h => !h.object.userData.disc);
   select(hit ? hit.object.userData.pid : null);
 });
 function size() { const w = el.clientWidth, h = el.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }

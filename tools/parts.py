@@ -20,7 +20,7 @@ PARTS = [
          nodes=["battery_6S6P_P50B"], price=323.64, mass=2722,
          buy=[["Liion Wholesale (36 cells, $8.99 each)", "https://liionwholesale.com/products/molicel-npe-inr-21700-p50b-60a-5000mah-flat-top-21700-battery-authorized-distributor", "$323.64"],
               ["IMR Batteries", "https://imrbatteries.com/products/molicel-21700-p50b-5000mah-60a-battery", "$9.99 each"]],
-         job="Stores the energy for a whole field day. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
+         job="Powers the drone: an estimated {flights_pack} survey flights per charge. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
          why="648 Wh in 2.72 kg. In a hot-day hover each cell carries {Icell_hot} A, against a 60 A rating. "
              "It gives {tloit_sl} min of loiter with 20 % left, or {flights_pack} survey flights per charge.",
          connects=[["pm07", "XT90 connector, two 14 AWG wires per pole"]],
