@@ -102,3 +102,4 @@ span.num{padding-right:0}
 .leaflet-tooltip.maplabel.water{font:italic 400 14px "Archivo";color:#4f6f8f}
 .leaflet-tooltip.maplabel.quiet{font:400 13px "Archivo";color:var(--quiet);letter-spacing:.04em}
 .leaflet-tooltip.maplabel.fire{font:600 12.5px "Archivo";color:var(--red)}
+.refh{font:600 15px "Archivo";margin:18px 0 6px;color:var(--ink)}
