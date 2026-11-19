@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from parts import PARTS, SYSTEMS, PART_LINE
+from parts import PARTS, SYSTEMS, PART_LINE, RAW
 GH = "https://github.com/Stanford-SkyRunners/ridgeback-design"
 
 E = html.escape
@@ -72,7 +72,7 @@ for p in PARTS:
     q = dict(p)
     q["why"] = fill(p["why"]); q["job"] = fill(p["job"])
     q["systemName"], q["color"] = SYSTEMS[p["system"]]
-    q["edit"] = f"{GH}/edit/main/data/parts.toml"; q["editLine"] = PART_LINE[p["id"]]
+    q["edit"] = f"{GH}/edit/main/data/parts.toml"; q["editLine"] = PART_LINE[p["id"]]; q["raw"] = RAW[p["id"]]
     if p["id"] in CALCS:
         c = CALCS[p["id"]]
         q["calc"] = [list(x) for x in c["lines"]]
@@ -90,10 +90,11 @@ def page(title, slug, body, extra_head=""):
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title>{FONTS}<link rel="stylesheet" href="assets/style.css">{extra_head}</head>
 <body><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
-<span class="who">SkyRunners, Stanford Student Robotics</span></div><nav>{links}</nav></header>
+<span class="who">SkyRunners, Stanford Student Robotics</span></div><nav>{links}<button type="button" id="editToggle" class="editbtn" aria-pressed="false">Edit</button></nav></header>
+<div id="editbar" class="editbar" hidden></div>
 <main>{body}</main>
 <footer class="collar foot"><span>Designed in CAD, not yet built or flown. Numbers from the calculation sheets, updated 17 Nov 2026.</span>
-<a href="https://github.com/Stanford-SkyRunners/ridgeback-design">Source on GitHub</a></footer></div></body></html>"""
+<a href="https://github.com/Stanford-SkyRunners/ridgeback-design">Source on GitHub</a></footer></div><script type="module" src="assets/edit.js"></script></body></html>"""
 
 
 def status_row():
@@ -310,8 +311,8 @@ calc_body = "".join([
          r"\begin{aligned} V &= 1.3\,V_s \\ C_L &= \dfrac{2W}{\rho V^2 S} \\ C_D &= C_{D0} + K C_L^2 \\ D &= \tfrac12 \rho V^2 S\, C_D \end{aligned}",
          rf"V = {V:.1f},\quad C_L = {CL:.3f},\quad C_D = {CD0:.4f} + {K:.4f}\times{CL:.3f}^2 = {CD:.4f}",
          f"Drag D = {D:.1f} N at {V:.1f} m/s.", sheet("03_Aerodynamics", "Aero_Cruise")),
-    step("5. Loiter power", "Thrust power through the pusher (efficiency η = 0.55, assumed), plus 20 W for the electronics.",
-         r"P = \dfrac{D\,V}{\eta} + P_{av}", rf"P = \dfrac{{{D:.1f} \times {V:.1f}}}{{0.55}} + 20", f"P = {Pcr:.0f} W", sheet("03_Aerodynamics", "Aero_Cruise")),
+    step("5. Loiter power", f"Thrust power through the pusher (efficiency η = {val('eta_push'):.2f}, assumed), plus {val('P_av'):.0f} W for the flight electronics and the mission sensors.",
+         r"P = \dfrac{D\,V}{\eta} + P_{av}", rf"P = \dfrac{{{D:.1f} \times {V:.1f}}}{{{val('eta_push'):.2f}}} + {val('P_av'):.0f}", f"P = {Pcr:.0f} W", sheet("03_Aerodynamics", "Aero_Cruise")),
     step("6. Hover power", "From T-Motor's own MN5008 test table, fitted as a power law and corrected for air density.",
          r"P_{motor} = e^{c}\, T^{k} \sqrt{\rho_{test}/\rho},\qquad P_{hover} = 4P_{motor} + P_{av}",
          rf"T = {val('Thov_sl'):,.0f}\ \text{{g per motor}},\quad k = {val('fit_k'):.3f}",
@@ -328,6 +329,25 @@ calc_body = "".join([
          r"\text{range} = V\, t_{loiter}", rf"\text{{range}} = {V:.1f}\ \text{{m/s}} \times {val('tloit_sl') * 60:,.0f}\ \text{{s}}",
          f"{val('range_km'):.0f} km, against a 1 km operating radius.", sheet("04_Propulsion_Battery_Energy", "Mission_Energy")),
 ])
+# design numbers (data/inputs.toml), editable on the page
+INPUT_ROWS, _grp = [], None
+for line in (ROOT / "data/inputs.toml").read_text().splitlines():
+    mg = re.match(r"^\[(\w+)\]", line)
+    if mg: _grp = mg.group(1); continue
+    mk = re.match(r"^(\w+) = (.+?)\s+#\s*(.*)$", line)
+    if mk:
+        label, _, src = mk.group(3).partition("; ")
+        unit = re.search(r"\[([^\]]+)\]\s*$", label)
+        INPUT_ROWS.append(dict(group=_grp, key=mk.group(1), value=mk.group(2), label=re.sub(r"\s*\[[^\]]+\]\s*$", "", label), unit=unit.group(1) if unit else "", source=src))
+(ROOT / "docs/assets/inputs.json").write_text(json.dumps(INPUT_ROWS, indent=0, ensure_ascii=False))
+_tr, _last = [], None
+for r_ in INPUT_ROWS:
+    if r_["group"] != _last:
+        _tr.append(f'<tr class="grp"><th colspan="4">{E(r_["group"].replace("_", " "))}</th></tr>'); _last = r_["group"]
+    _tr.append(f'<tr data-key="{r_["key"]}"><td>{E(r_["label"])}</td><td class="num val">{E(r_["value"])}</td><td>{E(r_["unit"])}</td><td class="small">{E(r_["source"])}</td></tr>')
+calc_body += f"""<section id="inputs"><h2>Design numbers behind the steps</h2>
+<p>Every typed number the calculations start from. Press <b>Edit</b> at the top to change one here; saving recomputes every sheet and page.</p>
+<div class="tablewrap"><table class="parts inputs"><thead><tr><th>Number</th><th class="num">Value</th><th>Unit</th><th>Where it comes from</th></tr></thead><tbody>{"".join(_tr)}</tbody></table></div></section>"""
 katex = ('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">'
          '<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>'
          '<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body)"></script>')

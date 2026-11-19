@@ -228,6 +228,7 @@ function calcBlock(p) {
 }
 function esc(s) { return String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch])); }
 function showDetail(p) {
+  if (window.RB?.partForm?.(p, document.getElementById('detail'))) return;
   const price = p.status.startsWith('reuse') ? 'owned' : (p.price ? `$${p.price.toFixed(2)} each` : '');
   const conn = p.connects.length ? '<ul>' + p.connects.map(([to, how]) => `<li><button class="link" data-go="${to}">${esc(parts[to]?.name || to)}</button>: ${esc(how)}</li>`).join('') + '</ul>' : '<p>Nothing wired; it runs on its own.</p>';
   const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
@@ -295,3 +296,4 @@ renderer.setAnimationLoop(() => {
 });
 const fromHash = () => { const id = location.hash.slice(1); if (parts[id]) select(id, true); };
 addEventListener('hashchange', fromHash); fromHash();
+window.RB = Object.assign(window.RB || {}, { rerender: () => { if (selected) showDetail(parts[selected]); } });

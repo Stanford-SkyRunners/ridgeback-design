@@ -2,6 +2,7 @@
 
 The site, the 3D model and the sheets all read it through PARTS and SYSTEMS below.
 """
+import copy
 import tomllib
 from pathlib import Path
 
@@ -10,6 +11,7 @@ PARTS_FILE = ROOT / "data/parts.toml"
 _d = tomllib.loads(PARTS_FILE.read_text())
 
 SYSTEMS = {k: (v["name"], v["color"]) for k, v in _d["systems"].items()}
+RAW = {p["id"]: copy.deepcopy(p) for p in _d["part"]}   # exactly as written in parts.toml (for the in-page editor)
 PARTS = []
 for p in _d["part"]:
     p = dict(p)

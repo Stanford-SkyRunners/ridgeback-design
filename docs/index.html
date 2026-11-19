@@ -1,7 +1,8 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Ridgeback Scout</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script></head>
 <body><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
-<span class="who">SkyRunners, Stanford Student Robotics</span></div><nav><a href="index.html" aria-current=page>Drone</a><a href="mission.html">Mission and range</a><a href="calculations.html">Calculations</a><a href="files.html">Sheets, code, CAD</a></nav></header>
+<span class="who">SkyRunners, Stanford Student Robotics</span></div><nav><a href="index.html" aria-current=page>Drone</a><a href="mission.html">Mission and range</a><a href="calculations.html">Calculations</a><a href="files.html">Sheets, code, CAD</a><button type="button" id="editToggle" class="editbtn" aria-pressed="false">Edit</button></nav></header>
+<div id="editbar" class="editbar" hidden></div>
 <main>
 <section class="lead"><h1>Inside the drone</h1>
 <p>Our own 2.24 m VTOL drone for measuring how much water chaparral shrubs lose between dawn and midday, for planning prescribed burns.
@@ -45,4 +46,4 @@ sensors for the first mission flights. Click a row to see it on the drone.</p>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="assets/app.js"></script></main>
 <footer class="collar foot"><span>Designed in CAD, not yet built or flown. Numbers from the calculation sheets, updated 17 Nov 2026.</span>
-<a href="https://github.com/Stanford-SkyRunners/ridgeback-design">Source on GitHub</a></footer></div></body></html>
+<a href="https://github.com/Stanford-SkyRunners/ridgeback-design">Source on GitHub</a></footer></div><script type="module" src="assets/edit.js"></script></body></html>

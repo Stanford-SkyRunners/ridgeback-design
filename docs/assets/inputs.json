@@ -1,0 +1,458 @@
+[
+{
+"group": "Requirements",
+"key": "req_loiter",
+"value": "80",
+"label": "Loiter time, with 20 % reserve left",
+"unit": "min",
+"source": "[A] team rule (OWN_SMALL_DRONE §1)"
+},
+{
+"group": "Requirements",
+"key": "req_tw",
+"value": "1.5",
+"label": "Hover thrust / weight, 800 m altitude, ISA+20 (hot day)",
+"unit": "",
+"source": "[A] common VTOL control-margin rule; same rule as the 3.35 m design"
+},
+{
+"group": "Requirements",
+"key": "req_stall",
+"value": "15.0",
+"label": "Stall speed (clean wing, takeoff mass, sea level)",
+"unit": "m/s",
+"source": "[A] team rule"
+},
+{
+"group": "Requirements",
+"key": "req_budget",
+"value": "3000",
+"label": "Budget for the aircraft",
+"unit": "USD",
+"source": "user (10-30): $3k cap, stretch 4-5k"
+},
+{
+"group": "Requirements",
+"key": "req_alt",
+"value": "800",
+"label": "Design altitude for the hot-day case",
+"unit": "m",
+"source": "[A]"
+},
+{
+"group": "Requirements",
+"key": "req_dT",
+"value": "20",
+"label": "Hot-day temperature above ISA",
+"unit": "K",
+"source": "[A] ISA+20 = 30 °C at sea level"
+},
+{
+"group": "Requirements",
+"key": "req_radius",
+"value": "1000",
+"label": "Operating radius from the take-off point",
+"unit": "m",
+"source": "[A] FAA Part 107 §107.31: the pilot or a visual observer must see the aircraft; our field plan flies within ~1 km (docs/BASE_STATION.md D3)"
+},
+{
+"group": "Requirements",
+"key": "req_site",
+"value": "2",
+"label": "Site surveyed per flight",
+"unit": "ha",
+"source": "[A] docs/BASE_STATION.md §2.1: a 5-acre plot of chaparral plus a 50 m buffer"
+},
+{
+"group": "Requirements",
+"key": "req_survey",
+"value": "15",
+"label": "Time over the site per flight",
+"unit": "min",
+"source": "[A] BASE_STATION.md: 18 lines x 240 m ≈ 7 min at 19 m/s, plus passes and hovering for the spot sensor"
+},
+{
+"group": "Requirements",
+"key": "req_flights",
+"value": "3",
+"label": "Flights per field day on one battery",
+"unit": "",
+"source": "[A] BASE_STATION.md: pre-dawn, mid-morning, midday (the water-loss curve needs at least dawn and midday)"
+},
+{
+"group": "Constants",
+"key": "g",
+"value": "9.80665",
+"label": "Gravity",
+"unit": "m/s²",
+"source": "standard"
+},
+{
+"group": "Constants",
+"key": "Rair",
+"value": "287.05",
+"label": "Gas constant of air",
+"unit": "J/(kg K)",
+"source": "standard"
+},
+{
+"group": "Constants",
+"key": "T0",
+"value": "288.15",
+"label": "Sea-level ISA temperature",
+"unit": "K",
+"source": "ISA"
+},
+{
+"group": "Constants",
+"key": "p0",
+"value": "101325",
+"label": "Sea-level ISA pressure",
+"unit": "Pa",
+"source": "ISA"
+},
+{
+"group": "Constants",
+"key": "lapse",
+"value": "0.0065",
+"label": "Temperature lapse rate",
+"unit": "K/m",
+"source": "ISA"
+},
+{
+"group": "Constants",
+"key": "h_sl",
+"value": "0",
+"label": "Altitude",
+"unit": "m",
+"source": ""
+},
+{
+"group": "Constants",
+"key": "dT_sl",
+"value": "0",
+"label": "ISA deviation",
+"unit": "K",
+"source": ""
+},
+{
+"group": "Mass_CG",
+"key": "cg_target",
+"value": "94",
+"label": "CG target",
+"unit": "mm",
+"source": "[C] mini_layout.py, 15 % static margin"
+},
+{
+"group": "Airfoil_SD7037",
+"key": "tc",
+"value": "0.092",
+"label": "Thickness / chord",
+"unit": "",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "Vref",
+"value": "19.0",
+"label": "Reference airspeed for Reynolds numbers",
+"unit": "m/s",
+"source": "[A]"
+},
+{
+"group": "Drag_Buildup",
+"key": "fuse_L",
+"value": "0.94",
+"label": "Fuselage length",
+"unit": "m",
+"source": "[C] cad/design.py"
+},
+{
+"group": "Drag_Buildup",
+"key": "fuse_W",
+"value": "0.17",
+"label": "Fuselage width",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "fuse_H",
+"value": "0.165",
+"label": "Fuselage height",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "fuse_Swet",
+"value": "0.45",
+"label": "Fuselage wetted area",
+"unit": "m²",
+"source": "[C] CAD, 2 methods"
+},
+{
+"group": "Drag_Buildup",
+"key": "boom_len",
+"value": "1.358",
+"label": "Boom tube length",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "boom_D",
+"value": "0.03",
+"label": "Boom tube diameter",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "tail_c",
+"value": "0.12",
+"label": "Arch tail chord",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "tail_h",
+"value": "0.36",
+"label": "Arch tail apex height",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "boom_y",
+"value": "0.39",
+"label": "Boom lateral position",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "nac_L",
+"value": "0.22",
+"label": "Nacelle (ESC fairing) length",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "nac_W",
+"value": "0.064",
+"label": "Nacelle width",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "nac_H",
+"value": "0.095",
+"label": "Nacelle height",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "leg_c",
+"value": "0.048",
+"label": "Leg fairing chord (NACA 0025)",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "leg_h",
+"value": "0.148",
+"label": "Leg fairing height",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "foot_D",
+"value": "0.036",
+"label": "Foot diameter (TPU)",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "foot_H",
+"value": "0.045",
+"label": "Foot height",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "mot_D",
+"value": "0.0556",
+"label": "Lift motor diameter",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "mot_H",
+"value": "0.031",
+"label": "Lift motor height",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Drag_Buildup",
+"key": "Cd_bluff",
+"value": "0.8",
+"label": "Cd of short bluff cylinders (motors, feet)",
+"unit": "",
+"source": "[A] Hoerner: short cylinder in cross-flow, L/D ≈ 0.5-1.3 → 0.6-0.9"
+},
+{
+"group": "Drag_Buildup",
+"key": "misc_frac",
+"value": "0.1",
+"label": "Extra for gaps, hinges, antennas, GNSS pads, rough print",
+"unit": "",
+"source": "[A] Raymer: 5-10 % (leakage + protuberance)"
+},
+{
+"group": "Drag_Buildup",
+"key": "CD0_rev_lo",
+"value": "0.04",
+"label": "Independent review: CD0 low",
+"unit": "",
+"source": "[C from A] independent reviewer 11-17"
+},
+{
+"group": "Drag_Buildup",
+"key": "CD0_rev_mid",
+"value": "0.06",
+"label": "Independent review: CD0 likely",
+"unit": "",
+"source": "[C from A]"
+},
+{
+"group": "Drag_Buildup",
+"key": "CD0_rev_hi",
+"value": "0.09",
+"label": "Independent review: CD0 high",
+"unit": "",
+"source": "[C from A]"
+},
+{
+"group": "Aero_Cruise",
+"key": "S",
+"value": "0.5",
+"label": "Wing area",
+"unit": "m²",
+"source": "[C] cad/design.py WING_AREA_M2"
+},
+{
+"group": "Aero_Cruise",
+"key": "b",
+"value": "2.24",
+"label": "Span",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Aero_Cruise",
+"key": "c_root",
+"value": "0.2706",
+"label": "Root chord",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Aero_Cruise",
+"key": "c_tip",
+"value": "0.1759",
+"label": "Tip chord",
+"unit": "m",
+"source": "[C]"
+},
+{
+"group": "Aero_Cruise",
+"key": "eta_push",
+"value": "0.55",
+"label": "Pusher efficiency (electrical → thrust power)",
+"unit": "",
+"source": "[A] motor ~0.80 x prop ~0.70 at cruise"
+},
+{
+"group": "Lift_Hover",
+"key": "Tmax_test",
+"value": "4215",
+"label": "Max thrust per motor in the test (100 %)",
+"unit": "g",
+"source": "[V]"
+},
+{
+"group": "Lift_Hover",
+"key": "V_test",
+"value": "22.51",
+"label": "Test voltage at 100 %",
+"unit": "V",
+"source": "[V]"
+},
+{
+"group": "Lift_Hover",
+"key": "rho_test",
+"value": "1.2",
+"label": "Air density during the maker's test",
+"unit": "kg/m³",
+"source": "[A] not stated on the page"
+},
+{
+"group": "Lift_Hover",
+"key": "I_esc",
+"value": "40",
+"label": "ESC continuous rating (ALPHA 40A 6S)",
+"unit": "A",
+"source": "[V] product name / page"
+},
+{
+"group": "Pusher",
+"key": "J0",
+"value": "0.66",
+"label": "Advance ratio where thrust reaches zero",
+"unit": "",
+"source": "[A] APC thin-electric props, pitch/diameter ≈ 0.5: zero thrust at J ≈ 0.62-0.70 (independent review, from UIUC/APC data; APC file blocked HTTP 403)"
+},
+{
+"group": "Mission_Energy",
+"key": "bat_S",
+"value": "6",
+"label": "Cells in series",
+"unit": "",
+"source": "[V] parts"
+},
+{
+"group": "Mission_Energy",
+"key": "reserve",
+"value": "0.2",
+"label": "Landing reserve kept",
+"unit": "",
+"source": "[A] same as the 3.35 m design"
+},
+{
+"group": "Mission_Energy",
+"key": "h_climb",
+"value": "120",
+"label": "Winged climb height",
+"unit": "m",
+"source": "[A] to 120 m (Part 107 limit)"
+},
+{
+"group": "Mission_Energy",
+"key": "roc_plan",
+"value": "1.5",
+"label": "Planned winged climb rate",
+"unit": "m/s",
+"source": "[A] Pusher tab: best winged climb ≈ 1.5-2 m/s"
+}
+]
