@@ -3,7 +3,7 @@
 //  - team passcode: through the relay (tools/relay/Code.gs, a Google Apps Script web app that holds one team token);
 //  - own GitHub token: for people with write access, or while no relay is set up.
 // RELAY: paste the relay's web app URL (https://script.google.com/macros/s/.../exec) between the quotes.
-const RELAY = '';
+const RELAY = 'https://script.google.com/macros/s/AKfycbyk8_AVZHNF-hboeR7PNGiZm2r85k1m4cnDSoK09AfEZN6TVsxQWjAzT_WjPRDIP_FAPw/exec';
 const REPO = 'Stanford-SkyRunners/ridgeback-design';
 const API = `https://api.github.com/repos/${REPO}`;
 const TOKEN_URL = 'https://github.com/settings/tokens/new?scopes=public_repo&description=Ridgeback%20site%20editing';

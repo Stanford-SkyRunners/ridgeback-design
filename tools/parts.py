@@ -33,6 +33,13 @@ for i, line in enumerate(PARTS_FILE.read_text().splitlines(), 1):
 
 ids = [p["id"] for p in PARTS]
 assert len(ids) == len(set(ids)), "two parts have the same id in data/parts.toml"
+import re as _re
+for _k, (_n, _c) in SYSTEMS.items():
+    assert _re.fullmatch(r"#[0-9a-fA-F]{6}", str(_c)), f'system {_k}: color "{_c}" must look like #9a6b16'
+for _p in _d["part"]:
+    assert _re.fullmatch(r"[a-z0-9_]+", str(_p["id"])), f'part id "{_p["id"]}" may use only a-z, 0-9 and _'
+    for _f in ("qty", "mass", "price", "power_w"):
+        if _f in _p: assert isinstance(_p[_f], (int, float)) and not isinstance(_p[_f], bool), f'{_p["id"]}: {_f} must be a number'
 for p in PARTS:
     assert p["system"] in SYSTEMS, f'{p["id"]}: system "{p["system"]}" is not one of {list(SYSTEMS)}'
     for c in p["connects"]:
