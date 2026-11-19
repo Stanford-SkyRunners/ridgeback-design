@@ -1,4 +1,5 @@
 // Drone explorer. Airframe = the CAD meshes. Bought parts = shapes built at each part's CAD position and size.
+const safeUrl = u => /^https?:\/\//i.test(String(u)) ? u : '#';   // only web links are ever rendered as links
 // Click a part (or a table row): it turns purple, the camera moves to it, lines show what it connects to.
 // Flight modes: Hover spins the lift propellers; Cruise parks them along the booms and spins the pusher.
 import * as THREE from 'three';
@@ -231,11 +232,11 @@ function showDetail(p) {
   if (window.RB?.partForm?.(p, document.getElementById('detail'))) return;
   const price = p.status.startsWith('reuse') ? 'owned' : (p.price ? `$${p.price.toFixed(2)} each` : '');
   const conn = p.connects.length ? '<ul>' + p.connects.map(([to, how]) => `<li><button class="link" data-go="${to}">${esc(parts[to]?.name || to)}</button>: ${esc(how)}</li>`).join('') + '</ul>' : '<p>Nothing wired; it runs on its own.</p>';
-  const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
+  const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(safeUrl(u))}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
   document.getElementById('detail').innerHTML = `<h2>${esc(p.name)}</h2>
    <dl class="meta"><div><dt>System</dt><dd><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}</dd></div><div><dt>Status</dt><dd>${esc(p.status.charAt(0).toUpperCase() + p.status.slice(1))}</dd></div><div><dt>Quantity</dt><dd>${p.qty}</dd></div>${price ? `<div><dt>Price</dt><dd>${price}</dd></div>` : ''}<div><dt>Mass</dt><dd>${p.mass} g each</dd></div>${p.power_w ? `<div><dt>Power</dt><dd>${p.power_w} W</dd></div>` : ''}</dl>
    ${p.size || sizeOf[p.id] ? `<p class="size"><b>Size</b> ${esc(p.size || '')}${sizeOf[p.id] ? `${p.size ? '. ' : ''}Drawn at its CAD size: ${[sizeOf[p.id].x, sizeOf[p.id].y, sizeOf[p.id].z].map(v => Math.round(v * 1000)).join(' × ')} mm (outlined).` : ''}</p>` : ''}
-   <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>${calcBlock(p)}
+   <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>${p.without ? `<h3>Without it</h3><p>${esc(p.without)}</p>` : ''}${p.refs?.length ? '<h3>Evidence</h3><ul class="refs">' + p.refs.map(r => `<li><a href="${esc(safeUrl(r.link))}" target="_blank" rel="noopener">${esc(r.cite)}</a>: ${esc(r.says || '')}</li>`).join('') + '</ul>' : ''}${calcBlock(p)}
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}
    ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}
    <p class="small"><a href="#row-${p.id}">Show in the parts table</a> · <a href="${esc(p.edit)}" target="_blank" rel="noopener">Edit this part</a> (data/parts.toml, line ${p.editLine})</p>`;

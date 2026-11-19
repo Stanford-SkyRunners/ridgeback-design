@@ -409,6 +409,8 @@ buy = [
 ]
 job = "Records every sensor with the time and position from the flight controller, and triggers the camera."
 why = "It runs the Raspberry Pi colour camera with its own driver, the thermal camera over USB, the spot sensor and air sensor over I2C, and reads time and position from the flight controller over a serial cable, so each reading is tagged with where the drone was. About 130 g lighter and 5 W less than the Jetson we own. Readings are tagged by time only; a 50 ms timing error is about 1 m along track at 19 m/s, so the camera trigger should also be logged by the flight controller."
+without = "Readings would have no time or position, so they could not be put on the map or matched between the dawn and midday flights."
+refs = []
 instead = "The Jetson Orin Nano we own from Sky4 ($0, 176 g, 7–15 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it."
 source = "Adafruit price (read 18 Nov); mass and power estimated until weighed"
 connects = [["payload_power", "5 V, USB-C power"], ["pixhawk", "serial cable (MAVLink): time and position"], ["thermal_cam", "USB"], ["rgb_cam", "camera ribbon (CSI)"], ["spot_sensor", "I2C"], ["air_sensor", "I2C"]]
@@ -431,6 +433,8 @@ buy = [
 ]
 job = "Turns battery voltage into a steady 5 V for the payload computer and sensors."
 why = "The battery runs from 25.2 V full to about 18 V empty. This regulator takes 5.5 to 50 V in and gives up to 5.5 A at 5 V, enough for the Raspberry Pi 5 (5 A peak) and the sensors it powers. About 1 W is lost as heat."
+without = "The computer and sensors would have to run off the battery's 18 to 25 V, which they cannot take."
+refs = []
 instead = "D36V50F12 (12 V, same price) if the Jetson is used instead."
 source = "pololu.com product page, read 18 Nov"
 connects = [["pm07", "XT30 from the power module"], ["payload_computer", "5 V, USB-C power"]]
@@ -454,6 +458,13 @@ buy = [
 ]
 job = "Measures the temperature of the shrub canopy, looking straight down."
 why = "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal, and the one sensor here that works in the pre-dawn flight too. 160 × 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m; with lens blur and motion, only shrubs of about 2 m or more give pure canopy pixels, smaller ones mix with soil. Its accuracy (about ±5 °C) is not enough alone, so warm and cool targets of known temperature sit in every flight, and the camera is kept in an insulated case and warmed up in a hover before the survey."
+without = "No measure of plant stress: leaf temperature against air temperature is the only stress signal the drone has. The papers below are on irrigated crops and orchards, not chaparral; how well it works over shrubs is part of what the first flights test."
+refs = [
+  { cite = "Jackson et al., Water Resources Research 17:1133 (1981)", link = "https://doi.org/10.1029/WR017i004p01133", says = "canopy temperature as a water stress indicator (the crop water stress index)" },
+  { cite = "Berni et al., IEEE Trans. Geoscience and Remote Sensing 47:722 (2009)", link = "https://doi.org/10.1109/TGRS.2008.2010457", says = "a small drone with an inexpensive thermal camera (40 cm pixels) mapped water stress from canopy temperature, checked on the ground" },
+  { cite = "Gonzalez-Dugo et al., Precision Agriculture 14:660 (2013)", link = "https://doi.org/10.1007/s11119-013-9322-9", says = "drone thermal images used to map the water status of five tree species in one orchard" },
+  { cite = "Aragon et al., Sensors 20:3316 (2020)", link = "https://doi.org/10.3390/s20113316", says = "calibrating a FLIR A655sc pixel by pixel against a lab black body cut its error from about 6 °C to under 1 °C; not tested on a Lepton" },
+]
 instead = "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email): sharper images, but the same need for ground targets to be accurate."
 source = "Jackson et al. 1981 (crop water stress index); FLIR Lepton 3.5 datasheet; BEST_PRICES 10 Nov"
 connects = [["payload_computer", "USB"]]
@@ -476,6 +487,10 @@ buy = [
 ]
 job = "Photographs the plot so we can find every shrub, see how much is plant and how much is bare soil, and build its 3D shape from overlapping photos."
 why = "1456 × 1088 pixels of 3.45 µm. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 × 38 m; flown with the short side along the track, 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel. Needs daylight, so it is not used in the pre-dawn flight."
+without = "We could not find the same shrub at dawn and at midday, or tell leaf from soil. At midday bare soil is far hotter than leaves, so a thermal pixel that mixes in soil looks like a stressed shrub."
+refs = [
+  { cite = "Dandois and Ellis, Remote Sensing of Environment 136:259 (2013)", link = "https://doi.org/10.1016/j.rse.2013.04.005", says = "3D canopy structure from overlapping photos taken with an ordinary camera on a hobby drone below 130 m" },
+]
 instead = "Livox Mid-360 lidar (265 g, 6.5 W): it looks sideways and up, and reaches only 40 m, so it cannot map the ground from 60 m. MAPIR Survey3W ($400) adds a near-infrared band."
 source = "Raspberry Pi camera specs; Livox Mid-360 specs (read 18 Nov); our ground-resolution arithmetic"
 connects = [["payload_computer", "camera ribbon (CSI)"]]
@@ -501,6 +516,12 @@ buy = [
 ]
 job = "Measures how much 1610 nm short-wave infrared light the shrubs reflect, one reading per spot, plus the sunlight coming down."
 why = "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as leaves hold less water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20° tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. Parts $385 plus about $25 of small parts. It needs sunlight, so it works from the morning flight on, not before dawn. Readings taken while the drone banks in a turn are dropped, using the bank angle from the flight controller, because the upward diode then sees the sky at an angle. Each spot mixes shrub, soil and shadow, which is why the near-infrared channel below is worth adding."
+without = "We would see stress (leaf pores closing) but have no reading tied to how much water the leaves hold. The band responds to water per leaf area; live fuel moisture, which fire planners use, is water per dry mass, so the two are related, not the same. Open risk: the change between dawn and midday may be too small for this band to see; the first flights test that."
+refs = [
+  { cite = "Hunt and Rock, Remote Sensing of Environment 30:43 (1989)", link = "https://doi.org/10.1016/0034-4257(89)90046-1", says = "changes in leaf water content detected with near- and middle-infrared reflectance" },
+  { cite = "Ceccato et al., Remote Sensing of Environment 77:22 (2001)", link = "https://doi.org/10.1016/S0034-4257(01)00191-2", says = "detecting leaf water content from reflectance in the optical bands" },
+  { cite = "Yebra et al., Remote Sensing of Environment 136:455 (2013)", link = "https://doi.org/10.1016/j.rse.2013.05.029", says = "review of remote sensing of live fuel moisture for fire danger" },
+]
 instead = "A SWIR camera through the companies we emailed (LUCID, Tech Imaging rental, SILIOS, Spectral Devices): images instead of spots, $2,250 a week to $30,000."
 source = "Hunt and Rock 1989, Ceccato et al. 2001 (leaf water in the short-wave infrared); SPOT_SENSOR_CIRCUIT doc; prices BEST_PRICES 10 Nov"
 connects = [["payload_computer", "I2C"]]
@@ -523,6 +544,10 @@ buy = [
 ]
 job = "Measures the air temperature and humidity at the drone, every flight."
 why = "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). The weather meter on the ground is the main reference at canopy height; this sensor adds the air at flight height, which at dawn can differ by several degrees because of the morning temperature inversion. ±0.1 °C and ±1 % humidity; checked against the ground meter in the shade before each flight, and mounted in a small shield away from the electronics."
+without = "The weather meter on the ground still gives the air near the canopy, so stress can still be read. What is lost is the air at flight height, which at dawn can be several degrees different because of the morning temperature inversion."
+refs = [
+  { cite = "Idso et al., Agricultural Meteorology 24:45 (1981)", link = "https://doi.org/10.1016/0002-1571(81)90032-7", says = "leaf-minus-air temperature has to be normalised for the weather, mainly how dry the air is, before it means stress" },
+]
 instead = "Ground weather meter only: it is the main reference anyway, but misses the air the drone flies through."
 source = "Adafruit SHT45 page (read 18 Nov); Idso et al. 1981"
 connects = [["payload_computer", "I2C"]]
@@ -544,7 +569,12 @@ buy = [
   { store = "Edmund Optics 850 nm / 40 nm bandpass, 12.5 mm mounted (×2)", link = "https://www.edmundoptics.com/p/850nm-cwl-40nm-fwhm-125mm-mounted-diameter/22453/", price = "$105.00 each (search listing, 18 Nov)" },
 ]
 job = "Adds a near-infrared band next to the 1610 nm band, down and up, in the same head."
-why = "Leaves reflect strongly at 850 nm and water barely absorbs there, so the ratio of the 1610 nm and 850 nm readings cancels much of the shrub, soil and shadow mix in each spot; pairing a water band with a near-infrared band is the usual leaf-water index. Two filters and two silicon photodiodes (a few dollars each) on the same converter."
+why = "Leaves reflect strongly at 850 nm and water barely absorbs there, so the ratio of the 1610 nm and 850 nm readings cancels most of the effect of lighting and shadow. Soil still mixes in; the colour camera's plant and soil split corrects for that. Pairing a water band with a near-infrared band is the usual leaf-water index. Two filters (most of the $214) and two silicon photodiodes on the same converter."
+without = "The 1610 nm reading would also change with lighting, shadow and how much of the 21 m spot is soil, not only with leaf water."
+refs = [
+  { cite = "Hunt and Rock, Remote Sensing of Environment 30:43 (1989)", link = "https://doi.org/10.1016/0034-4257(89)90046-1", says = "changes in leaf water content detected with near- and middle-infrared reflectance" },
+  { cite = "Gao, Remote Sensing of Environment 58:257 (1996)", link = "https://doi.org/10.1016/S0034-4257(96)00067-3", says = "a water index from two near-infrared bands (860 and 1240 nm), one absorbed by water and one not" },
+]
 instead = "1240 nm band (InGaAs, $123 filter): a second water band, but more expensive."
 source = "Hunt and Rock 1989; Ceccato et al. 2001; Edmund Optics listing"
 connects = [["spot_sensor", "same head and converter"]]

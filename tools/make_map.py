@@ -42,23 +42,29 @@ def dem(lon0, lat0, lon1, lat1, z):
     return np.vstack(rows), X0 * 256, Y0 * 256
 
 
-def contours(grid, levels, ox, oy, sx, sy, step=1, nd=1):
+def contours(grid, levels, ox, oy, sx, sy, step=1, nd=1, min_px=0):
+    """Contour lines as SVG points. Closed loops smaller than min_px across (knolls, noise) are dropped so the sheet reads clean."""
     fig = plt.figure(); cs = plt.contour(grid, levels=levels); plt.close(fig)
     out = []
     for lev, segs in zip(cs.levels, cs.allsegs):
         for s in segs:
             if len(s) < 6: continue
+            closed = np.hypot(*(s[0] - s[-1])) < 1e-6
+            if closed and min(np.ptp(s[:, 0]) * sx, np.ptp(s[:, 1]) * sy) < min_px: continue
             s = s[::step] if len(s) > 4 * step else s
             out.append((lev, " ".join(f"{(p[0] + ox) * sx:.{nd}f},{(p[1] + oy) * sy:.{nd}f}" for p in s)))
     return out
 
 
-def water(grid, ox, oy, sx, sy, level=0.5):
+def water(grid, ox, oy, sx, sy, level=0.5, min_area=0):
+    """Sea and bay as one SVG path. Pieces (and islands) under min_area px^2, i.e. ponds and marsh specks, are dropped."""
     fig = plt.figure(); cs = plt.contourf(grid, levels=[-1e5, level]); plt.close(fig)
     d = []
     for path in cs.get_paths():
         for poly in path.to_polygons():
             if len(poly) < 4: continue
+            x, y = poly[:, 0] * sx, poly[:, 1] * sy
+            if abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1))) / 2 < min_area: continue
             d.append("M" + " L".join(f"{(p[0] + ox) * sx:.1f},{(p[1] + oy) * sy:.1f}" for p in poly) + "Z")
     return " ".join(d)
 
@@ -70,14 +76,14 @@ class Sheet:
         self.box = (lon0, lat0, lon1, lat1)
     def xy(self, lon, lat): return ((gx(lon, self.z) - self.px0) * self.k, (gy(lat, self.z) - self.py0) * self.k)
     def ring(self, coords): return "M" + " L".join("%.1f,%.1f" % self.xy(*c) for c in coords) + "Z"
-    def terrain(self, interval, index, smooth, step, nd=1):
+    def terrain(self, interval, index, smooth, step, nd=1, min_px=0, min_area=0):
         lon0, lat0, lon1, lat1 = self.box
         g, X0, Y0 = dem(lon0 - .01, lat0 - .01, lon1 + .01, lat1 + .01, self.z)
         g = gaussian_filter(np.where(g < -50, -50, g), smooth)
         ox, oy = X0 - self.px0, Y0 - self.py0
         top = int(np.nanmax(g) // interval * interval)
-        lines = contours(g, list(range(interval, top + 1, interval)), ox, oy, self.k, self.k, step, nd)
-        return lines, water(g, ox, oy, self.k, self.k), g
+        lines = contours(g, list(range(interval, top + 1, interval)), ox, oy, self.k, self.k, step, nd, min_px)
+        return lines, water(gaussian_filter(g, 2.5), ox, oy, self.k, self.k, min_area=min_area), g  # extra smoothing: no stair-step coast
 
 
 def geo(f):
@@ -91,6 +97,11 @@ def polys(geom):
 def text(x, y, s, cls, anchor="middle", rot=0):
     r = f' transform="rotate({rot} {x:.0f} {y:.0f})"' if rot else ""
     return f'<text x="{x:.0f}" y="{y:.0f}" class="{cls}" text-anchor="{anchor}"{r}>{s}</text>'
+
+
+def text2(x, y, long, short, cls, anchor="middle", rot=0):
+    """A label with a short form for phones (the sheet is drawn 1200 wide, so on a phone it shows at a third of its size)."""
+    return text(x, y, long, cls + " long", anchor, rot) + text(x, y, short, cls + " short", anchor, rot)
 
 
 def scalebar(sh, x, y, km, lat):
@@ -122,7 +133,7 @@ def ticks(sh, step):
 
 # ---------------------------------------------------------------- region sheet
 R = Sheet(-122.62, 36.95, -121.80, 37.62, 11, 1200)
-lines, sea, _ = R.terrain(100, 500, 1.2, 2, 0)
+lines, sea, _ = R.terrain(100, 500, 1.2, 2, 0, min_px=7, min_area=5000)
 fires = geo("fires.geojson"); jr = geo("jrbp.geojson")
 parts = [f'<svg viewBox="0 0 {R.W:.0f} {R.H:.0f}" class="mapsvg" role="img" aria-label="Map: wildfires and prescribed burns around Stanford since 2000, on the terrain of the Santa Cruz Mountains">',
          '<defs><clipPath id="rclip"><rect width="100%" height="100%"/></clipPath>'
@@ -142,18 +153,18 @@ for f in jr:
 sx, sy = R.xy(-122.1697, 37.4275)
 parts.append(f'<circle cx="{sx:.1f}" cy="{sy:.1f}" r="4" class="pt"/>{text(sx + 8, sy + 4, "Stanford", "lab", "start")}')
 jx, jy = R.xy(-122.24, 37.404)
-parts.append(f'<line x1="{jx - 12:.0f}" y1="{jy - 14:.0f}" x2="{jx - 2:.0f}" y2="{jy - 3:.0f}" class="grat"/>' + text(jx - 14, jy - 18, "Jasper Ridge: first flights", "lab b", "end"))
+parts.append(f'<line x1="{jx - 12:.0f}" y1="{jy - 14:.0f}" x2="{jx - 2:.0f}" y2="{jy - 3:.0f}" class="grat"/>' + text2(jx - 14, jy - 18, "Jasper Ridge: first flights", "Jasper Ridge", "lab b", "end"))
 ox_, oy_ = R.xy(-122.50, 37.15); parts.append(text(ox_, oy_, "PACIFIC OCEAN", "lab sea", "middle"))
 bx, by = R.xy(-122.13, 37.56); parts.append(text(bx, by, "SAN FRANCISCO BAY", "lab sea", "middle"))
 mx, my = R.xy(-122.13, 37.29); parts.append(text(mx, my, "SANTA CRUZ MOUNTAINS", "lab mtn", "middle", -38))
-cx_, cy_ = R.xy(-122.24, 37.13); parts.append(text(cx_, cy_, "CZU Lightning Complex, 2020", "lab fireL", "middle"))
-parts.append(text(cx_, cy_ + 15, "86,553 acres", "lab fireS", "middle"))
-ux, uy = R.xy(-121.86, 37.40); parts.append(text(ux, uy, "SCU Lightning Complex, 2020 →", "lab fireL", "end"))
-parts.append(text(ux, uy + 15, "396,824 acres, most of it further east", "lab fireS", "end"))
+cx_, cy_ = R.xy(-122.24, 37.13); parts.append(text2(cx_, cy_, "CZU Lightning Complex, 2020", "CZU fire 2020", "lab fireL", "middle"))
+parts.append(text(cx_, cy_ + 15, "86,553 acres", "lab fireS long", "middle"))
+ux, uy = R.xy(-121.86, 37.40); parts.append(text2(ux, uy, "SCU Lightning Complex, 2020 →", "SCU 2020 →", "lab fireL", "end"))
+parts.append(text(ux, uy + 15, "396,824 acres, most of it further east", "lab fireS long", "end"))
 parts.append("</g>")
 parts.append(f'<rect x="0.5" y="0.5" width="{R.W - 1:.0f}" height="{R.H - 1:.0f}" class="neat"/>{ticks(R, 0.2)}')
 parts.append(scalebar(R, R.W - 190, R.H - 26, 10, 37.3) + north(R.W - 40, 52))
-parts.append(text(16, R.H - 16, "Contours every 100 m (bold every 500 m), from AWS Terrain Tiles. Fire perimeters: CAL FIRE; prescribed burns: NIFC.", "tick", "start"))
+parts.append(text(16, R.H - 16, "Contours every 100 m (bold every 500 m), from AWS Terrain Tiles. Fire perimeters: CAL FIRE; prescribed burns: NIFC.", "tick long", "start"))
 parts.append("</svg>")
 (OUT / "region.svg").write_text("".join(parts))
 print("region", len(lines), "contours", f"{R.W:.0f}x{R.H:.0f}")
@@ -175,7 +186,7 @@ for f in jr:
 x0, y0 = S.xy(*T0)
 r_px = S.xy(*at(1000, 0))[0] - x0
 s.append(f'<circle cx="{x0:.1f}" cy="{y0:.1f}" r="{r_px:.1f}" class="ring" data-tip="1 km: how far we expect to keep the drone in sight (14 CFR 107.31)"/>')
-rx_, ry_ = S.xy(*at(-700, 760)); s.append(text(rx_, ry_, "1 km: the drone stays in sight", "lab b", "middle", -42))
+rx_, ry_ = S.xy(*at(-700, 760)); s.append(text2(rx_, ry_, "1 km: the drone stays in sight", "1 km", "lab b", "middle", -42))
 cx, cy, half = 420, 180, 120.5
 a = S.xy(*at(cx - half, cy + half)); b_ = S.xy(*at(cx + half, cy - half))
 ia = S.xy(*at(cx - 70.7, cy + 70.7)); ib = S.xy(*at(cx + 70.7, cy - 70.7))
@@ -190,23 +201,25 @@ for i in range(n):
     pts += [S.xy(*at(*e)) for e in ends]
 pts.append(S.xy(*at(0, 0)))
 s.append(f'<polyline id="flightpath" points="{" ".join("%.1f,%.1f" % p for p in pts)}" class="path" data-tip="Flight path: 18 lines 14 m apart; 3.8 min on the lines at 19 m/s, about 7 min with the turns"/>')
-s.append(text(b_[0] + 8, a[1] + 14, "2 ha plot + 50 m buffer, 18 survey lines", "lab b", "start"))
+s.append(text2(b_[0] + 8, a[1] + 14, "2 ha plot + 50 m buffer, 18 survey lines", "plot", "lab b", "start"))
 s.append(f'<g class="to" transform="translate({x0:.1f} {y0:.1f})" data-tip="Take-off and landing (example point)"><circle r="9"/><path d="M-6,-6 L6,6 M6,-6 L-6,6"/></g>')
-s.append(text(x0 - 14, y0 + 26, "take-off and landing", "lab", "end"))
+s.append(text2(x0 - 14, y0 + 26, "take-off and landing", "take-off", "lab", "end"))
 s.append("</g>")
 s.append(f'<rect x="0.5" y="0.5" width="{S.W - 1:.0f}" height="{S.H - 1:.0f}" class="neat"/>')
 s.append(scalebar(S, S.W - 190, S.H - 26, 0.5, T0[1]) + north(S.W - 40, 52))
-s.append(text(16, S.H - 16, "Contours every 10 m (bold every 50 m). Take-off point and plot placed for scale only.", "tick", "start"))
+s.append(text(16, S.H - 16, "Contours every 10 m (bold every 50 m). Take-off point and plot placed for scale only.", "tick long", "start"))
 s.append("</svg>")
 (OUT / "site.svg").write_text("".join(s))
 print("site", len(lines), "contours", f"{S.W:.0f}x{S.H:.0f}")
 
-# ---------------------------------------------------------------- map-table backdrop: contours only, faint, for the page background
-T = Sheet(-122.45, 37.20, -122.05, 37.50, 12, 1600)
-tl, tsea, _ = T.terrain(40, 200, 1.5, 3, 0)
-bg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {T.W:.0f} {T.H:.0f}" width="{T.W:.0f}" height="{T.H:.0f}">',
-      f'<path d="{tsea}" fill="#e7ecee"/>']
+# ---------------------------------------------------------------- map-table backdrop: one faint sheet, drawn once behind the page
+# (fixed to the window and scaled to cover it, never tiled, so no seams). Peninsula coast to the bay, Jasper Ridge near the middle.
+T = Sheet(-122.56, 37.24, -121.96, 37.54, 12, 1920)
+tl, tsea, _ = T.terrain(40, 200, 1.5, 3, 0, min_px=10, min_area=2500)
+bg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {T.W:.0f} {T.H:.0f}" width="{T.W:.0f}" height="{T.H:.0f}" preserveAspectRatio="xMidYMid slice">',
+      '<defs><pattern id="w" width="40" height="10" patternUnits="userSpaceOnUse"><path d="M0,6 q10,-5 20,0 t20,0" fill="none" stroke="#cdd7de" stroke-width=".7"/></pattern></defs>',
+      f'<path d="{tsea}" fill="#e6ebec" fill-rule="evenodd"/><path d="{tsea}" fill="url(#w)" fill-rule="evenodd"/>']  # same water as the map sheets, fainter
 bg += [f'<polyline points="{p}" fill="none" stroke="{"#cdbfa8" if lev % 200 == 0 else "#e2d9ca"}" stroke-width="{1.1 if lev % 200 == 0 else 0.7}"/>' for lev, p in tl]
 bg.append("</svg>")
 (OUT / "table.svg").write_text("".join(bg))
-print("table", len(tl), "contours")
+print("table", len(tl), "contours", f"{T.W:.0f}x{T.H:.0f}")

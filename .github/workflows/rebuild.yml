@@ -19,12 +19,13 @@ jobs:
       - run: pip install openpyxl==3.1.5 formulas==1.3.4
       - run: tools/rebuild.sh
       - name: Save the rebuilt sheets and pages
+        env: { MSG: "${{ github.event.head_commit.message || 'manual run' }}" }   # passed as data, never pasted into the script
         run: |
           git config user.name "ridgeback-rebuild"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs data
           if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
-          git commit -m "Rebuild sheets and site after: ${{ github.event.head_commit.message || 'manual run' }}"
+          git commit -m "Rebuild sheets and site after: $(printf '%s' "$MSG" | head -n 1 | cut -c1-200)"
           # someone may have saved again meanwhile; their own run rebuilds from their change
           for i in 1 2 3; do git push && break; git pull --rebase -X theirs; done
       - name: Publish the website

@@ -116,13 +116,27 @@ def cost_txt(p):
 
 
 def payload_section():
-    pay = [p for p in PARTS if p["system"] == "payload"]
+    ORDER = ['thermal_cam', 'air_sensor', 'spot_sensor', 'nir_channel', 'rgb_cam', 'payload_computer', 'payload_power']  # same order as the three questions
+    pay = sorted((p for p in PARTS if p["system"] == "payload"), key=lambda p: ORDER.index(p['id']) if p['id'] in ORDER else 99)
     tr = "".join(f'<tr data-id="{p["id"]}" tabindex="0"{" class=add" if p.get("tier") != "minimum" else ""}><td>{E(p["name"].split(":")[0].split(" (")[0])}</td><td>{E(p["job"])}</td><td>{E(TIER.get(p.get("tier"), ""))}</td><td class="num">{p["mass"]:.0f} g</td>'
                  f'<td class="num">{(f"{p['power_w']:g} W" if p.get("power_w") else "under 0.1 W")}</td><td class="num">{cost_txt(p)}</td></tr>' for p in pay)
+    def refs(p):
+        return "".join(f'<li><a href="{E(r["link"])}" target="_blank" rel="noopener">{E(r["cite"])}</a>: {E(r.get("says", ""))}</li>' for r in p.get("refs", []))
+    short = lambda p: E(p["name"].split(":")[0].split(" (")[0])
+    why = "".join(f'<tr data-id="{p["id"]}" tabindex="0"{" class=add" if p.get("tier") != "minimum" else ""}><td>{short(p)}</td><td>{E(p.get("without", ""))}</td>'
+                  f'<td>{f"<ul class=refs>{refs(p)}</ul>" if p.get("refs") else "<span class=quiet>a wiring need; no paper needed</span>"}</td></tr>' for p in pay)
     return f"""<section id="sensors"><h2>What the drone carries for the mission</h2>
-<p>The parts above only make the drone fly. To see shrubs lose water between dawn and midday it needs to measure three things over the same
-plants on every flight: how warm the leaves are, how much short-wave infrared they reflect, and where every shrub is. These are the
-sensors for the first mission flights. Click a row to see it on the drone.</p>
+<p>The parts above only make the drone fly. The mission is to measure how much water each shrub loses between dawn and midday. That needs
+three readings over the same plants on every flight, and each one comes from a different sensor:</p>
+<ol class="chain"><li><b>Is the plant stressed?</b> Leaves that run short of water close their pores and warm up compared with the air: the thermal camera, read against the air sensor.</li>
+<li><b>How much water do the leaves hold?</b> Water absorbs short-wave infrared light near 1610 nm: the spot sensor, best paired with its 850 nm channel, which water does not absorb (the pair gives a leaf-water index; $214, still to decide).</li>
+<li><b>Which plant is it, and how much of each reading is leaf and how much is soil?</b> The colour camera. Its overlapping photos also give each shrub's 3D shape, so no separate 3D sensor is needed.</li></ol>
+<p>That is the minimum: drop the thermal camera, the spot sensor or the colour camera and one of the three questions has no answer.
+The air sensor on the drone adds the air at flight height (the main air reference is the weather meter on the ground), and the computer and the 5 V regulator make it all work.
+A SWIR camera or centimetre GPS would make the readings better; see "Not decided yet" below. Click a row to see the sensor on the drone.</p>
+<h3>What we would lose without each one</h3>
+<div class="tablewrap"><table class="parts why"><thead><tr><th>Sensor</th><th>Without it</th><th>Evidence</th></tr></thead><tbody>{why}</tbody></table></div>
+<h3>Mass, power and price</h3>
 <div class="tablewrap"><table class="parts"><thead><tr><th>Sensor</th><th>What it does</th><th>When</th><th class="num">Mass</th><th class="num">Power</th><th class="num">Price</th></tr></thead>
 <tbody>{tr}<tr class="tot"><td>Total, first flights</td><td></td><td></td><td class="num">{val('m_pay_g'):.0f} g</td><td class="num">{val('P_payload'):.0f} W</td><td class="num">${val('cost_sensors'):,.0f}</td></tr></tbody></table></div>
 <p class="small">Mass and power go into the takeoff mass and the energy budget ({sheet('02_Mass_and_CG', 'Mass_CG')}, {sheet('04_Propulsion_Battery_Energy', 'Mission_Energy')}). With the first-flight sensors on board: takeoff mass {val('m_to'):.2f} kg, hot-day hover thrust {val('TW_hot'):.2f} times the weight (rule: 1.5), loiter {val('tloit_sl'):.0f} min (target 80: short, see Requirements). The pre-dawn flight uses only the thermal camera and the air sensor: the other sensors need sunlight.</p>
@@ -130,14 +144,14 @@ sensors for the first mission flights. Click a row to see it on the drone.</p>
 <table class="plain"><thead><tr><th>Item</th><th>Why</th><th>Cost</th></tr></thead><tbody>
 <tr><td>Ground truth from the plants: leaf samples from 5–10 tagged shrubs at each flight time, weighed and oven-dried (the standard live fuel moisture protocol), and leaf water potential with a pressure chamber borrowed from a lab</td><td>The only way to turn sensor readings into plant water. Fire agencies plan burns from live fuel moisture measured this way.</td><td>clippers, sealed bottles, a 0.01 g balance; pressure chamber to borrow</td></tr>
 <tr><td>Reference panel for 1610 and 850 nm (white PTFE sheet, measured once on a lab spectrometer)</td><td>Turns the spot sensor's readings into reflectance and catches drift between the morning and midday flights. Flown over before and after each flight.</td><td>estimate $40</td></tr>
-<tr><td>Warm and cool thermal targets: 2–3 insulated water tubs, each with a logging probe</td><td>The Lepton reads only to about ±5 °C; targets of known temperature in every flight correct it (Aragon et al. 2020 cut errors to about 1 °C this way).</td><td>estimate $350</td></tr>
+<tr><td>Warm and cool thermal targets: 2–3 insulated water tubs, each with a logging probe</td><td>The Lepton reads only to about ±5 °C; targets of known temperature in every flight correct it. Calibrating a FLIR A655sc pixel by pixel against a lab black body cut its error from about 6 °C to under 1 °C (<a href="https://doi.org/10.3390/s20113316" target="_blank" rel="noopener">Aragon et al. 2020</a>); field targets are our cheaper version, and how close the Lepton gets is untested.</td><td>estimate $350</td></tr>
 <tr><td>Weather meter on a tripod at canopy height (an SHT45 logger to start; a Kestrel 5500 at $449 if wind is needed)</td><td>The main air reference for leaf-minus-air temperature, through the whole day; the drone's air sensor is checked against it.</td><td>estimate $40</td></tr>
 <tr><td>Ground targets visible in both thermal and colour (black and foil squares)</td><td>Lines up the dawn and midday images so the same shrubs are compared.</td><td>about $120, own build</td></tr>
 </tbody></table>
 <h3>Not decided yet</h3>
 <ul class="open">
 <li><b>A SWIR camera</b> instead of the spot sensor: images of every shrub instead of one reading per 21 m spot. $2,250 a week to rent, $5,650 and up to buy; asked several companies.</li>
-<li><b>The near-infrared channel</b> in the table above (850 nm, $214): recommended before the first mission flights, since it makes the 1610 nm reading usable over mixed shrub and soil.</li>
+<li><b>The near-infrared channel</b> in the table above (850 nm, $214): recommended before the first mission flights: it turns the 1610 nm reading into a leaf-water index that lighting and shadow affect much less.</li>
 <li><b>A vegetation layer on sheet 1</b> showing where the chaparral actually is, to place the plot.</li>
 <li><b>Centimetre GPS (RTK)</b> to find the same shrub on every flight without ground targets. About $3,000; later.</li>
 </ul></section>"""
@@ -364,6 +378,7 @@ srows = "".join(f'<tr><td>{sheet(n)}</td><td>{E(d)}</td><td><a href="sheets/Ridg
 files_body = f"""
 <section class="lead"><h1>Sheets, code and CAD</h1><p>Everything behind the numbers on this site. The sheets and pages are rebuilt from two plain files, so a change made there is permanent and shows up everywhere.</p></section>
 <section id="edit"><h2>Change a value or a link</h2>
+<p><b>Easiest: press Edit at the top right of any page.</b> On the drone page, pick a part and its panel turns into a form (price, shop links, size, reasons, references); on the calculations page, the design numbers become editable. With the team passcode no GitHub account is needed (<a href="{GH}/blob/main/tools/relay/SETUP.md">how the passcode relay is set up</a>); until it is set up, Edit asks for a GitHub token. Or edit the files directly:</p>
 <table class="plain"><thead><tr><th>To change</th><th>Edit this file</th></tr></thead><tbody>
 <tr><td>A part: price, quantity, mass, shop link, why we chose it, what it connects to</td><td><a href="{GH}/edit/main/data/parts.toml">data/parts.toml</a></td></tr>
 <tr><td>A design number: requirements, air, wing, drag, motors, battery, mission (60 typed numbers)</td><td><a href="{GH}/edit/main/data/inputs.toml">data/inputs.toml</a></td></tr>

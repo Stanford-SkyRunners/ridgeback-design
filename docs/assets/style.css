@@ -180,7 +180,8 @@ body.editing #inputs td.val input{font:14px "IBM Plex Mono";width:7em;text-align
 /* map sheets on the mission page */
 .mapsheet{margin:22px 0 8px;border:1px solid var(--ink);background:var(--paper)}
 .mapsheet .mapholder{border-top:1px solid var(--ink);border-bottom:1px solid var(--hair)}.mapsheet .mapholder[aria-busy]{min-height:300px}
-@media (max-width:700px){.mapsvg .lab{font-size:24px}.mapsvg .lab.sea,.mapsvg .lab.mtn{font-size:26px}.mapsvg .tick{font-size:18px}.collar2 #replay,.collar2 .toggles{margin-left:0}}
+.mapsvg .short{display:none}
+@media (max-width:700px){.mapsvg .long{display:none}.mapsvg .short{display:inline}.mapsvg .lab,.mapsvg .lab.fireL{font-size:36px}.mapsvg .lab.sea,.mapsvg .lab.mtn{font-size:34px}.mapsvg .tick{font-size:26px}svg.day .t,svg.day .l{font-size:26px}.collar2 #replay,.collar2 .toggles{margin-left:0}}
 .mapsheet .maplegend{padding:8px 14px 10px;margin:0}
 .collar2{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding:9px 14px;font-size:14px}
 .collar2 b{font-size:16px}.collar2 .quiet{color:var(--quiet)}
@@ -188,11 +189,20 @@ body.editing #inputs td.val input{font:14px "IBM Plex Mono";width:7em;text-align
 .collar2 #replay,.collar2 .toggles{margin-left:auto}.toggles label{margin-left:12px;cursor:pointer}
 #maptip{position:absolute;z-index:5;white-space:normal;max-width:320px}
 /* the mission page sits on a map table: real contours around the sheet */
-body.maptable{background:var(--paper) url(map/table.svg) center top/1600px auto repeat}
-@media (prefers-color-scheme:dark){body.maptable{background-image:none}}
-body.maptable .sheet{background:var(--paper);box-shadow:0 0 0 12px color-mix(in srgb,var(--paper) 85%,transparent)}
+body.maptable{background:var(--paper)}
+body.maptable>*{position:relative;z-index:1}
+body.maptable::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:url(map/table.svg) center/cover no-repeat}
+@media (prefers-color-scheme:dark){body.maptable::before{display:none}}
+body.maptable .sheet{background:var(--paper);box-shadow:0 0 22px 14px color-mix(in srgb,var(--paper) 90%,transparent)}  /* soft margin, no straight cut */
 .detail dl.meta{display:grid;grid-template-columns:repeat(3,auto);gap:4px 16px;margin:6px 0 4px;font-size:14px}
 .detail dl.meta div{min-width:0}.detail dl.meta dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--quiet)}.detail dl.meta dd{margin:0}
 .mapsvg .core{fill:none;stroke:var(--green);stroke-width:1.2;stroke-dasharray:4 3}
 table.parts tr.add td{color:var(--quiet)}
 table.parts td:first-child,table.parts th:first-child{padding-left:8px}
+ol.chain{max-width:760px;padding-left:22px;line-height:1.55}ol.chain li{margin:6px 0}
+table.why td{vertical-align:top}table.why td:first-child{white-space:nowrap;font-weight:600}
+table.why ul.refs{margin:0;padding-left:16px;font-size:14px;line-height:1.45}table.why ul.refs li{margin:0 0 4px}
+table.why .quiet{color:var(--quiet);font-size:14px}
+.pform .refrow{grid-template-columns:1.4fr 1.2fr 1.6fr auto}
+.editbar .row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:8px 0 6px}.editbar .row label{white-space:nowrap}.editbar .small{display:block}
+table.why th:nth-child(2){width:38%}table.why th:nth-child(3){width:44%}

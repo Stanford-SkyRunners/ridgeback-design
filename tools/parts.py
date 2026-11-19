@@ -37,3 +37,7 @@ for p in PARTS:
     assert p["system"] in SYSTEMS, f'{p["id"]}: system "{p["system"]}" is not one of {list(SYSTEMS)}'
     for c in p["connects"]:
         assert c[0] in ids, f'{p["id"]}: connects to "{c[0]}", which is not a part id'
+    for b in p["buy"]:
+        assert str(b[1]).startswith("https://"), f'{p["id"]}: shop link "{b[1]}" must start with https://'
+    for r in p.get("refs", []):
+        assert r.get("cite") and str(r.get("link", "")).startswith("https://"), f'{p["id"]}: every reference needs a cite and an https:// link'
