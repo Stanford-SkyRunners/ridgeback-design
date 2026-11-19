@@ -84,12 +84,12 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="
          '<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">')
 
 
-def page(title, slug, body, extra_head=""):
+def page(title, slug, body, extra_head="", body_class=""):
     nav = [("index.html", "Drone"), ("mission.html", "Mission and range"), ("calculations.html", "Calculations"), ("files.html", "Sheets, code, CAD")]
     links = "".join(f'<a href="{h}"{" aria-current=page" if h == slug else ""}>{t}</a>' for h, t in nav)
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title>{FONTS}<link rel="stylesheet" href="assets/style.css">{extra_head}</head>
-<body><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
+<body class="{body_class}"><div class="sheet"><header class="collar"><div class="mast"><a class="home" href="index.html">Ridgeback Scout</a>
 <span class="who">SkyRunners, Stanford Student Robotics</span></div><nav>{links}<button type="button" id="editToggle" class="editbtn" aria-pressed="false">Edit</button></nav></header>
 <div id="editbar" class="editbar" hidden></div>
 <main>{body}</main>
@@ -191,31 +191,28 @@ katex_idx = ('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.
 
 # ------------------------------------------------------------------ mission and range
 mission_body = f"""
-<figure class="scene" aria-label="Sketch of one survey flight over a hillside">
-<svg viewBox="0 0 1600 640" preserveAspectRatio="xMidYMid slice" role="img">
-<image href="assets/contours.svg" x="0" y="-130" width="1600" height="900"/>
-<circle cx="560" cy="420" r="330" class="ring"/>
-<text x="560" y="78" class="sk" text-anchor="middle">1 km: the drone stays in sight</text>
-<rect x="690" y="250" width="150" height="150" class="plot"/>
-<path class="lines" d="{''.join(f"M{690 + i * 150 / 17:.1f},{250 if i % 2 == 0 else 400} L{690 + i * 150 / 17:.1f},{400 if i % 2 == 0 else 250} " for i in range(18))}"/>
-<path class="leg" d="M560,420 L690,400 M840,250 L560,420"/>
-<g class="to"><circle cx="560" cy="420" r="10"/><line x1="548" y1="408" x2="572" y2="432"/><line x1="572" y1="408" x2="548" y2="432"/></g>
-<text x="575" y="455" class="sk">take-off and landing</text>
-<text x="765" y="235" class="sk" text-anchor="middle">2 ha plot, 18 survey lines</text>
-<text x="1290" y="560" class="sk quiet" text-anchor="middle">sketch, not to scale</text>
-</svg></figure>
+<figure class="mapsheet hero" id="siteSheet">
+<figcaption class="collar2"><span class="sheetno">Sheet 1</span><b>Jasper Ridge: one survey flight, to scale</b><span class="quiet">10 m contours from real terrain. Hover any line for what it is.</span>
+<button type="button" class="plainbtn" id="replay">Fly it again</button></figcaption>
+<div class="mapholder" data-src="assets/map/site.svg" aria-busy="true"></div>
+<div class="maplegend"><span><i class="sw ring"></i>1 km line-of-sight radius</span><span><i class="sw plot"></i>2 ha survey plot</span><span><i class="sw path"></i>Flight path, 18 lines</span><span><i class="sw line"></i>Preserve boundary</span><span><i class="sw ct"></i>Contour, 10 m</span></div>
+</figure>
 <section class="lead"><h1>Mission and range</h1>
 <p>We plan around an operating radius of about 1 km, set by the rule that the drone must stay in sight.
 So the motors and battery are sized for hover thrust and for time over the plants, not for distance.</p></section>
 <section class="mapsec"><h2>Where fire meets our flights</h2>
-<p>Every wildfire over 50 acres since 2000 within about 40 km of Stanford, and the prescribed burns on record. In August 2020 the CZU Lightning Complex
+<p>Every wildfire over 50 acres since 2000 within about 40 km of Stanford, and the prescribed burns on record, on the terrain they burned. In August 2020 the CZU Lightning Complex
 burned 86,553 acres of the Santa Cruz Mountains, about 25 km from Jasper Ridge. Prescribed burns are the tool for lowering that risk, and they
 are planned around how dry the living plants are.</p>
-<div class="mapbar" role="group" aria-label="Map view"><button type="button" data-view="region" aria-pressed="true">Fires since 2000</button><button type="button" data-view="site" aria-pressed="false">One survey flight at Jasper Ridge</button></div>
-<div id="map" aria-label="Map of fire perimeters near Stanford and an example survey flight at Jasper Ridge"></div>
-<div class="maplegend"><span><i class="sw fire"></i>Wildfire, 2000–2024</span><span><i class="sw rx"></i>Prescribed burn</span><span><i class="sw line"></i>Jasper Ridge Biological Preserve</span><span><i class="sw ring"></i>1 km line-of-sight radius</span><span><i class="sw plot"></i>2 ha survey plot</span><span><i class="sw path"></i>Flight path</span></div>
-<p class="small">Wildfire perimeters: CAL FIRE historic fire perimeters. Prescribed burns: NIFC interagency fire perimeter history. Preserve boundary: OpenStreetMap.
-The take-off point and plot are placed for scale only; the real plot will be chosen with the preserve.</p></section>
+<figure class="mapsheet" id="regionSheet">
+<figcaption class="collar2"><span class="sheetno">Sheet 2</span><b>Fires around Stanford, 2000–2024</b><span class="quiet">100 m contours. Hover a fire for its name, year and size.</span>
+<span class="toggles" role="group" aria-label="Show on the map"><label><input type="checkbox" data-layer="fire" checked> wildfires</label><label><input type="checkbox" data-layer="rx" checked> prescribed burns</label></span></figcaption>
+<div class="mapholder" data-src="assets/map/region.svg" aria-busy="true"></div>
+<div class="maplegend"><span><i class="sw fire"></i>Wildfire, 2000–2024</span><span><i class="sw rx"></i>Prescribed burn</span><span><i class="sw line"></i>Jasper Ridge Biological Preserve</span><span><i class="sw sea"></i>Ocean and bay</span><span><i class="sw ct"></i>Contour, 100 m</span></div>
+</figure>
+<div id="maptip" class="tip" hidden></div>
+<p class="small">Terrain: AWS Terrain Tiles (USGS and other public elevation data), contoured by tools/make_map.py. Wildfire perimeters: CAL FIRE historic fire perimeters. Prescribed burns: NIFC interagency fire perimeter history. Preserve boundary: OpenStreetMap.
+The take-off point and plot on sheet 1 are placed for scale only; the real plot will be chosen with the preserve.</p></section>
 <section><h2>Operating radius, range and endurance</h2>
 <table class="plain"><thead><tr><th>Term</th><th class="num">Ours</th><th>What sets it</th></tr></thead><tbody>
 <tr><td>Operating radius: how far from the take-off point</td><td class="num">about 1 km</td><td>FAA rule 14 CFR 107.31: the pilot or an observer must see the drone at all times
@@ -281,10 +278,9 @@ small quadcopters were seen at 245–307 m, a visual angle of about 0.065°. At 
 <li>Whether 15 minutes over 2 ha is enough once the thermal camera's 90 % overlap and the spot sensor's hover points are planned.</li>
 <li>Whether the preserve allows take-off within 1 km of the plots we want.</li>
 </ul></section>"""
-leaflet = ('<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">'
-           '<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>')
+leaflet = ""
 mission_body += '<script type="module" src="assets/mission_map.js"></script>'
-(ROOT / "docs/mission.html").write_text(page("Ridgeback mission and range", "mission.html", mission_body, leaflet))
+(ROOT / "docs/mission.html").write_text(page("Ridgeback mission and range", "mission.html", mission_body, leaflet, "maptable"))
 
 # ------------------------------------------------------------------ calculations with rendered equations
 def step(title, why, tex, numbers, result, where):
