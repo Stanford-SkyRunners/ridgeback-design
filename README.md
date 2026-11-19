@@ -1,5 +1,8 @@
 # Ridgeback Scout design
 
+**Moved:** this project now lives at https://github.com/guinterface/skyrunners-ridgeback (site https://guinterface.github.io/skyrunners-ridgeback/). This copy is no longer updated.
+
+
 Our own 2.24 m VTOL quadplane (SkyRunners, Stanford Student Robotics) for measuring how much water chaparral shrubs lose
 between dawn and midday, for prescribed-burn planning.
 
