@@ -178,7 +178,9 @@ s.append(f'<circle cx="{x0:.1f}" cy="{y0:.1f}" r="{r_px:.1f}" class="ring" data-
 rx_, ry_ = S.xy(*at(-700, 760)); s.append(text(rx_, ry_, "1 km: the drone stays in sight", "lab b", "middle", -42))
 cx, cy, half = 420, 180, 120.5
 a = S.xy(*at(cx - half, cy + half)); b_ = S.xy(*at(cx + half, cy - half))
-s.append(f'<rect x="{a[0]:.1f}" y="{a[1]:.1f}" width="{b_[0] - a[0]:.1f}" height="{b_[1] - a[1]:.1f}" class="plot" data-tip="Survey plot: 2 ha of chaparral plus a 50 m buffer (241 m square)"/>')
+ia = S.xy(*at(cx - 70.7, cy + 70.7)); ib = S.xy(*at(cx + 70.7, cy - 70.7))
+s.append(f'<rect x="{ia[0]:.1f}" y="{ia[1]:.1f}" width="{ib[0] - ia[0]:.1f}" height="{ib[1] - ia[1]:.1f}" class="core"/>')
+s.append(f'<rect x="{a[0]:.1f}" y="{a[1]:.1f}" width="{b_[0] - a[0]:.1f}" height="{b_[1] - a[1]:.1f}" class="plot" data-tip="Survey plot: 2 ha of chaparral (141 m square, inner line) plus a 50 m buffer = 241 m square"/>')
 pts = [S.xy(*at(0, 0))]
 n = 18; st = 2 * half / (n - 1)
 for i in range(n):
@@ -187,8 +189,8 @@ for i in range(n):
     if i % 2: ends.reverse()
     pts += [S.xy(*at(*e)) for e in ends]
 pts.append(S.xy(*at(0, 0)))
-s.append(f'<polyline id="flightpath" points="{" ".join("%.1f,%.1f" % p for p in pts)}" class="path" data-tip="Flight path: 18 lines 14 m apart, about 7 minutes at 19 m/s"/>')
-s.append(text(b_[0] + 8, a[1] + 14, "2 ha plot, 18 survey lines", "lab b", "start"))
+s.append(f'<polyline id="flightpath" points="{" ".join("%.1f,%.1f" % p for p in pts)}" class="path" data-tip="Flight path: 18 lines 14 m apart; 3.8 min on the lines at 19 m/s, about 7 min with the turns"/>')
+s.append(text(b_[0] + 8, a[1] + 14, "2 ha plot + 50 m buffer, 18 survey lines", "lab b", "start"))
 s.append(f'<g class="to" transform="translate({x0:.1f} {y0:.1f})" data-tip="Take-off and landing (example point)"><circle r="9"/><path d="M-6,-6 L6,6 M6,-6 L-6,6"/></g>')
 s.append(text(x0 - 14, y0 + 26, "take-off and landing", "lab", "end"))
 s.append("</g>")

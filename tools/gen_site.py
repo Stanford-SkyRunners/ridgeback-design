@@ -117,26 +117,28 @@ def cost_txt(p):
 
 def payload_section():
     pay = [p for p in PARTS if p["system"] == "payload"]
-    tr = "".join(f'<tr data-id="{p["id"]}" tabindex="0"><td>{E(p["name"].split(":")[0])}</td><td>{E(p["job"])}</td><td class="num">{p["mass"]:.0f} g</td>'
+    tr = "".join(f'<tr data-id="{p["id"]}" tabindex="0"{" class=add" if p.get("tier") != "minimum" else ""}><td>{E(p["name"].split(":")[0].split(" (")[0])}</td><td>{E(p["job"])}</td><td>{E(TIER.get(p.get("tier"), ""))}</td><td class="num">{p["mass"]:.0f} g</td>'
                  f'<td class="num">{(f"{p['power_w']:g} W" if p.get("power_w") else "under 0.1 W")}</td><td class="num">{cost_txt(p)}</td></tr>' for p in pay)
     return f"""<section id="sensors"><h2>What the drone carries for the mission</h2>
 <p>The parts above only make the drone fly. To see shrubs lose water between dawn and midday it needs to measure three things over the same
 plants on every flight: how warm the leaves are, how much short-wave infrared they reflect, and where every shrub is. These are the
 sensors for the first mission flights. Click a row to see it on the drone.</p>
-<div class="tablewrap"><table class="parts"><thead><tr><th>Sensor</th><th>What it does</th><th class="num">Mass</th><th class="num">Power</th><th class="num">Price</th></tr></thead>
-<tbody>{tr}<tr class="tot"><td>Total</td><td></td><td class="num">{val('m_pay_g'):.0f} g</td><td class="num">{val('P_payload'):.0f} W</td><td class="num">${val('cost_sensors'):,.0f}</td></tr></tbody></table></div>
-<p class="small">Mass and power go into the takeoff mass and the energy budget ({sheet('02_Mass_and_CG', 'Mass_CG')}, {sheet('04_Propulsion_Battery_Energy', 'Mission_Energy')}). With them on board: takeoff mass {val('m_to'):.2f} kg, hot-day hover thrust {val('TW_hot'):.2f} times the weight, loiter {val('tloit_sl'):.0f} min.</p>
+<div class="tablewrap"><table class="parts"><thead><tr><th>Sensor</th><th>What it does</th><th>When</th><th class="num">Mass</th><th class="num">Power</th><th class="num">Price</th></tr></thead>
+<tbody>{tr}<tr class="tot"><td>Total, first flights</td><td></td><td></td><td class="num">{val('m_pay_g'):.0f} g</td><td class="num">{val('P_payload'):.0f} W</td><td class="num">${val('cost_sensors'):,.0f}</td></tr></tbody></table></div>
+<p class="small">Mass and power go into the takeoff mass and the energy budget ({sheet('02_Mass_and_CG', 'Mass_CG')}, {sheet('04_Propulsion_Battery_Energy', 'Mission_Energy')}). With the first-flight sensors on board: takeoff mass {val('m_to'):.2f} kg, hot-day hover thrust {val('TW_hot'):.2f} times the weight (rule: 1.5), loiter {val('tloit_sl'):.0f} min (target 80: short, see Requirements). The pre-dawn flight uses only the thermal camera and the air sensor: the other sensors need sunlight.</p>
 <h3>On the ground, every field day</h3>
 <table class="plain"><thead><tr><th>Item</th><th>Why</th><th>Cost</th></tr></thead><tbody>
-<tr><td>1610 nm reference panel (white PTFE sheet, measured once on a lab spectrometer)</td><td>Turns the spot sensor's readings into reflectance and catches drift between dawn and midday. Flown over before and after each flight.</td><td>about $40, not priced</td></tr>
-<tr><td>Warm and cool thermal targets: 2–3 insulated water tubs, each with a logging probe</td><td>The Lepton reads only to about ±5 °C; targets of known temperature in every flight correct it (Aragon et al. 2020 cut errors to about 1 °C this way).</td><td>about $350, not priced</td></tr>
-<tr><td>Weather meter on a tripod (Kestrel 5500 or an SHT45 logger)</td><td>Air temperature, humidity and wind at the site through the day; the drone's air sensor is checked against it.</td><td>$449 (Kestrel) or about $40</td></tr>
+<tr><td>Ground truth from the plants: leaf samples from 5–10 tagged shrubs at each flight time, weighed and oven-dried (the standard live fuel moisture protocol), and leaf water potential with a pressure chamber borrowed from a lab</td><td>The only way to turn sensor readings into plant water. Fire agencies plan burns from live fuel moisture measured this way.</td><td>clippers, sealed bottles, a 0.01 g balance; pressure chamber to borrow</td></tr>
+<tr><td>Reference panel for 1610 and 850 nm (white PTFE sheet, measured once on a lab spectrometer)</td><td>Turns the spot sensor's readings into reflectance and catches drift between the morning and midday flights. Flown over before and after each flight.</td><td>estimate $40</td></tr>
+<tr><td>Warm and cool thermal targets: 2–3 insulated water tubs, each with a logging probe</td><td>The Lepton reads only to about ±5 °C; targets of known temperature in every flight correct it (Aragon et al. 2020 cut errors to about 1 °C this way).</td><td>estimate $350</td></tr>
+<tr><td>Weather meter on a tripod at canopy height (an SHT45 logger to start; a Kestrel 5500 at $449 if wind is needed)</td><td>The main air reference for leaf-minus-air temperature, through the whole day; the drone's air sensor is checked against it.</td><td>estimate $40</td></tr>
 <tr><td>Ground targets visible in both thermal and colour (black and foil squares)</td><td>Lines up the dawn and midday images so the same shrubs are compared.</td><td>about $120, own build</td></tr>
 </tbody></table>
 <h3>Not decided yet</h3>
 <ul class="open">
 <li><b>A SWIR camera</b> instead of the spot sensor: images of every shrub instead of one reading per 21 m spot. $2,250 a week to rent, $5,650 and up to buy; asked several companies.</li>
-<li><b>A near-infrared reference band</b> (about 860 nm, a cheap silicon photodiode as a third channel). Pairing a water band with a near-infrared band is the usual leaf-water index; filter not priced yet.</li>
+<li><b>The near-infrared channel</b> in the table above (850 nm, $214): recommended before the first mission flights, since it makes the 1610 nm reading usable over mixed shrub and soil.</li>
+<li><b>A vegetation layer on sheet 1</b> showing where the chaparral actually is, to place the plot.</li>
 <li><b>Centimetre GPS (RTK)</b> to find the same shrub on every flight without ground targets. About $3,000; later.</li>
 </ul></section>"""
 
@@ -222,14 +224,15 @@ The take-off point and plot on sheet 1 are placed for scale only; the real plot 
 </tbody></table></section>
 <section><h2>A field day</h2>
 <p>Water loss shows up as the difference between dawn and midday. We target three 15-minute surveys of the same 2 ha chaparral plot on one charge,
-within 1 km of the take-off point. The current estimate is {val('flights_pack'):.1f} flights per charge.</p>
+within 1 km of the take-off point. The current estimate is {val('flights_pack'):.1f} flights per charge. Before sunrise there is no sunlight, so the pre-dawn flight uses
+only the thermal camera; the 1610 nm sensor and the colour camera start with the mid-morning flight.</p>
 <svg class="day" viewBox="0 0 900 120" role="img" aria-label="Three flights: pre-dawn, mid-morning, midday">
 <line x1="40" y1="70" x2="860" y2="70" class="axis"/>
 {''.join(f'<line x1="{x}" y1="64" x2="{x}" y2="76" class="tick"/><text x="{x}" y="96" class="t">{h}</text>' for x, h in [(40, "5:00"), (177, "7:00"), (313, "9:00"), (450, "11:00"), (587, "13:00"), (723, "15:00"), (860, "17:00")])}
 {''.join(f'<rect x="{40 + (h - 5) * 68.33:.0f}" y="48" width="{0.25 * 68.33:.0f}" height="22" class="fl"/><text x="{40 + (h - 5 + 0.125) * 68.33:.0f}" y="38" class="l">{lab}</text>' for h, lab in [(6.25, "pre-dawn, 6:15"), (9.75, "mid-morning, 9:45"), (12.75, "midday, 12:45")])}
 </svg>
 <table class="plain"><tbody>
-<tr><td>Plot</td><td>2 ha of chaparral plus a 50 m buffer: 18 lines of 240 m, about 7 minutes at 19 m/s, plus hovering for the spot sensor</td></tr>
+<tr><td>Plot</td><td>2 ha of chaparral (141 m square) plus a 50 m buffer, so 241 m square: 18 lines of 240 m, 14 m apart. That is 3.8 minutes on the lines at 19 m/s; at that speed a turn needs about 64 m radius, so lines are flown in skip order (racetrack turns), which brings it to about 7 minutes (estimate). The thermal camera's wider pixels set the line count.</td></tr>
 <tr><td>Energy per flight</td><td><span class="num">{val('E_flight'):.0f} Wh</span>: hover, climb, 15 min survey, 1 km out and back</td></tr>
 <tr><td>Usable energy per charge</td><td><span class="num">{val('E_use'):.0f} Wh</span>, keeping 20 % in reserve</td></tr>
 <tr><td>Flights per charge</td><td><span class="num">{val('flights_pack'):.1f}</span>, against the 3 we target</td></tr>
@@ -342,7 +345,8 @@ for r_ in INPUT_ROWS:
         _tr.append(f'<tr class="grp"><th colspan="4">{E(r_["group"].replace("_", " "))}</th></tr>'); _last = r_["group"]
     _tr.append(f'<tr data-key="{r_["key"]}"><td>{E(r_["label"])}</td><td class="num val">{E(r_["value"])}</td><td>{E(r_["unit"])}</td><td class="small">{E(r_["source"])}</td></tr>')
 calc_body += f"""<section id="inputs"><h2>Design numbers behind the steps</h2>
-<p>Every typed number the calculations start from. Press <b>Edit</b> at the top to change one here; saving recomputes every sheet and page.</p>
+<p>Every typed number the calculations start from. Press <b>Edit</b> at the top to change one here; saving writes it to data/inputs.toml on GitHub (a commit with your name, undoable) and recomputes every sheet and page in about two minutes.</p>
+<p class="small">Source tags: [V] read on the maker's or store's page, [S] from a datasheet or listing not re-read, [C] calculated in the sheets, [A] our assumption until measured.</p>
 <div class="tablewrap"><table class="parts inputs"><thead><tr><th>Number</th><th class="num">Value</th><th>Unit</th><th>Where it comes from</th></tr></thead><tbody>{"".join(_tr)}</tbody></table></div></section>"""
 katex = ('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">'
          '<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>'

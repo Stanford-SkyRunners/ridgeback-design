@@ -29,7 +29,7 @@
 "value": "3000",
 "label": "Budget for the aircraft",
 "unit": "USD",
-"source": "user (10-30): $3k cap, stretch 4-5k"
+"source": "team budget (30 Oct): $3k cap, stretch $4–5k"
 },
 {
 "group": "Requirements",

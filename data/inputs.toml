@@ -10,7 +10,7 @@
 req_loiter = 80   # Loiter time, with 20 % reserve left [min]; [A] team rule (OWN_SMALL_DRONE §1)
 req_tw = 1.5   # Hover thrust / weight, 800 m altitude, ISA+20 (hot day); [A] common VTOL control-margin rule; same rule as the 3.35 m design
 req_stall = 15.0   # Stall speed (clean wing, takeoff mass, sea level) [m/s]; [A] team rule
-req_budget = 3000   # Budget for the aircraft [USD]; user (10-30): $3k cap, stretch 4-5k
+req_budget = 3000   # Budget for the aircraft [USD]; team budget (30 Oct): $3k cap, stretch $4–5k
 req_alt = 800   # Design altitude for the hot-day case [m]; [A]
 req_dT = 20   # Hot-day temperature above ISA [K]; [A] ISA+20 = 30 °C at sea level
 req_radius = 1000   # Operating radius from the take-off point [m]; [A] FAA Part 107 §107.31: the pilot or a visual observer must see the aircraft; our field plan flies within ~1 km (docs/BASE_STATION.md D3)

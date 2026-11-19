@@ -81,7 +81,7 @@ function start() {
   editing = true; btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Done editing';
   document.body.classList.add('editing');
   say(`<b>Editing.</b> ${document.getElementById('detail') ? 'Pick a part; its panel turns into a form.' : ''} ${document.getElementById('inputs') ? 'Change any value in the design numbers table, then press Save.' : ''}
-    Every save is a commit in <a href="https://github.com/${REPO}/commits/main" target="_blank" rel="noopener">the history</a>, so it can be undone. <button type="button" id="forget" class="plainbtn">Forget my token</button>`);
+    Saving writes data/parts.toml or data/inputs.toml on GitHub with your name; the sheets and pages rebuild in about two minutes. Every save is a commit in <a href="https://github.com/${REPO}/commits/main" target="_blank" rel="noopener">the history</a>, so it can be undone. <button type="button" id="forget" class="plainbtn">Forget my token</button>`);
   document.getElementById('forget').onclick = () => { store.set('rb-token', null); try { sessionStorage.removeItem('rb-token'); } catch { } token = null; stop(); };
   window.RB?.rerender?.();
   inputsMode(true);

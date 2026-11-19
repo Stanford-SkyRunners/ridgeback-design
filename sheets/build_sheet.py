@@ -274,7 +274,7 @@ p(ws, "req_stall", "Stall speed (clean wing, takeoff mass, sea level)", "V_s", 1
   "VTOL takes off and lands on rotors, so stall matters for transitions and slow turns, not landing. Lower stall = slower, safer transitions.", fmt="0.0")
 p(ws, "req_payload", "Sensor payload (minimum mission kit)", "m_p", round(sum(pp_["mass"] * pp_["qty"] for pp_ in _PARTS if pp_["system"] == "payload" and pp_.get("tier") == "minimum") / 1000, 3), "kg", "Σ minimum sensors in data/parts.toml", "[A] masses from makers / estimates until weighed: computer, regulator, thermal camera, colour camera, 1610 nm spot sensor, air sensor",
   "Real units must be weighed.", fmt="0.000")
-p(ws, "req_budget", "Budget for the aircraft", "$", 3000, "USD", "typed", "user (10-30): $3k cap, stretch 4-5k", "Stock parts only, real store prices.", fmt="$#,##0")
+p(ws, "req_budget", "Budget for the aircraft", "$", 3000, "USD", "typed", "team budget (30 Oct): $3k cap, stretch $4–5k", "Stock parts only, real store prices.", fmt="$#,##0")
 p(ws, "req_alt", "Design altitude for the hot-day case", "h", 800, "m", "typed", "[A]", "", fmt="0")
 p(ws, "req_dT", "Hot-day temperature above ISA", "ΔT", 20, "K", "typed", "[A] ISA+20 = 30 °C at sea level", "", fmt="0")
 section(ws, "Mission: how far and how long we fly, and why (prediction / observation flights)")

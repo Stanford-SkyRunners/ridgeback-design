@@ -393,29 +393,30 @@ nodes = ["airframe:tail", "tube_tail_spar_*", "rod_rear_*"]
 
 [[part]]
 id = "payload_computer"
-name = "Payload computer: NVIDIA Jetson Orin Nano"
+name = "Payload computer: Raspberry Pi 5 (4 GB) with active cooler"
 system = "payload"
 tier = "minimum"
 qty = 1
-status = "reuse (Sky4)"
-price = 0
-mass = 176
-size = "100 × 79 × 31 mm dev kit with fan"
-power_w = 10
-box = { c = [110, 0, -84], dims = [100, 79, 31] }
+status = "buy"
+price = 135
+mass = 50
+size = "85 × 56 × 20 mm with the cooler"
+power_w = 7
+box = { c = [110, 0, -90], dims = [85, 56, 20] }
 buy = [
-  { store = "Raspberry Pi 5, 4 GB (Adafruit), if a lighter logger is wanted", link = "https://www.adafruit.com/product/5812", price = "$130.00" },
+  { store = "Adafruit: Raspberry Pi 5, 4 GB", link = "https://www.adafruit.com/product/5812", price = "$130.00" },
+  { store = "Raspberry Pi Active Cooler (any reseller)", link = "https://www.raspberrypi.com/products/active-cooler/", price = "about $5" },
 ]
 job = "Records every sensor with the time and position from the flight controller, and triggers the camera."
-why = "We already own it. It takes the thermal camera over USB, the colour camera, the spot sensor and the air sensor over I2C, and reads position and time from the flight controller over a serial cable, so each reading is tagged with where the drone was. It draws 7 to 15 W."
-instead = "Raspberry Pi 5 (4 GB, $130): about 130 g lighter and about 5 W less, enough for logging. Worth it if the hot-day hover margin gets tight."
-source = "Jetson Orin Nano carrier board spec (DC input 9–20 V); payload_fit.py position"
-connects = [["payload_power", "12 V barrel plug"], ["pixhawk", "serial cable (MAVLink): time and position"], ["thermal_cam", "USB"], ["rgb_cam", "camera ribbon (CSI)"], ["spot_sensor", "I2C"], ["air_sensor", "I2C"]]
+why = "It runs the Raspberry Pi colour camera with its own driver, the thermal camera over USB, the spot sensor and air sensor over I2C, and reads time and position from the flight controller over a serial cable, so each reading is tagged with where the drone was. About 130 g lighter and 5 W less than the Jetson we own. Readings are tagged by time only; a 50 ms timing error is about 1 m along track at 19 m/s, so the camera trigger should also be logged by the flight controller."
+instead = "The Jetson Orin Nano we own from Sky4 ($0, 176 g, 7–15 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it."
+source = "Adafruit price (read 18 Nov); mass and power estimated until weighed"
+connects = [["payload_power", "5 V, USB-C power"], ["pixhawk", "serial cable (MAVLink): time and position"], ["thermal_cam", "USB"], ["rgb_cam", "camera ribbon (CSI)"], ["spot_sensor", "I2C"], ["air_sensor", "I2C"]]
 nodes = ["payload_computer"]
 
 [[part]]
 id = "payload_power"
-name = "Payload regulator: Pololu D36V50F12, 12 V 4.5 A"
+name = "Payload regulator: Pololu D36V50F5, 5 V 5.5 A"
 system = "payload"
 tier = "minimum"
 qty = 1
@@ -426,13 +427,13 @@ size = "25.4 × 25.4 × 9.5 mm"
 power_w = 1
 box = { c = [150, 40, -100], dims = [25.4, 25.4, 9.5] }
 buy = [
-  { store = "Pololu", link = "https://www.pololu.com/product/4095", price = "$44.95" },
+  { store = "Pololu", link = "https://www.pololu.com/product/4091", price = "$44.95" },
 ]
-job = "Turns battery voltage into a steady 12 V for the payload computer."
-why = "The battery runs from 25.2 V full to about 18 V empty; the Jetson accepts 9 to 20 V. This regulator takes 13.3 to 50 V in and gives up to 4.5 A at 12 V, about 3 times what the payload needs."
-instead = "D36V50F5 (5 V, same price) if the Raspberry Pi 5 is used instead."
+job = "Turns battery voltage into a steady 5 V for the payload computer and sensors."
+why = "The battery runs from 25.2 V full to about 18 V empty. This regulator takes 5.5 to 50 V in and gives up to 5.5 A at 5 V, enough for the Raspberry Pi 5 (5 A peak) and the sensors it powers. About 1 W is lost as heat."
+instead = "D36V50F12 (12 V, same price) if the Jetson is used instead."
 source = "pololu.com product page, read 18 Nov"
-connects = [["pm07", "XT30 from the power module"], ["payload_computer", "12 V barrel plug"]]
+connects = [["pm07", "XT30 from the power module"], ["payload_computer", "5 V, USB-C power"]]
 nodes = ["payload_power"]
 
 [[part]]
@@ -452,15 +453,15 @@ buy = [
   { store = "GroupGets: PureThermal 3 board", link = "https://groupgets.com/products/purethermal-3", price = "$119.99" },
 ]
 job = "Measures the temperature of the shrub canopy, looking straight down."
-why = "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal. 160 × 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m, so a 1–3 m shrub spans several pixels. Its accuracy (about ±5 °C) is not enough alone, so warm and cool reference targets of known temperature sit in every flight."
-instead = "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email). Same accuracy class as the Lepton without ground targets."
+why = "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal, and the one sensor here that works in the pre-dawn flight too. 160 × 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m; with lens blur and motion, only shrubs of about 2 m or more give pure canopy pixels, smaller ones mix with soil. Its accuracy (about ±5 °C) is not enough alone, so warm and cool targets of known temperature sit in every flight, and the camera is kept in an insulated case and warmed up in a hover before the survey."
+instead = "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email): sharper images, but the same need for ground targets to be accurate."
 source = "Jackson et al. 1981 (crop water stress index); FLIR Lepton 3.5 datasheet; BEST_PRICES 10 Nov"
 connects = [["payload_computer", "USB"]]
 nodes = ["thermal_cam"]
 
 [[part]]
 id = "rgb_cam"
-name = "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens"
+name = "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens (lens not priced)"
 system = "payload"
 tier = "minimum"
 qty = 1
@@ -474,7 +475,7 @@ buy = [
   { store = "PiShop.us (camera $55, out of stock 18 Nov; lens about $25 not priced)", link = "https://www.pishop.us/product/raspberry-pi-global-shutter-camera/", price = "$55.00 + lens" },
 ]
 job = "Photographs the plot so we can find every shrub, see how much is plant and how much is bare soil, and build its 3D shape from overlapping photos."
-why = "1456 × 1088 pixels of 3.45 µm. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 × 38 m, so 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel."
+why = "1456 × 1088 pixels of 3.45 µm. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 × 38 m; flown with the short side along the track, 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel. Needs daylight, so it is not used in the pre-dawn flight."
 instead = "Livox Mid-360 lidar (265 g, 6.5 W): it looks sideways and up, and reaches only 40 m, so it cannot map the ground from 60 m. MAPIR Survey3W ($400) adds a near-infrared band."
 source = "Raspberry Pi camera specs; Livox Mid-360 specs (read 18 Nov); our ground-resolution arithmetic"
 connects = [["payload_computer", "camera ribbon (CSI)"]]
@@ -499,7 +500,7 @@ buy = [
   { store = "Microchip MCP6V32 op-amp (×2)", link = "https://www.microchipdirect.com/product/MCP6V32", price = "$2.25 each" },
 ]
 job = "Measures how much 1610 nm short-wave infrared light the shrubs reflect, one reading per spot, plus the sunlight coming down."
-why = "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as shrubs lose water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20° tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. About $410 in parts plus $25 of small parts."
+why = "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as leaves hold less water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20° tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. Parts $385 plus about $25 of small parts. It needs sunlight, so it works from the morning flight on, not before dawn. Readings taken while the drone banks in a turn are dropped, using the bank angle from the flight controller, because the upward diode then sees the sky at an angle. Each spot mixes shrub, soil and shadow, which is why the near-infrared channel below is worth adding."
 instead = "A SWIR camera through the companies we emailed (LUCID, Tech Imaging rental, SILIOS, Spectral Devices): images instead of spots, $2,250 a week to $30,000."
 source = "Hunt and Rock 1989, Ceccato et al. 2001 (leaf water in the short-wave infrared); SPOT_SENSOR_CIRCUIT doc; prices BEST_PRICES 10 Nov"
 connects = [["payload_computer", "I2C"]]
@@ -516,13 +517,35 @@ price = 12.5
 mass = 5
 size = "25 × 18 mm board in a small printed sun shield"
 power_w = 0
-box = { c = [20, 0, 10], dims = [25, 18, 12] }
+box = { c = [-40, 0, -150], dims = [25, 18, 12] }
 buy = [
   { store = "Adafruit SHT45 (STEMMA QT)", link = "https://www.adafruit.com/product/5665", price = "$12.50" },
 ]
 job = "Measures the air temperature and humidity at the drone, every flight."
-why = "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). ±0.1 °C and ±1 % humidity. It is checked against the ground weather meter in the shade before each flight."
-instead = "Weather meter on the ground only: it misses the air at flight height."
+why = "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). The weather meter on the ground is the main reference at canopy height; this sensor adds the air at flight height, which at dawn can differ by several degrees because of the morning temperature inversion. ±0.1 °C and ±1 % humidity; checked against the ground meter in the shade before each flight, and mounted in a small shield away from the electronics."
+instead = "Ground weather meter only: it is the main reference anyway, but misses the air the drone flies through."
 source = "Adafruit SHT45 page (read 18 Nov); Idso et al. 1981"
 connects = [["payload_computer", "I2C"]]
 nodes = ["air_sensor"]
+
+[[part]]
+id = "nir_channel"
+name = "Near-infrared reference channel (850 nm) for the spot sensor"
+system = "payload"
+tier = "add"
+qty = 1
+status = "build"
+price = 214
+mass = 10
+size = "two silicon photodiodes and filters in the spot sensor head"
+power_w = 0
+box = { c = [125, 28, -125], dims = [20, 16, 30] }
+buy = [
+  { store = "Edmund Optics 850 nm / 40 nm bandpass, 12.5 mm mounted (×2)", link = "https://www.edmundoptics.com/p/850nm-cwl-40nm-fwhm-125mm-mounted-diameter/22453/", price = "$105.00 each (search listing, 18 Nov)" },
+]
+job = "Adds a near-infrared band next to the 1610 nm band, down and up, in the same head."
+why = "Leaves reflect strongly at 850 nm and water barely absorbs there, so the ratio of the 1610 nm and 850 nm readings cancels much of the shrub, soil and shadow mix in each spot; pairing a water band with a near-infrared band is the usual leaf-water index. Two filters and two silicon photodiodes (a few dollars each) on the same converter."
+instead = "1240 nm band (InGaAs, $123 filter): a second water band, but more expensive."
+source = "Hunt and Rock 1989; Ceccato et al. 2001; Edmund Optics listing"
+connects = [["spot_sensor", "same head and converter"]]
+nodes = ["nir_channel"]

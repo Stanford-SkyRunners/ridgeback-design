@@ -21,8 +21,8 @@
      "$9.99 each"
     ]
    ],
-   "job": "Powers the drone: an estimated 2.7 survey flights per charge. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
-   "why": "648 Wh in 2.72 kg. In a hot-day hover each cell carries 9.4 A, against a 60 A rating. It gives 58 min of loiter with 20 % left, or 2.7 survey flights per charge.",
+   "job": "Powers the drone: an estimated 2.8 survey flights per charge. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
+   "why": "648 Wh in 2.72 kg. In a hot-day hover each cell carries 9.2 A, against a 60 A rating. It gives 60 min of loiter with 20 % left, or 2.8 survey flights per charge.",
    "instead": "Samsung 50S ($6.99 a cell, $72 cheaper): voltage sag at our current not measured, so it needs a bench test first. Samsung 50E: 9.8 A rating, too low. A LiPo pack of the same mass would hold about 40 % less energy.",
    "source": "Sheet 04, Battery_Options and Mission_Energy",
    "connects": [
@@ -75,16 +75,16 @@
    },
    "calc": [
     [
-     "E_{flight} = E_{hover} + E_{climb} + P\\,(t_{survey} + t_{transit}) = 164\\ \\text{Wh}",
+     "E_{flight} = E_{hover} + E_{climb} + P\\,(t_{survey} + t_{transit}) = 160\\ \\text{Wh}",
      "energy for one 15-minute survey, 1 km out and back"
     ],
     [
-     "E_{pack,\\,needed} = \\dfrac{3 \\times 164}{0.85 \\times 0.8} = 724\\ \\text{Wh}",
+     "E_{pack,\\,needed} = \\dfrac{3 \\times 160}{0.85 \\times 0.8} = 706\\ \\text{Wh}",
      "three flights, keeping the cells between 95 % and 10 % and 20 % in reserve"
     ],
     [
-     "724\\ \\text{Wh needed} \\;>\\; 648\\ \\text{Wh in 6S6P}",
-     "so the pack covers 2.7 flights, not 3; a 7P pack would fail the hover-thrust rule (Battery_Options)"
+     "706\\ \\text{Wh needed} \\;>\\; 648\\ \\text{Wh in 6S6P}",
+     "so the pack covers 2.8 flights, not 3; a 7P pack would fail the hover-thrust rule (Battery_Options)"
     ]
    ],
    "calcStep": "step-8",
@@ -108,7 +108,7 @@
     ]
    ],
    "job": "Splits battery power to the five speed controllers and tells the flight controller the battery voltage and current.",
-   "why": "Rated 90 A continuous. Hot-day hover draws 57 A. Its stock 30 A input wire is replaced by two 14 AWG wires and an XT90.",
+   "why": "Rated 90 A continuous. Hot-day hover draws 55 A. Its stock 30 A input wire is replaced by two 14 AWG wires and an XT90.",
    "instead": "PM08D (higher rating) if the wiring tests run hot.",
    "source": "Holybro PM07 page; sheet 04 Lift_Hover",
    "connects": [
@@ -188,7 +188,7 @@
    },
    "calc": [
     [
-     "I_{pack} = \\dfrac{P_{hover}}{V} = \\dfrac{1223\\ \\text{W}}{21.6\\ \\text{V}} = 57\\ \\text{A} \\;<\\; 90\\ \\text{A}",
+     "I_{pack} = \\dfrac{P_{hover}}{V} = \\dfrac{1195\\ \\text{W}}{21.6\\ \\text{V}} = 55\\ \\text{A} \\;<\\; 90\\ \\text{A}",
      "hot-day hover through the power module"
     ]
    ],
@@ -293,7 +293,7 @@
     ]
    ],
    "job": "Lifts the drone straight up for take-off and landing, and holds it in a hover.",
-   "why": "T-Motor's own test table for this motor with an 18 inch prop on 6 cells: 4.2 kg of thrust at full throttle. Our drone weighs 8.8 kg, so each motor carries 2,209 g in a hover, about 56% throttle at sea level and 65% on a hot day at 800 m. Total thrust is 1.55 times the weight on that hot day, above the 1.5 we require for control in gusts. Each motor draws 13.8 A in a hot hover and 33.5 A at full throttle, inside the 40 A speed controller.",
+   "why": "T-Motor's own test table for this motor with an 18 inch prop on 6 cells: 4.2 kg of thrust at full throttle. Our drone weighs 8.7 kg, so each motor carries 2,178 g in a hover, about 55% throttle at sea level and 64% on a hot day at 800 m. Total thrust is 1.57 times the weight on that hot day, above the 1.5 we require for control in gusts. Each motor draws 13.5 A in a hot hover and 33.5 A at full throttle, inside the 40 A speed controller.",
    "instead": "The SunnySky V4014 motors we already own from Sky4: only 1.20 times the weight on a hot day, below the 1.5 rule.",
    "source": "store.tmotor.com MN5008 test table (read 30 Oct); sheet 04 Lift_Hover",
    "connects": [
@@ -365,11 +365,11 @@
    },
    "calc": [
     [
-     "T_{hover} = \\dfrac{m g}{4} = \\dfrac{8.84 \\times 9.81}{4} = 21.7\\ \\text{N per motor}",
+     "T_{hover} = \\dfrac{m g}{4} = \\dfrac{8.71 \\times 9.81}{4} = 21.4\\ \\text{N per motor}",
      "thrust each motor holds in a hover"
     ],
     [
-     "\\dfrac{T}{W} = \\dfrac{4\\,T_{max}}{m g} = \\dfrac{4 \\times 33.6}{86.7} = 1.55 \\;\\geq\\; 1.5",
+     "\\dfrac{T}{W} = \\dfrac{4\\,T_{max}}{m g} = \\dfrac{4 \\times 33.6}{85.4} = 1.57 \\;\\geq\\; 1.5",
      "hot day at 800 m, from T-Motor's test table"
     ]
    ],
@@ -448,7 +448,7 @@
    },
    "calc": [
     [
-     "\\dfrac{T}{W} = 1.55 \\;\\text{on a hot day}",
+     "\\dfrac{T}{W} = 1.57 \\;\\text{on a hot day}",
      "the maker's thrust figures are for this exact propeller"
     ]
    ],
@@ -557,7 +557,7 @@
      "full throttle, from the motor test table"
     ],
     [
-     "I_{hover} = 13.8\\ \\text{A}",
+     "I_{hover} = 13.5\\ \\text{A}",
      "hot-day hover, per motor"
     ]
    ],
@@ -587,7 +587,7 @@
     ]
    ],
    "job": "Pushes the drone forward once the wing carries it.",
-   "why": "Maker's test on 6 cells with a 13 inch prop: 3.6 kg static thrust at 34.9 A. In cruise we need 10.3 N; our estimate of the thrust left at 20 m/s is about 19 N, so level flight uses about half of it. Winged climb is limited, so we climb gently or on the rotors.",
+   "why": "Maker's test on 6 cells with a 13 inch prop: 3.6 kg static thrust at 34.9 A. In cruise we need 10.1 N; our estimate of the thrust left at 20 m/s is about 19 N, so level flight uses about half of it. Winged climb is limited, so we climb gently or on the rotors.",
    "instead": "",
    "source": "store.tmotor.com AT3520 test table (read 17 Nov); sheet 04 Pusher",
    "connects": [
@@ -648,11 +648,11 @@
    },
    "calc": [
     [
-     "D = \\tfrac12 \\rho V^2 S\\, C_D = 10.3\\ \\text{N}",
+     "D = \\tfrac12 \\rho V^2 S\\, C_D = 10.1\\ \\text{N}",
      "drag at the loiter speed of 20 m/s"
     ],
     [
-     "\\dfrac{D}{T(V)} = \\dfrac{10.3}{19} = 0.53",
+     "\\dfrac{D}{T(V)} = \\dfrac{10.1}{19} = 0.52",
      "share of the pusher's thrust used in level flight (estimate)"
     ]
    ],
@@ -1366,11 +1366,11 @@
    },
    "calc": [
     [
-     "V_s = \\sqrt{\\dfrac{2W}{\\rho S C_{L,\\max}}} = 15.4\\ \\text{m/s}",
+     "V_s = \\sqrt{\\dfrac{2W}{\\rho S C_{L,\\max}}} = 15.3\\ \\text{m/s}",
      "stall speed with 0.50 m\u00b2 and the SD7037 airfoil"
     ],
     [
-     "V_{loiter} = 1.3\\,V_s = 20.1\\ \\text{m/s}",
+     "V_{loiter} = 1.3\\,V_s = 19.9\\ \\text{m/s}",
      "loiter speed, kept above stall for turns and gusts"
     ]
    ],
@@ -1576,42 +1576,47 @@
   },
   {
    "id": "payload_computer",
-   "name": "Payload computer: NVIDIA Jetson Orin Nano",
+   "name": "Payload computer: Raspberry Pi 5 (4 GB) with active cooler",
    "system": "payload",
    "tier": "minimum",
    "qty": 1,
-   "status": "reuse (Sky4)",
-   "price": 0,
-   "mass": 176,
-   "size": "100 \u00d7 79 \u00d7 31 mm dev kit with fan",
-   "power_w": 10,
+   "status": "buy",
+   "price": 135,
+   "mass": 50,
+   "size": "85 \u00d7 56 \u00d7 20 mm with the cooler",
+   "power_w": 7,
    "box": {
     "c": [
      110,
      0,
-     -84
+     -90
     ],
     "dims": [
-     100,
-     79,
-     31
+     85,
+     56,
+     20
     ]
    },
    "buy": [
     [
-     "Raspberry Pi 5, 4 GB (Adafruit), if a lighter logger is wanted",
+     "Adafruit: Raspberry Pi 5, 4 GB",
      "https://www.adafruit.com/product/5812",
      "$130.00"
+    ],
+    [
+     "Raspberry Pi Active Cooler (any reseller)",
+     "https://www.raspberrypi.com/products/active-cooler/",
+     "about $5"
     ]
    ],
    "job": "Records every sensor with the time and position from the flight controller, and triggers the camera.",
-   "why": "We already own it. It takes the thermal camera over USB, the colour camera, the spot sensor and the air sensor over I2C, and reads position and time from the flight controller over a serial cable, so each reading is tagged with where the drone was. It draws 7 to 15 W.",
-   "instead": "Raspberry Pi 5 (4 GB, $130): about 130 g lighter and about 5 W less, enough for logging. Worth it if the hot-day hover margin gets tight.",
-   "source": "Jetson Orin Nano carrier board spec (DC input 9\u201320 V); payload_fit.py position",
+   "why": "It runs the Raspberry Pi colour camera with its own driver, the thermal camera over USB, the spot sensor and air sensor over I2C, and reads time and position from the flight controller over a serial cable, so each reading is tagged with where the drone was. About 130 g lighter and 5 W less than the Jetson we own. Readings are tagged by time only; a 50 ms timing error is about 1 m along track at 19 m/s, so the camera trigger should also be logged by the flight controller.",
+   "instead": "The Jetson Orin Nano we own from Sky4 ($0, 176 g, 7\u201315 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it.",
+   "source": "Adafruit price (read 18 Nov); mass and power estimated until weighed",
    "connects": [
     [
      "payload_power",
-     "12 V barrel plug"
+     "5 V, USB-C power"
     ],
     [
      "pixhawk",
@@ -1643,42 +1648,47 @@
    "editLine": 394,
    "raw": {
     "id": "payload_computer",
-    "name": "Payload computer: NVIDIA Jetson Orin Nano",
+    "name": "Payload computer: Raspberry Pi 5 (4 GB) with active cooler",
     "system": "payload",
     "tier": "minimum",
     "qty": 1,
-    "status": "reuse (Sky4)",
-    "price": 0,
-    "mass": 176,
-    "size": "100 \u00d7 79 \u00d7 31 mm dev kit with fan",
-    "power_w": 10,
+    "status": "buy",
+    "price": 135,
+    "mass": 50,
+    "size": "85 \u00d7 56 \u00d7 20 mm with the cooler",
+    "power_w": 7,
     "box": {
      "c": [
       110,
       0,
-      -84
+      -90
      ],
      "dims": [
-      100,
-      79,
-      31
+      85,
+      56,
+      20
      ]
     },
     "buy": [
      {
-      "store": "Raspberry Pi 5, 4 GB (Adafruit), if a lighter logger is wanted",
+      "store": "Adafruit: Raspberry Pi 5, 4 GB",
       "link": "https://www.adafruit.com/product/5812",
       "price": "$130.00"
+     },
+     {
+      "store": "Raspberry Pi Active Cooler (any reseller)",
+      "link": "https://www.raspberrypi.com/products/active-cooler/",
+      "price": "about $5"
      }
     ],
     "job": "Records every sensor with the time and position from the flight controller, and triggers the camera.",
-    "why": "We already own it. It takes the thermal camera over USB, the colour camera, the spot sensor and the air sensor over I2C, and reads position and time from the flight controller over a serial cable, so each reading is tagged with where the drone was. It draws 7 to 15 W.",
-    "instead": "Raspberry Pi 5 (4 GB, $130): about 130 g lighter and about 5 W less, enough for logging. Worth it if the hot-day hover margin gets tight.",
-    "source": "Jetson Orin Nano carrier board spec (DC input 9\u201320 V); payload_fit.py position",
+    "why": "It runs the Raspberry Pi colour camera with its own driver, the thermal camera over USB, the spot sensor and air sensor over I2C, and reads time and position from the flight controller over a serial cable, so each reading is tagged with where the drone was. About 130 g lighter and 5 W less than the Jetson we own. Readings are tagged by time only; a 50 ms timing error is about 1 m along track at 19 m/s, so the camera trigger should also be logged by the flight controller.",
+    "instead": "The Jetson Orin Nano we own from Sky4 ($0, 176 g, 7\u201315 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it.",
+    "source": "Adafruit price (read 18 Nov); mass and power estimated until weighed",
     "connects": [
      [
       "payload_power",
-      "12 V barrel plug"
+      "5 V, USB-C power"
      ],
      [
       "pixhawk",
@@ -1708,7 +1718,7 @@
   },
   {
    "id": "payload_power",
-   "name": "Payload regulator: Pololu D36V50F12, 12 V 4.5 A",
+   "name": "Payload regulator: Pololu D36V50F5, 5 V 5.5 A",
    "system": "payload",
    "tier": "minimum",
    "qty": 1,
@@ -1732,13 +1742,13 @@
    "buy": [
     [
      "Pololu",
-     "https://www.pololu.com/product/4095",
+     "https://www.pololu.com/product/4091",
      "$44.95"
     ]
    ],
-   "job": "Turns battery voltage into a steady 12 V for the payload computer.",
-   "why": "The battery runs from 25.2 V full to about 18 V empty; the Jetson accepts 9 to 20 V. This regulator takes 13.3 to 50 V in and gives up to 4.5 A at 12 V, about 3 times what the payload needs.",
-   "instead": "D36V50F5 (5 V, same price) if the Raspberry Pi 5 is used instead.",
+   "job": "Turns battery voltage into a steady 5 V for the payload computer and sensors.",
+   "why": "The battery runs from 25.2 V full to about 18 V empty. This regulator takes 5.5 to 50 V in and gives up to 5.5 A at 5 V, enough for the Raspberry Pi 5 (5 A peak) and the sensors it powers. About 1 W is lost as heat.",
+   "instead": "D36V50F12 (12 V, same price) if the Jetson is used instead.",
    "source": "pololu.com product page, read 18 Nov",
    "connects": [
     [
@@ -1747,7 +1757,7 @@
     ],
     [
      "payload_computer",
-     "12 V barrel plug"
+     "5 V, USB-C power"
     ]
    ],
    "nodes": [
@@ -1756,10 +1766,10 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 416,
+   "editLine": 417,
    "raw": {
     "id": "payload_power",
-    "name": "Payload regulator: Pololu D36V50F12, 12 V 4.5 A",
+    "name": "Payload regulator: Pololu D36V50F5, 5 V 5.5 A",
     "system": "payload",
     "tier": "minimum",
     "qty": 1,
@@ -1783,13 +1793,13 @@
     "buy": [
      {
       "store": "Pololu",
-      "link": "https://www.pololu.com/product/4095",
+      "link": "https://www.pololu.com/product/4091",
       "price": "$44.95"
      }
     ],
-    "job": "Turns battery voltage into a steady 12 V for the payload computer.",
-    "why": "The battery runs from 25.2 V full to about 18 V empty; the Jetson accepts 9 to 20 V. This regulator takes 13.3 to 50 V in and gives up to 4.5 A at 12 V, about 3 times what the payload needs.",
-    "instead": "D36V50F5 (5 V, same price) if the Raspberry Pi 5 is used instead.",
+    "job": "Turns battery voltage into a steady 5 V for the payload computer and sensors.",
+    "why": "The battery runs from 25.2 V full to about 18 V empty. This regulator takes 5.5 to 50 V in and gives up to 5.5 A at 5 V, enough for the Raspberry Pi 5 (5 A peak) and the sensors it powers. About 1 W is lost as heat.",
+    "instead": "D36V50F12 (12 V, same price) if the Jetson is used instead.",
     "source": "pololu.com product page, read 18 Nov",
     "connects": [
      [
@@ -1798,7 +1808,7 @@
      ],
      [
       "payload_computer",
-      "12 V barrel plug"
+      "5 V, USB-C power"
      ]
     ],
     "nodes": [
@@ -1842,8 +1852,8 @@
     ]
    ],
    "job": "Measures the temperature of the shrub canopy, looking straight down.",
-   "why": "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal. 160 \u00d7 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m, so a 1\u20133 m shrub spans several pixels. Its accuracy (about \u00b15 \u00b0C) is not enough alone, so warm and cool reference targets of known temperature sit in every flight.",
-   "instead": "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email). Same accuracy class as the Lepton without ground targets.",
+   "why": "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal, and the one sensor here that works in the pre-dawn flight too. 160 \u00d7 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m; with lens blur and motion, only shrubs of about 2 m or more give pure canopy pixels, smaller ones mix with soil. Its accuracy (about \u00b15 \u00b0C) is not enough alone, so warm and cool targets of known temperature sit in every flight, and the camera is kept in an insulated case and warmed up in a hover before the survey.",
+   "instead": "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email): sharper images, but the same need for ground targets to be accurate.",
    "source": "Jackson et al. 1981 (crop water stress index); FLIR Lepton 3.5 datasheet; BEST_PRICES 10 Nov",
    "connects": [
     [
@@ -1857,7 +1867,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 438,
+   "editLine": 439,
    "raw": {
     "id": "thermal_cam",
     "name": "Thermal camera: FLIR Lepton 3.5 on a PureThermal 3 board",
@@ -1894,8 +1904,8 @@
      }
     ],
     "job": "Measures the temperature of the shrub canopy, looking straight down.",
-    "why": "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal. 160 \u00d7 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m, so a 1\u20133 m shrub spans several pixels. Its accuracy (about \u00b15 \u00b0C) is not enough alone, so warm and cool reference targets of known temperature sit in every flight.",
-    "instead": "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email). Same accuracy class as the Lepton without ground targets.",
+    "why": "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal, and the one sensor here that works in the pre-dawn flight too. 160 \u00d7 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m; with lens blur and motion, only shrubs of about 2 m or more give pure canopy pixels, smaller ones mix with soil. Its accuracy (about \u00b15 \u00b0C) is not enough alone, so warm and cool targets of known temperature sit in every flight, and the camera is kept in an insulated case and warmed up in a hover before the survey.",
+    "instead": "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email): sharper images, but the same need for ground targets to be accurate.",
     "source": "Jackson et al. 1981 (crop water stress index); FLIR Lepton 3.5 datasheet; BEST_PRICES 10 Nov",
     "connects": [
      [
@@ -1910,7 +1920,7 @@
   },
   {
    "id": "rgb_cam",
-   "name": "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens",
+   "name": "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens (lens not priced)",
    "system": "payload",
    "tier": "minimum",
    "qty": 1,
@@ -1939,7 +1949,7 @@
     ]
    ],
    "job": "Photographs the plot so we can find every shrub, see how much is plant and how much is bare soil, and build its 3D shape from overlapping photos.",
-   "why": "1456 \u00d7 1088 pixels of 3.45 \u00b5m. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 \u00d7 38 m, so 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel.",
+   "why": "1456 \u00d7 1088 pixels of 3.45 \u00b5m. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 \u00d7 38 m; flown with the short side along the track, 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel. Needs daylight, so it is not used in the pre-dawn flight.",
    "instead": "Livox Mid-360 lidar (265 g, 6.5 W): it looks sideways and up, and reaches only 40 m, so it cannot map the ground from 60 m. MAPIR Survey3W ($400) adds a near-infrared band.",
    "source": "Raspberry Pi camera specs; Livox Mid-360 specs (read 18 Nov); our ground-resolution arithmetic",
    "connects": [
@@ -1954,10 +1964,10 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 461,
+   "editLine": 462,
    "raw": {
     "id": "rgb_cam",
-    "name": "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens",
+    "name": "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens (lens not priced)",
     "system": "payload",
     "tier": "minimum",
     "qty": 1,
@@ -1986,7 +1996,7 @@
      }
     ],
     "job": "Photographs the plot so we can find every shrub, see how much is plant and how much is bare soil, and build its 3D shape from overlapping photos.",
-    "why": "1456 \u00d7 1088 pixels of 3.45 \u00b5m. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 \u00d7 38 m, so 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel.",
+    "why": "1456 \u00d7 1088 pixels of 3.45 \u00b5m. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 \u00d7 38 m; flown with the short side along the track, 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel. Needs daylight, so it is not used in the pre-dawn flight.",
     "instead": "Livox Mid-360 lidar (265 g, 6.5 W): it looks sideways and up, and reaches only 40 m, so it cannot map the ground from 60 m. MAPIR Survey3W ($400) adds a near-infrared band.",
     "source": "Raspberry Pi camera specs; Livox Mid-360 specs (read 18 Nov); our ground-resolution arithmetic",
     "connects": [
@@ -2046,7 +2056,7 @@
     ]
    ],
    "job": "Measures how much 1610 nm short-wave infrared light the shrubs reflect, one reading per spot, plus the sunlight coming down.",
-   "why": "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as shrubs lose water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20\u00b0 tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. About $410 in parts plus $25 of small parts.",
+   "why": "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as leaves hold less water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20\u00b0 tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. Parts $385 plus about $25 of small parts. It needs sunlight, so it works from the morning flight on, not before dawn. Readings taken while the drone banks in a turn are dropped, using the bank angle from the flight controller, because the upward diode then sees the sky at an angle. Each spot mixes shrub, soil and shadow, which is why the near-infrared channel below is worth adding.",
    "instead": "A SWIR camera through the companies we emailed (LUCID, Tech Imaging rental, SILIOS, Spectral Devices): images instead of spots, $2,250 a week to $30,000.",
    "source": "Hunt and Rock 1989, Ceccato et al. 2001 (leaf water in the short-wave infrared); SPOT_SENSOR_CIRCUIT doc; prices BEST_PRICES 10 Nov",
    "connects": [
@@ -2061,7 +2071,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 483,
+   "editLine": 484,
    "raw": {
     "id": "spot_sensor",
     "name": "1610 nm spot sensor (built by us): two InGaAs photodiodes behind 1610 nm filters",
@@ -2108,7 +2118,7 @@
      }
     ],
     "job": "Measures how much 1610 nm short-wave infrared light the shrubs reflect, one reading per spot, plus the sunlight coming down.",
-    "why": "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as shrubs lose water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20\u00b0 tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. About $410 in parts plus $25 of small parts.",
+    "why": "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as leaves hold less water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20\u00b0 tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. Parts $385 plus about $25 of small parts. It needs sunlight, so it works from the morning flight on, not before dawn. Readings taken while the drone banks in a turn are dropped, using the bank angle from the flight controller, because the upward diode then sees the sky at an angle. Each spot mixes shrub, soil and shadow, which is why the near-infrared channel below is worth adding.",
     "instead": "A SWIR camera through the companies we emailed (LUCID, Tech Imaging rental, SILIOS, Spectral Devices): images instead of spots, $2,250 a week to $30,000.",
     "source": "Hunt and Rock 1989, Ceccato et al. 2001 (leaf water in the short-wave infrared); SPOT_SENSOR_CIRCUIT doc; prices BEST_PRICES 10 Nov",
     "connects": [
@@ -2135,9 +2145,9 @@
    "power_w": 0,
    "box": {
     "c": [
-     20,
+     -40,
      0,
-     10
+     -150
     ],
     "dims": [
      25,
@@ -2153,8 +2163,8 @@
     ]
    ],
    "job": "Measures the air temperature and humidity at the drone, every flight.",
-   "why": "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). \u00b10.1 \u00b0C and \u00b11 % humidity. It is checked against the ground weather meter in the shade before each flight.",
-   "instead": "Weather meter on the ground only: it misses the air at flight height.",
+   "why": "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). The weather meter on the ground is the main reference at canopy height; this sensor adds the air at flight height, which at dawn can differ by several degrees because of the morning temperature inversion. \u00b10.1 \u00b0C and \u00b11 % humidity; checked against the ground meter in the shade before each flight, and mounted in a small shield away from the electronics.",
+   "instead": "Ground weather meter only: it is the main reference anyway, but misses the air the drone flies through.",
    "source": "Adafruit SHT45 page (read 18 Nov); Idso et al. 1981",
    "connects": [
     [
@@ -2168,7 +2178,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 508,
+   "editLine": 509,
    "raw": {
     "id": "air_sensor",
     "name": "Air temperature and humidity: Sensirion SHT45",
@@ -2182,9 +2192,9 @@
     "power_w": 0,
     "box": {
      "c": [
-      20,
+      -40,
       0,
-      10
+      -150
      ],
      "dims": [
       25,
@@ -2200,8 +2210,8 @@
      }
     ],
     "job": "Measures the air temperature and humidity at the drone, every flight.",
-    "why": "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). \u00b10.1 \u00b0C and \u00b11 % humidity. It is checked against the ground weather meter in the shade before each flight.",
-    "instead": "Weather meter on the ground only: it misses the air at flight height.",
+    "why": "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). The weather meter on the ground is the main reference at canopy height; this sensor adds the air at flight height, which at dawn can differ by several degrees because of the morning temperature inversion. \u00b10.1 \u00b0C and \u00b11 % humidity; checked against the ground meter in the shade before each flight, and mounted in a small shield away from the electronics.",
+    "instead": "Ground weather meter only: it is the main reference anyway, but misses the air the drone flies through.",
     "source": "Adafruit SHT45 page (read 18 Nov); Idso et al. 1981",
     "connects": [
      [
@@ -2211,6 +2221,98 @@
     ],
     "nodes": [
      "air_sensor"
+    ]
+   }
+  },
+  {
+   "id": "nir_channel",
+   "name": "Near-infrared reference channel (850 nm) for the spot sensor",
+   "system": "payload",
+   "tier": "add",
+   "qty": 1,
+   "status": "build",
+   "price": 214,
+   "mass": 10,
+   "size": "two silicon photodiodes and filters in the spot sensor head",
+   "power_w": 0,
+   "box": {
+    "c": [
+     125,
+     28,
+     -125
+    ],
+    "dims": [
+     20,
+     16,
+     30
+    ]
+   },
+   "buy": [
+    [
+     "Edmund Optics 850 nm / 40 nm bandpass, 12.5 mm mounted (\u00d72)",
+     "https://www.edmundoptics.com/p/850nm-cwl-40nm-fwhm-125mm-mounted-diameter/22453/",
+     "$105.00 each (search listing, 18 Nov)"
+    ]
+   ],
+   "job": "Adds a near-infrared band next to the 1610 nm band, down and up, in the same head.",
+   "why": "Leaves reflect strongly at 850 nm and water barely absorbs there, so the ratio of the 1610 nm and 850 nm readings cancels much of the shrub, soil and shadow mix in each spot; pairing a water band with a near-infrared band is the usual leaf-water index. Two filters and two silicon photodiodes (a few dollars each) on the same converter.",
+   "instead": "1240 nm band (InGaAs, $123 filter): a second water band, but more expensive.",
+   "source": "Hunt and Rock 1989; Ceccato et al. 2001; Edmund Optics listing",
+   "connects": [
+    [
+     "spot_sensor",
+     "same head and converter"
+    ]
+   ],
+   "nodes": [
+    "nir_channel"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 531,
+   "raw": {
+    "id": "nir_channel",
+    "name": "Near-infrared reference channel (850 nm) for the spot sensor",
+    "system": "payload",
+    "tier": "add",
+    "qty": 1,
+    "status": "build",
+    "price": 214,
+    "mass": 10,
+    "size": "two silicon photodiodes and filters in the spot sensor head",
+    "power_w": 0,
+    "box": {
+     "c": [
+      125,
+      28,
+      -125
+     ],
+     "dims": [
+      20,
+      16,
+      30
+     ]
+    },
+    "buy": [
+     {
+      "store": "Edmund Optics 850 nm / 40 nm bandpass, 12.5 mm mounted (\u00d72)",
+      "link": "https://www.edmundoptics.com/p/850nm-cwl-40nm-fwhm-125mm-mounted-diameter/22453/",
+      "price": "$105.00 each (search listing, 18 Nov)"
+     }
+    ],
+    "job": "Adds a near-infrared band next to the 1610 nm band, down and up, in the same head.",
+    "why": "Leaves reflect strongly at 850 nm and water barely absorbs there, so the ratio of the 1610 nm and 850 nm readings cancels much of the shrub, soil and shadow mix in each spot; pairing a water band with a near-infrared band is the usual leaf-water index. Two filters and two silicon photodiodes (a few dollars each) on the same converter.",
+    "instead": "1240 nm band (InGaAs, $123 filter): a second water band, but more expensive.",
+    "source": "Hunt and Rock 1989; Ceccato et al. 2001; Edmund Optics listing",
+    "connects": [
+     [
+      "spot_sensor",
+      "same head and converter"
+     ]
+    ],
+    "nodes": [
+     "nir_channel"
     ]
    }
   }

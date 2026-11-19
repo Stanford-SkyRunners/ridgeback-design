@@ -233,7 +233,7 @@ function showDetail(p) {
   const conn = p.connects.length ? '<ul>' + p.connects.map(([to, how]) => `<li><button class="link" data-go="${to}">${esc(parts[to]?.name || to)}</button>: ${esc(how)}</li>`).join('') + '</ul>' : '<p>Nothing wired; it runs on its own.</p>';
   const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
   document.getElementById('detail').innerHTML = `<h2>${esc(p.name)}</h2>
-   <div class="meta"><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}. ${esc(p.status)}. ${p.qty} × ${price}${price ? ', ' : ''}${p.mass} g each${p.power_w ? `, ${p.power_w} W` : ''}.</div>
+   <dl class="meta"><div><dt>System</dt><dd><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}</dd></div><div><dt>Status</dt><dd>${esc(p.status.charAt(0).toUpperCase() + p.status.slice(1))}</dd></div><div><dt>Quantity</dt><dd>${p.qty}</dd></div>${price ? `<div><dt>Price</dt><dd>${price}</dd></div>` : ''}<div><dt>Mass</dt><dd>${p.mass} g each</dd></div>${p.power_w ? `<div><dt>Power</dt><dd>${p.power_w} W</dd></div>` : ''}</dl>
    ${p.size || sizeOf[p.id] ? `<p class="size"><b>Size</b> ${esc(p.size || '')}${sizeOf[p.id] ? `${p.size ? '. ' : ''}Drawn at its CAD size: ${[sizeOf[p.id].x, sizeOf[p.id].y, sizeOf[p.id].z].map(v => Math.round(v * 1000)).join(' × ')} mm (outlined).` : ''}</p>` : ''}
    <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>${calcBlock(p)}
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}

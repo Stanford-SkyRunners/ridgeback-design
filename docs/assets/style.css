@@ -191,3 +191,8 @@ body.editing #inputs td.val input{font:14px "IBM Plex Mono";width:7em;text-align
 body.maptable{background:var(--paper) url(map/table.svg) center top/1600px auto repeat}
 @media (prefers-color-scheme:dark){body.maptable{background-image:none}}
 body.maptable .sheet{background:var(--paper);box-shadow:0 0 0 12px color-mix(in srgb,var(--paper) 85%,transparent)}
+.detail dl.meta{display:grid;grid-template-columns:repeat(3,auto);gap:4px 16px;margin:6px 0 4px;font-size:14px}
+.detail dl.meta div{min-width:0}.detail dl.meta dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--quiet)}.detail dl.meta dd{margin:0}
+.mapsvg .core{fill:none;stroke:var(--green);stroke-width:1.2;stroke-dasharray:4 3}
+table.parts tr.add td{color:var(--quiet)}
+table.parts td:first-child,table.parts th:first-child{padding-left:8px}
