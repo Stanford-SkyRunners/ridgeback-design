@@ -179,7 +179,8 @@ body.editing #inputs td.val input{font:14px "IBM Plex Mono";width:7em;text-align
 .sw.ct{background:none;border:none;border-top:1.5px solid color-mix(in srgb,var(--brown) 70%,var(--paper));height:0;vertical-align:3px}
 /* map sheets on the mission page */
 .mapsheet{margin:22px 0 8px;border:1px solid var(--ink);background:var(--paper)}
-.mapsheet .mapholder{min-height:300px;border-top:1px solid var(--ink);border-bottom:1px solid var(--hair)}
+.mapsheet .mapholder{border-top:1px solid var(--ink);border-bottom:1px solid var(--hair)}.mapsheet .mapholder[aria-busy]{min-height:300px}
+@media (max-width:700px){.mapsvg .lab{font-size:24px}.mapsvg .lab.sea,.mapsvg .lab.mtn{font-size:26px}.mapsvg .tick{font-size:18px}.collar2 #replay,.collar2 .toggles{margin-left:0}}
 .mapsheet .maplegend{padding:8px 14px 10px;margin:0}
 .collar2{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding:9px 14px;font-size:14px}
 .collar2 b{font-size:16px}.collar2 .quiet{color:var(--quiet)}
