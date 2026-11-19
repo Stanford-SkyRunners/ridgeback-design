@@ -7,6 +7,9 @@
 # - Text in {curly braces} is filled from the calculations (e.g. {TW_hot}); keep the braces.
 # - connects = [other part id, how it is connected].
 # - nodes = names of the part in the 3D model (only change if the CAD changes).
+# - size = real dimensions from the maker. box = where the part sits in the CAD [x aft, y right, z up] and its size, mm.
+# - power_w = electrical power it draws in flight (sensors and payload computer only; summed into the energy budget).
+# - tier (sensors only): minimum = needed for the first mission flights; add = worth adding; later = not yet.
 # Design numbers that are not parts (speeds, densities, rules...) are in data/inputs.toml.
 
 [systems]
@@ -16,6 +19,7 @@ cruise = { name = "Cruise (pusher)", color = "#6b6b66" }
 control = { name = "Flight control", color = "#2f5d8a" }
 surfaces = { name = "Control surfaces", color = "#4e7a3a" }
 airframe = { name = "Airframe", color = "#b9bcb4" }
+payload = { name = "Mission sensors", color = "#1f7a72" }
 
 [[part]]
 id = "battery"
@@ -25,6 +29,7 @@ qty = 36
 status = "buy (36 cells, pack built by us)"
 price = 8.99
 mass = 70
+size = "36 Molicel P50B cells, each 21.7 mm wide × 70.4 mm tall, standing in a 6 × 6 block: 140 × 135 × 75 mm with nickel strip, BMS and wrap"
 buy = [
   { store = "Liion Wholesale (36 cells, $8.99 each)", link = "https://liionwholesale.com/products/molicel-npe-inr-21700-p50b-60a-5000mah-flat-top-21700-battery-authorized-distributor", price = "$323.64" },
   { store = "IMR Batteries", link = "https://imrbatteries.com/products/molicel-21700-p50b-5000mah-60a-battery", price = "$9.99 each" },
@@ -44,6 +49,7 @@ qty = 1
 status = "reuse (Sky4)"
 price = 0
 mass = 25
+size = "68 × 50 × 8 mm (Holybro)"
 buy = [
   { store = "Holybro (new, if needed)", link = "https://holybro.com/products/pm07-power-module", price = "$43.99" },
 ]
@@ -80,6 +86,7 @@ qty = 4
 status = "buy"
 price = 89.99
 mass = 135
+size = "Ø 55.6 × 31 mm (T-Motor drawing)"
 buy = [
   { store = "UnmannedRC", link = "https://unmannedrc.com/products/mn5008-antigravity-type-6-12s-uav-motor", price = "$89.99" },
   { store = "iNsightFPV", link = "https://insightfpv.com/products/t-motor-antigravity-mn5008-kv170-kv340-kv400", price = "$89.99" },
@@ -100,6 +107,7 @@ qty = 2
 status = "buy"
 price = 82.9
 mass = 63
+size = "18 inch = 457 mm tip to tip"
 buy = [
   { store = "UnmannedRC", link = "https://unmannedrc.com/products/polish-p18-6-1-prop-2pcs-pair", price = "$82.90 a pair" },
 ]
@@ -118,6 +126,7 @@ qty = 4
 status = "buy"
 price = 92.0
 mass = 54.5
+size = "64.5 × 29.4 × 14.7 mm (T-Motor)"
 buy = [
   { store = "United UAV (US stock, no import duty)", link = "https://store.uniteduav.com/products/alpha-40a-6s", price = "$92.00" },
   { store = "UnmannedRC (ships from China, +37.5 % duty)", link = "https://unmannedrc.com/products/alpha-40a-6s-foc-multi-rotor-uavs-esc", price = "$69.99" },
@@ -137,6 +146,7 @@ qty = 1
 status = "buy"
 price = 79.99
 mass = 218
+size = "Ø 42 × 52 mm with the long shaft"
 buy = [
   { store = "UnmannedRC", link = "https://unmannedrc.com/products/at3520-long-shaft-fixed-wing-uav-motor-kv550-kv720-kv850", price = "$79.99" },
   { store = "T-Motor store", link = "https://store.tmotor.com/product/at3520-long-shaft-fixed-wing-motor.html", price = "$79.99" },
@@ -156,6 +166,7 @@ qty = 1
 status = "buy"
 price = 12.0
 mass = 28
+size = "12 inch = 305 mm"
 buy = [
   { store = "APC", link = "https://www.apcprop.com/product/12x6e/", price = "about $12" },
 ]
@@ -174,6 +185,7 @@ qty = 1
 status = "buy"
 price = 92.0
 mass = 54.5
+size = "64.5 × 29.4 × 14.7 mm"
 buy = [
   { store = "United UAV", link = "https://store.uniteduav.com/products/alpha-40a-6s", price = "$92.00" },
 ]
@@ -192,6 +204,7 @@ qty = 1
 status = "reuse (Sky4)"
 price = 0
 mass = 59
+size = "84.8 × 44 × 12.4 mm (Holybro)"
 buy = [
   { store = "Holybro (new, if needed)", link = "https://holybro.com/products/pixhawk-6c", price = "from $199" },
 ]
@@ -210,6 +223,7 @@ qty = 1
 status = "reuse (Sky4)"
 price = 0
 mass = 32
+size = "Ø 50 × 15 mm"
 buy = [
   { store = "Holybro (new, if needed)", link = "https://holybro.com/products/m9n-gps", price = "$54.99" },
 ]
@@ -278,6 +292,7 @@ qty = 1
 status = "buy"
 price = 39.99
 mass = 13.5
+size = "32 × 22 × 10 mm"
 buy = [
   { store = "Ruko", link = "https://www.ruko.net/products/ruko-r111-remote-id-module", price = "$39.99" },
 ]
@@ -296,6 +311,7 @@ qty = 4
 status = "buy"
 price = 45.0
 mass = 23
+size = "30 × 35.5 × 10 mm"
 buy = [
   { store = "Boomerang RC Jets", link = "https://www.boomerangrcjets.com/products/kst-x10-v2-wing-servo", price = "$45.00" },
   { store = "Aloft Hobbies", link = "https://alofthobbies.com/products/kst-x10-wing-servo-10-8kg-149-98-oz-in-0-1sec-high-voltage", price = "$50.00" },
@@ -374,3 +390,139 @@ instead = ""
 source = "mini_layout.py, AVL"
 connects = [["booms", "tail sockets"], ["servos", "two servos"]]
 nodes = ["airframe:tail", "tube_tail_spar_*", "rod_rear_*"]
+
+[[part]]
+id = "payload_computer"
+name = "Payload computer: NVIDIA Jetson Orin Nano"
+system = "payload"
+tier = "minimum"
+qty = 1
+status = "reuse (Sky4)"
+price = 0
+mass = 176
+size = "100 × 79 × 31 mm dev kit with fan"
+power_w = 10
+box = { c = [110, 0, -84], dims = [100, 79, 31] }
+buy = [
+  { store = "Raspberry Pi 5, 4 GB (Adafruit), if a lighter logger is wanted", link = "https://www.adafruit.com/product/5812", price = "$130.00" },
+]
+job = "Records every sensor with the time and position from the flight controller, and triggers the camera."
+why = "We already own it. It takes the thermal camera over USB, the colour camera, the spot sensor and the air sensor over I2C, and reads position and time from the flight controller over a serial cable, so each reading is tagged with where the drone was. It draws 7 to 15 W."
+instead = "Raspberry Pi 5 (4 GB, $130): about 130 g lighter and about 5 W less, enough for logging. Worth it if the hot-day hover margin gets tight."
+source = "Jetson Orin Nano carrier board spec (DC input 9–20 V); payload_fit.py position"
+connects = [["payload_power", "12 V barrel plug"], ["pixhawk", "serial cable (MAVLink): time and position"], ["thermal_cam", "USB"], ["rgb_cam", "camera ribbon (CSI)"], ["spot_sensor", "I2C"], ["air_sensor", "I2C"]]
+nodes = ["payload_computer"]
+
+[[part]]
+id = "payload_power"
+name = "Payload regulator: Pololu D36V50F12, 12 V 4.5 A"
+system = "payload"
+tier = "minimum"
+qty = 1
+status = "buy"
+price = 44.95
+mass = 10
+size = "25.4 × 25.4 × 9.5 mm"
+power_w = 1   # about 10 % lost as heat
+box = { c = [150, 40, -100], dims = [25.4, 25.4, 9.5] }
+buy = [
+  { store = "Pololu", link = "https://www.pololu.com/product/4095", price = "$44.95" },
+]
+job = "Turns battery voltage into a steady 12 V for the payload computer."
+why = "The battery runs from 25.2 V full to about 18 V empty; the Jetson accepts 9 to 20 V. This regulator takes 13.3 to 50 V in and gives up to 4.5 A at 12 V, about 3 times what the payload needs."
+instead = "D36V50F5 (5 V, same price) if the Raspberry Pi 5 is used instead."
+source = "pololu.com product page, read 18 Nov"
+connects = [["pm07", "XT30 from the power module"], ["payload_computer", "12 V barrel plug"]]
+nodes = ["payload_power"]
+
+[[part]]
+id = "thermal_cam"
+name = "Thermal camera: FLIR Lepton 3.5 on a PureThermal 3 board"
+system = "payload"
+tier = "minimum"
+qty = 1
+status = "buy"
+price = 291.99
+mass = 25
+size = "Lepton 11.8 × 12.7 × 7.2 mm on a 32 × 32 mm board, in a 40 × 30 × 22 mm printed case"
+power_w = 1
+box = { c = [60, -35, -126], dims = [40, 30, 22] }
+buy = [
+  { store = "GroupGets: Lepton 3.5", link = "https://groupgets.com/products/flir-lepton-3-5", price = "$172.00" },
+  { store = "GroupGets: PureThermal 3 board", link = "https://groupgets.com/products/purethermal-3", price = "$119.99" },
+]
+job = "Measures the temperature of the shrub canopy, looking straight down."
+why = "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal. 160 × 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m, so a 1–3 m shrub spans several pixels. Its accuracy (about ±5 °C) is not enough alone, so warm and cool reference targets of known temperature sit in every flight."
+instead = "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email). Same accuracy class as the Lepton without ground targets."
+source = "Jackson et al. 1981 (crop water stress index); FLIR Lepton 3.5 datasheet; BEST_PRICES 10 Nov"
+connects = [["payload_computer", "USB"]]
+nodes = ["thermal_cam"]
+
+[[part]]
+id = "rgb_cam"
+name = "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens"
+system = "payload"
+tier = "minimum"
+qty = 1
+status = "buy"
+price = 80
+mass = 60
+size = "38 × 38 × 28 mm body, C/CS lens on top"
+power_w = 1
+box = { c = [60, 30, -124], dims = [38, 38, 28] }
+buy = [
+  { store = "PiShop.us (camera $55, out of stock 18 Nov; lens about $25 not priced)", link = "https://www.pishop.us/product/raspberry-pi-global-shutter-camera/", price = "$55.00 + lens" },
+]
+job = "Photographs the plot so we can find every shrub, see how much is plant and how much is bare soil, and build its 3D shape from overlapping photos."
+why = "1456 × 1088 pixels of 3.45 µm. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 × 38 m, so 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel."
+instead = "Livox Mid-360 lidar (265 g, 6.5 W): it looks sideways and up, and reaches only 40 m, so it cannot map the ground from 60 m. MAPIR Survey3W ($400) adds a near-infrared band."
+source = "Raspberry Pi camera specs; Livox Mid-360 specs (read 18 Nov); our ground-resolution arithmetic"
+connects = [["payload_computer", "camera ribbon (CSI)"]]
+nodes = ["rgb_cam"]
+
+[[part]]
+id = "spot_sensor"
+name = "1610 nm spot sensor (built by us): two InGaAs photodiodes behind 1610 nm filters"
+system = "payload"
+tier = "minimum"
+qty = 1
+status = "build"
+price = 409.71
+mass = 80
+size = "50 × 40 × 45 mm printed head with a 20° view tube"
+power_w = 0.1
+box = { c = [125, 0, -125], dims = [50, 40, 45] }
+buy = [
+  { store = "SyronOptics BP1610-60 filter, 12.5 mm (×2)", link = "https://syronoptics.com/products/bp1610-60", price = "$165.00 each" },
+  { store = "DigiKey Marktech MTPD1346D-100 photodiode (×2)", link = "https://www.digikey.com/en/products/detail/marktech-optoelectronics/MTPD1346D-100/5866635", price = "$17.63 each" },
+  { store = "Adafruit ADS1115 16-bit converter", link = "https://www.adafruit.com/product/1085", price = "$14.95" },
+  { store = "Microchip MCP6V32 op-amp (×2)", link = "https://www.microchipdirect.com/product/MCP6V32", price = "$2.25 each" },
+]
+job = "Measures how much 1610 nm short-wave infrared light the shrubs reflect, one reading per spot, plus the sunlight coming down."
+why = "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as shrubs lose water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20° tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. About $410 in parts plus $25 of small parts."
+instead = "A SWIR camera through the companies we emailed (LUCID, Tech Imaging rental, SILIOS, Spectral Devices): images instead of spots, $2,250 a week to $30,000."
+source = "Hunt and Rock 1989, Ceccato et al. 2001 (leaf water in the short-wave infrared); SPOT_SENSOR_CIRCUIT doc; prices BEST_PRICES 10 Nov"
+connects = [["payload_computer", "I2C"]]
+nodes = ["spot_sensor"]
+
+[[part]]
+id = "air_sensor"
+name = "Air temperature and humidity: Sensirion SHT45"
+system = "payload"
+tier = "minimum"
+qty = 1
+status = "buy"
+price = 12.50
+mass = 5
+size = "25 × 18 mm board in a small printed sun shield"
+power_w = 0
+box = { c = [20, 0, 10], dims = [25, 18, 12] }
+buy = [
+  { store = "Adafruit SHT45 (STEMMA QT)", link = "https://www.adafruit.com/product/5665", price = "$12.50" },
+]
+job = "Measures the air temperature and humidity at the drone, every flight."
+why = "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). ±0.1 °C and ±1 % humidity. It is checked against the ground weather meter in the shade before each flight."
+instead = "Weather meter on the ground only: it misses the air at flight height."
+source = "Adafruit SHT45 page (read 18 Nov); Idso et al. 1981"
+connects = [["payload_computer", "I2C"]]
+nodes = ["air_sensor"]

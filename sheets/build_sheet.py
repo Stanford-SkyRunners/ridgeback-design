@@ -241,7 +241,7 @@ def srow(label, a, b, rule, status):
     return r
 
 
-srow("Takeoff mass (kg), CAD + payload", "={m_to}", "={m_to}", "", "From 161 CAD parts + 316 g payload. Printed-part masses still to be weighed.")
+srow("Takeoff mass (kg), CAD + payload", "={m_to}", "={m_to}", "", "=\"From 161 CAD parts + \"&TEXT({m_pay_g},\"0\")&\" g of mission sensors. Printed-part masses still to be weighed.\"")
 r_ = srow("CG x (mm) vs target 94", "={cg_x}", "", "94 ± 5", "=IF(ABS({cg_x}-{cg_target})<=5,\"OK: within 5 mm, trim with the battery\",\"MOVE BATTERY\")")
 srow("Hover thrust / weight", "={TW_sl}", "={TW_hot}", "≥ 1.5 hot", "=IF({TW_hot}>={req_tw},\"PASS\",\"FAIL\")&\": MN5008 + P18 maker data; matches our Python model exactly\"")
 srow("Hover power (W)", "={Phov_sl}", "={Phov_hot}", "", "About 13-14 A per motor, under the 40 A ESCs; about 9 A per cell.")
@@ -272,7 +272,7 @@ p(ws, "req_tw", "Hover thrust / weight, 800 m altitude, ISA+20 (hot day)", "T/W"
   "Below ~1.5 a quadplane cannot hold attitude in gusts while hovering at full mass. 800 m covers the hills around Stanford (Jasper Ridge < 300 m) with margin.", fmt="0.00")
 p(ws, "req_stall", "Stall speed (clean wing, takeoff mass, sea level)", "V_s", 15.0, "m/s", "typed", "[A] team rule",
   "VTOL takes off and lands on rotors, so stall matters for transitions and slow turns, not landing. Lower stall = slower, safer transitions.", fmt="0.0")
-p(ws, "req_payload", "Sensor payload (core kit)", "m_p", 0.316, "kg", "=SUM of payload rows in Mass_CG", "[A] payload_fit.py boxes: Jetson 176 g, thermal 25 g, colour camera 35 g, 1610 nm spot sensor 80 g",
+p(ws, "req_payload", "Sensor payload (minimum mission kit)", "m_p", round(sum(pp_["mass"] * pp_["qty"] for pp_ in _PARTS if pp_["system"] == "payload" and pp_.get("tier") == "minimum") / 1000, 3), "kg", "Σ minimum sensors in data/parts.toml", "[A] masses from makers / estimates until weighed: computer, regulator, thermal camera, colour camera, 1610 nm spot sensor, air sensor",
   "Real units must be weighed.", fmt="0.000")
 p(ws, "req_budget", "Budget for the aircraft", "$", 3000, "USD", "typed", "user (10-30): $3k cap, stretch 4-5k", "Stock parts only, real store prices.", fmt="$#,##0")
 p(ws, "req_alt", "Design altitude for the hot-day case", "h", 800, "m", "typed", "[A]", "", fmt="0")
@@ -385,19 +385,16 @@ for name, a in items:
 r1 = ws._r - 1
 section(ws, "Payload (not in the CAD mass). Include = 1 / 0")
 header(ws, ["Item", "Group", "Kind", "Include (1/0)", "Qty", "g each", "g total", "x mm", "y mm", "z mm", "x · m (g mm)", "Source [tag]"])
-pb = json.loads((HERE / "payload_boxes.json").read_text())
-pay_mass = {"Jetson": (176, 1, "[A] Jetson Orin Nano dev kit, owned (Sky4); weigh it"), "Lepton": (25, 1, "[A] Lepton 3.5 + PureThermal 3"),
-            "Colour": (35, 1, "[A] global-shutter camera"), "1610": (80, 1, "[A] lens + photodiode board + housing"),
-            "SWIR scanner": (250, 0, "[A] future, not designed")}
+PAY = [p for p in _PARTS if p["system"] == "payload"]   # mission sensors, from data/parts.toml
 p0r = ws._r
-for nm, v in pb.items():
-    key = next(k for k in pay_mass if k in nm)
-    g_, inc, src = pay_mass[key]
+for pp_ in PAY:
     r = ws._r
-    put(ws, r, 1, nm); put(ws, r, 2, "payload"); put(ws, r, 3, "bought/owned"); put(ws, r, 4, inc, fill=INP, fmt="0")
-    put(ws, r, 5, 1, fill=INP, fmt="0"); put(ws, r, 6, g_, fill=INP, fmt="0.0"); put(ws, r, 7, f"=D{r}*E{r}*F{r}", fill=CALC, fmt="0.0")
-    put(ws, r, 8, v["c"][0], fill=INP, fmt="0.0"); put(ws, r, 9, v["c"][1], fill=INP, fmt="0.0"); put(ws, r, 10, v["c"][2], fill=INP, fmt="0.0")
-    put(ws, r, 11, f"=G{r}*H{r}", fill=CALC, fmt="#,##0"); put(ws, r, 12, src + "; position from payload_fit.py")
+    inc = 1 if pp_.get("tier", "minimum") == "minimum" else 0
+    put(ws, r, 1, pp_["name"]); put(ws, r, 2, "payload"); put(ws, r, 3, pp_["status"]); put(ws, r, 4, inc, fill=INP, fmt="0")
+    put(ws, r, 5, pp_["qty"], fill=INP, fmt="0"); put(ws, r, 6, pp_["mass"], fill=INP, fmt="0.0"); put(ws, r, 7, f"=D{r}*E{r}*F{r}", fill=CALC, fmt="0.0")
+    c_ = pp_["box"]["c"]
+    put(ws, r, 8, c_[0], fill=INP, fmt="0.0"); put(ws, r, 9, c_[1], fill=INP, fmt="0.0"); put(ws, r, 10, c_[2], fill=INP, fmt="0.0")
+    put(ws, r, 11, f"=G{r}*H{r}", fill=CALC, fmt="#,##0"); put(ws, r, 12, "data/parts.toml; mass [A] until weighed")
     ws._r += 1
 p1r = ws._r - 1
 section(ws, "Totals")
@@ -560,7 +557,9 @@ p(ws, "K", "Induced drag factor", "K", "=1/(PI()*{AR}*{e_used})", "-", "K = 1 / 
 p(ws, "CLmax", "Wing CLmax (clean)", "CL_max", "=0.9*{clmax230}", "-", "CL_max ≈ 0.9 cl_max (Raymer, unswept wing)", "[C] Airfoil_SD7037", "mini_sizing.py assumed 1.3 [A]; flaps are not counted", fmt="0.000")
 p(ws, "CD0", "CD0 used", "CD0", "={CD0_build}", "-", "= result of Drag_Buildup", "[C]", "", fmt="0.0000", key_result=True)
 p(ws, "eta_push", "Pusher efficiency (electrical → thrust power)", "η_p", 0.55, "-", "typed", "[A] motor ~0.80 x prop ~0.70 at cruise", "Not measured. See Pusher tab.", fmt="0.00")
-p(ws, "P_av", "Avionics + sensor power", "P_av", 20, "W", "typed", "[A] avionics 15 W + spot sensor / logger 5 W; Jetson adds 7-15 W when fitted", "", fmt="0")
+p(ws, "P_avionics", "Flight avionics power", "", 15, "W", "typed", "[A] flight controller, GPS, radios, servos at rest", "", fmt="0")
+p(ws, "P_payload", "Mission sensor power", "", sum(pp_.get("power_w", 0) for pp_ in _PARTS if pp_["system"] == "payload" and pp_.get("tier") == "minimum"), "W", "Σ power_w of the minimum sensors in data/parts.toml", "[A] makers' typical figures", "", fmt="0.0")
+p(ws, "P_av", "Avionics + sensor power", "P_av", "={P_avionics}+{P_payload}", "W", "P_av = P avionics + P sensors", "[C]", "", fmt="0.0")
 section(ws, "Loiter speed = max(minimum-power speed, 1.3 x stall). Here CL_mp > CL_max, so loiter is always set by 1.3 x stall.")
 header(ws, ["Quantity", "Symbol", "Sea level ISA", "800 m ISA+20", "Equation", "Source [tag]", "Note"])
 
@@ -933,7 +932,24 @@ p(ws, "cost_left", "Left of the budget", "", "={req_budget}-{cost_total}", "USD"
 section(ws, "Not included yet (decide or confirm)")
 text_rows(ws, [["6S charger", "", 100, "", "", "", "", "", "", "[A] if Sky4/club has none"],
                ["RC transmitter + receiver", "", 154, "", "", "", "", "", "", "[S] if Sky4/club has none"],
-               ["First sensors: Lepton 3.5 $172 + PureThermal 3 $119.99 + 1610 nm filter $165 + 2 InGaAs diodes $35.26 + 2 op-amps $4.50", "", 496.75, "", "", "", "", "", "", "[C] HANDOFF 11-12; sensor doc"]])
+               ])
+section(ws, "Mission sensors (minimum kit, from data/parts.toml; not in the aircraft total above)")
+header(ws, ["Item", "Qty", "Unit $", "Line $", "Status", "", "", "", "Buy", "Why it is needed", "On the website"])
+m0 = ws._r
+for pp_ in PAY:
+    if pp_.get("tier") != "minimum": continue
+    r = ws._r
+    put(ws, r, 1, pp_["name"]); put(ws, r, 2, pp_["qty"], fill=INP, fmt="0"); put(ws, r, 3, pp_["price"], fill=INP, fmt="$#,##0.00")
+    put(ws, r, 4, f"=B{r}*C{r}", fill=CALC, fmt="$#,##0.00"); put(ws, r, 5, pp_["status"])
+    c = put(ws, r, 9, part_url(pp_["id"]))
+    if part_url(pp_["id"]): c.hyperlink = part_url(pp_["id"]); c.font = Font(color="1155CC", underline="single")
+    put(ws, r, 10, pp_["job"])
+    cell = put(ws, r, 11, "see on the drone"); cell.hyperlink = SITE + "index.html#" + pp_["id"]; cell.font = Font(color="1155CC", underline="single")
+    ws._r += 1
+m1 = ws._r - 1
+header(ws, PARAM_COLS)
+p(ws, "cost_sensors", "Mission sensors", "", f"=SUM(D{m0}:D{m1})", "USD", "Σ lines", "[C]", "small parts and shipping not included", fmt="$#,##0", key_result=True)
+p(ws, "cost_all", "Aircraft + mission sensors", "", "={cost_total}+{cost_sensors}", "USD", "", "[C]", "budget: $3,000 cap, stretch $4,000–5,000 (user, 30 Oct)", fmt="$#,##0", key_result=True)
 
 # =====================================================================================================
 ws = sheet("Cost_Options", [44, 12, 14, 50, 34, 16])

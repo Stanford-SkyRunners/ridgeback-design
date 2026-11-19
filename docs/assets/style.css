@@ -125,3 +125,8 @@ span.num{padding-right:0}
 .calcbox .line{overflow-x:auto;padding:2px 0}
 .calcbox .why{font-size:13.5px;color:var(--quiet);margin:0 0 6px}
 ol.steps{max-width:760px;padding-left:22px;line-height:1.55}ol.steps li{margin:6px 0}
+.picks .sens{border-color:#1f7a72;color:#1f7a72}
+.picks .sens[aria-pressed="true"],.picks .sens.on{background:#1f7a72;color:#fff}
+.detail .size{font-size:14px;margin:.4em 0 .2em}
+tr.tot td{font-weight:600;border-top:1px solid var(--ink)}
+ul.open{max-width:760px;line-height:1.55;padding-left:20px}ul.open li{margin:6px 0}

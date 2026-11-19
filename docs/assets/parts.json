@@ -8,6 +8,7 @@
    "status": "buy (36 cells, pack built by us)",
    "price": 8.99,
    "mass": 70,
+   "size": "36 Molicel P50B cells, each 21.7 mm wide \u00d7 70.4 mm tall, standing in a 6 \u00d7 6 block: 140 \u00d7 135 \u00d7 75 mm with nickel strip, BMS and wrap",
    "buy": [
     [
      "Liion Wholesale (36 cells, $8.99 each)",
@@ -21,7 +22,7 @@
     ]
    ],
    "job": "Powers the drone: an estimated 2.7 survey flights per charge. Six cells in series give 21.6 V under load; six in parallel give 30 Ah.",
-   "why": "648 Wh in 2.72 kg. In a hot-day hover each cell carries 9.3 A, against a 60 A rating. It gives 59 min of loiter with 20 % left, or 2.7 survey flights per charge.",
+   "why": "648 Wh in 2.72 kg. In a hot-day hover each cell carries 9.4 A, against a 60 A rating. It gives 58 min of loiter with 20 % left, or 2.7 survey flights per charge.",
    "instead": "Samsung 50S ($6.99 a cell, $72 cheaper): voltage sag at our current not measured, so it needs a bench test first. Samsung 50E: 9.8 A rating, too low. A LiPo pack of the same mass would hold about 40 % less energy.",
    "source": "Sheet 04, Battery_Options and Mission_Energy",
    "connects": [
@@ -36,18 +37,18 @@
    "systemName": "Power",
    "color": "#8a5a2b",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 20,
+   "editLine": 24,
    "calc": [
     [
-     "E_{flight} = E_{hover} + E_{climb} + P\\,(t_{survey} + t_{transit}) = 161\\ \\text{Wh}",
+     "E_{flight} = E_{hover} + E_{climb} + P\\,(t_{survey} + t_{transit}) = 164\\ \\text{Wh}",
      "energy for one 15-minute survey, 1 km out and back"
     ],
     [
-     "E_{pack,\\,needed} = \\dfrac{3 \\times 161}{0.85 \\times 0.8} = 708\\ \\text{Wh}",
+     "E_{pack,\\,needed} = \\dfrac{3 \\times 164}{0.85 \\times 0.8} = 724\\ \\text{Wh}",
      "three flights, keeping the cells between 95 % and 10 % and 20 % in reserve"
     ],
     [
-     "708\\ \\text{Wh needed} \\;>\\; 648\\ \\text{Wh in 6S6P}",
+     "724\\ \\text{Wh needed} \\;>\\; 648\\ \\text{Wh in 6S6P}",
      "so the pack covers 2.7 flights, not 3; a 7P pack would fail the hover-thrust rule (Battery_Options)"
     ]
    ],
@@ -63,6 +64,7 @@
    "status": "reuse (Sky4)",
    "price": 0,
    "mass": 25,
+   "size": "68 \u00d7 50 \u00d7 8 mm (Holybro)",
    "buy": [
     [
      "Holybro (new, if needed)",
@@ -71,7 +73,7 @@
     ]
    ],
    "job": "Splits battery power to the five speed controllers and tells the flight controller the battery voltage and current.",
-   "why": "Rated 90 A continuous. Hot-day hover draws 56 A. Its stock 30 A input wire is replaced by two 14 AWG wires and an XT90.",
+   "why": "Rated 90 A continuous. Hot-day hover draws 57 A. Its stock 30 A input wire is replaced by two 14 AWG wires and an XT90.",
    "instead": "PM08D (higher rating) if the wiring tests run hot.",
    "source": "Holybro PM07 page; sheet 04 Lift_Hover",
    "connects": [
@@ -102,10 +104,10 @@
    "systemName": "Power",
    "color": "#8a5a2b",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 39,
+   "editLine": 44,
    "calc": [
     [
-     "I_{pack} = \\dfrac{P_{hover}}{V} = \\dfrac{1207\\ \\text{W}}{21.6\\ \\text{V}} = 56\\ \\text{A} \\;<\\; 90\\ \\text{A}",
+     "I_{pack} = \\dfrac{P_{hover}}{V} = \\dfrac{1223\\ \\text{W}}{21.6\\ \\text{V}} = 57\\ \\text{A} \\;<\\; 90\\ \\text{A}",
      "hot-day hover through the power module"
     ]
    ],
@@ -148,7 +150,7 @@
    "systemName": "Power",
    "color": "#8a5a2b",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 57
+   "editLine": 63
   },
   {
    "id": "motor_lift",
@@ -158,6 +160,7 @@
    "status": "buy",
    "price": 89.99,
    "mass": 135,
+   "size": "\u00d8 55.6 \u00d7 31 mm (T-Motor drawing)",
    "buy": [
     [
      "UnmannedRC",
@@ -176,7 +179,7 @@
     ]
    ],
    "job": "Lifts the drone straight up for take-off and landing, and holds it in a hover.",
-   "why": "T-Motor's own test table for this motor with an 18 inch prop on 6 cells: 4.2 kg of thrust at full throttle. Our drone weighs 8.8 kg, so each motor carries 2,199 g in a hover, about 56% throttle at sea level and 64% on a hot day at 800 m. Total thrust is 1.56 times the weight on that hot day, above the 1.5 we require for control in gusts. Each motor draws 13.7 A in a hot hover and 33.5 A at full throttle, inside the 40 A speed controller.",
+   "why": "T-Motor's own test table for this motor with an 18 inch prop on 6 cells: 4.2 kg of thrust at full throttle. Our drone weighs 8.8 kg, so each motor carries 2,209 g in a hover, about 56% throttle at sea level and 65% on a hot day at 800 m. Total thrust is 1.55 times the weight on that hot day, above the 1.5 we require for control in gusts. Each motor draws 13.8 A in a hot hover and 33.5 A at full throttle, inside the 40 A speed controller.",
    "instead": "The SunnySky V4014 motors we already own from Sky4: only 1.20 times the weight on a hot day, below the 1.5 rule.",
    "source": "store.tmotor.com MN5008 test table (read 30 Oct); sheet 04 Lift_Hover",
    "connects": [
@@ -198,14 +201,14 @@
    "systemName": "Lift (hover)",
    "color": "#22221f",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 75,
+   "editLine": 81,
    "calc": [
     [
-     "T_{hover} = \\dfrac{m g}{4} = \\dfrac{8.80 \\times 9.81}{4} = 21.6\\ \\text{N per motor}",
+     "T_{hover} = \\dfrac{m g}{4} = \\dfrac{8.84 \\times 9.81}{4} = 21.7\\ \\text{N per motor}",
      "thrust each motor holds in a hover"
     ],
     [
-     "\\dfrac{T}{W} = \\dfrac{4\\,T_{max}}{m g} = \\dfrac{4 \\times 33.6}{86.3} = 1.56 \\;\\geq\\; 1.5",
+     "\\dfrac{T}{W} = \\dfrac{4\\,T_{max}}{m g} = \\dfrac{4 \\times 33.6}{86.7} = 1.55 \\;\\geq\\; 1.5",
      "hot day at 800 m, from T-Motor's test table"
     ]
    ],
@@ -221,6 +224,7 @@
    "status": "buy",
    "price": 82.9,
    "mass": 63,
+   "size": "18 inch = 457 mm tip to tip",
    "buy": [
     [
      "UnmannedRC",
@@ -247,10 +251,10 @@
    "systemName": "Lift (hover)",
    "color": "#22221f",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 95,
+   "editLine": 102,
    "calc": [
     [
-     "\\dfrac{T}{W} = 1.56 \\;\\text{on a hot day}",
+     "\\dfrac{T}{W} = 1.55 \\;\\text{on a hot day}",
      "the maker's thrust figures are for this exact propeller"
     ]
    ],
@@ -266,6 +270,7 @@
    "status": "buy",
    "price": 92.0,
    "mass": 54.5,
+   "size": "64.5 \u00d7 29.4 \u00d7 14.7 mm (T-Motor)",
    "buy": [
     [
      "United UAV (US stock, no import duty)",
@@ -305,14 +310,14 @@
    "systemName": "Lift (hover)",
    "color": "#22221f",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 113,
+   "editLine": 121,
    "calc": [
     [
      "I_{max} = \\dfrac{P_{100\\%}}{V} = \\dfrac{754\\ \\text{W}}{22.5\\ \\text{V}} = 33.5\\ \\text{A} \\;<\\; 40\\ \\text{A}",
      "full throttle, from the motor test table"
     ],
     [
-     "I_{hover} = 13.7\\ \\text{A}",
+     "I_{hover} = 13.8\\ \\text{A}",
      "hot-day hover, per motor"
     ]
    ],
@@ -328,6 +333,7 @@
    "status": "buy",
    "price": 79.99,
    "mass": 218,
+   "size": "\u00d8 42 \u00d7 52 mm with the long shaft",
    "buy": [
     [
      "UnmannedRC",
@@ -341,7 +347,7 @@
     ]
    ],
    "job": "Pushes the drone forward once the wing carries it.",
-   "why": "Maker's test on 6 cells with a 13 inch prop: 3.6 kg static thrust at 34.9 A. In cruise we need 10.2 N; our estimate of the thrust left at 20 m/s is about 19 N, so level flight uses about half of it. Winged climb is limited, so we climb gently or on the rotors.",
+   "why": "Maker's test on 6 cells with a 13 inch prop: 3.6 kg static thrust at 34.9 A. In cruise we need 10.3 N; our estimate of the thrust left at 20 m/s is about 19 N, so level flight uses about half of it. Winged climb is limited, so we climb gently or on the rotors.",
    "instead": "",
    "source": "store.tmotor.com AT3520 test table (read 17 Nov); sheet 04 Pusher",
    "connects": [
@@ -360,14 +366,14 @@
    "systemName": "Cruise (pusher)",
    "color": "#6b6b66",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 132,
+   "editLine": 141,
    "calc": [
     [
-     "D = \\tfrac12 \\rho V^2 S\\, C_D = 10.2\\ \\text{N}",
+     "D = \\tfrac12 \\rho V^2 S\\, C_D = 10.3\\ \\text{N}",
      "drag at the loiter speed of 20 m/s"
     ],
     [
-     "\\dfrac{D}{T(V)} = \\dfrac{10.2}{19} = 0.53",
+     "\\dfrac{D}{T(V)} = \\dfrac{10.3}{19} = 0.53",
      "share of the pusher's thrust used in level flight (estimate)"
     ]
    ],
@@ -383,6 +389,7 @@
    "status": "buy",
    "price": 12.0,
    "mass": 28,
+   "size": "12 inch = 305 mm",
    "buy": [
     [
      "APC",
@@ -406,7 +413,7 @@
    "systemName": "Cruise (pusher)",
    "color": "#6b6b66",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 151
+   "editLine": 161
   },
   {
    "id": "esc_pusher",
@@ -416,6 +423,7 @@
    "status": "buy",
    "price": 92.0,
    "mass": 54.5,
+   "size": "64.5 \u00d7 29.4 \u00d7 14.7 mm",
    "buy": [
     [
      "United UAV",
@@ -447,7 +455,7 @@
    "systemName": "Cruise (pusher)",
    "color": "#6b6b66",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 169
+   "editLine": 180
   },
   {
    "id": "pixhawk",
@@ -457,6 +465,7 @@
    "status": "reuse (Sky4)",
    "price": 0,
    "mass": 59,
+   "size": "84.8 \u00d7 44 \u00d7 12.4 mm (Holybro)",
    "buy": [
     [
      "Holybro (new, if needed)",
@@ -508,7 +517,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 187
+   "editLine": 199
   },
   {
    "id": "gnss",
@@ -518,6 +527,7 @@
    "status": "reuse (Sky4)",
    "price": 0,
    "mass": 32,
+   "size": "\u00d8 50 \u00d7 15 mm",
    "buy": [
     [
      "Holybro (new, if needed)",
@@ -541,7 +551,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 205
+   "editLine": 218
   },
   {
    "id": "airspeed",
@@ -568,7 +578,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 223
+   "editLine": 237
   },
   {
    "id": "telemetry",
@@ -601,7 +611,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 239
+   "editLine": 253
   },
   {
    "id": "rc_rx",
@@ -628,7 +638,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 257
+   "editLine": 271
   },
   {
    "id": "remote_id",
@@ -638,6 +648,7 @@
    "status": "buy",
    "price": 39.99,
    "mass": 13.5,
+   "size": "32 \u00d7 22 \u00d7 10 mm",
    "buy": [
     [
      "Ruko",
@@ -656,7 +667,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 273
+   "editLine": 287
   },
   {
    "id": "servos",
@@ -666,6 +677,7 @@
    "status": "buy",
    "price": 45.0,
    "mass": 23,
+   "size": "30 \u00d7 35.5 \u00d7 10 mm",
    "buy": [
     [
      "Boomerang RC Jets",
@@ -701,7 +713,7 @@
    "systemName": "Control surfaces",
    "color": "#4e7a3a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 291,
+   "editLine": 306,
    "calc": [
     [
      "\\tau_{needed} = 2 \\times M_{hinge} = 2 \\times 2.34 = 4.7\\ \\text{kg\u00b7cm} \\;<\\; 7.5",
@@ -744,14 +756,14 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 310,
+   "editLine": 326,
    "calc": [
     [
      "V_s = \\sqrt{\\dfrac{2W}{\\rho S C_{L,\\max}}} = 15.4\\ \\text{m/s}",
      "stall speed with 0.50 m\u00b2 and the SD7037 airfoil"
     ],
     [
-     "V_{loiter} = 1.3\\,V_s = 20.0\\ \\text{m/s}",
+     "V_{loiter} = 1.3\\,V_s = 20.1\\ \\text{m/s}",
      "loiter speed, kept above stall for turns and gusts"
     ]
    ],
@@ -796,7 +808,7 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 328
+   "editLine": 344
   },
   {
    "id": "fuselage",
@@ -828,7 +840,7 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 346
+   "editLine": 362
   },
   {
    "id": "tail",
@@ -861,7 +873,339 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 362
+   "editLine": 378
+  },
+  {
+   "id": "payload_computer",
+   "name": "Payload computer: NVIDIA Jetson Orin Nano",
+   "system": "payload",
+   "tier": "minimum",
+   "qty": 1,
+   "status": "reuse (Sky4)",
+   "price": 0,
+   "mass": 176,
+   "size": "100 \u00d7 79 \u00d7 31 mm dev kit with fan",
+   "power_w": 10,
+   "box": {
+    "c": [
+     110,
+     0,
+     -84
+    ],
+    "dims": [
+     100,
+     79,
+     31
+    ]
+   },
+   "buy": [
+    [
+     "Raspberry Pi 5, 4 GB (Adafruit), if a lighter logger is wanted",
+     "https://www.adafruit.com/product/5812",
+     "$130.00"
+    ]
+   ],
+   "job": "Records every sensor with the time and position from the flight controller, and triggers the camera.",
+   "why": "We already own it. It takes the thermal camera over USB, the colour camera, the spot sensor and the air sensor over I2C, and reads position and time from the flight controller over a serial cable, so each reading is tagged with where the drone was. It draws 7 to 15 W.",
+   "instead": "Raspberry Pi 5 (4 GB, $130): about 130 g lighter and about 5 W less, enough for logging. Worth it if the hot-day hover margin gets tight.",
+   "source": "Jetson Orin Nano carrier board spec (DC input 9\u201320 V); payload_fit.py position",
+   "connects": [
+    [
+     "payload_power",
+     "12 V barrel plug"
+    ],
+    [
+     "pixhawk",
+     "serial cable (MAVLink): time and position"
+    ],
+    [
+     "thermal_cam",
+     "USB"
+    ],
+    [
+     "rgb_cam",
+     "camera ribbon (CSI)"
+    ],
+    [
+     "spot_sensor",
+     "I2C"
+    ],
+    [
+     "air_sensor",
+     "I2C"
+    ]
+   ],
+   "nodes": [
+    "payload_computer"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 394
+  },
+  {
+   "id": "payload_power",
+   "name": "Payload regulator: Pololu D36V50F12, 12 V 4.5 A",
+   "system": "payload",
+   "tier": "minimum",
+   "qty": 1,
+   "status": "buy",
+   "price": 44.95,
+   "mass": 10,
+   "size": "25.4 \u00d7 25.4 \u00d7 9.5 mm",
+   "power_w": 1,
+   "box": {
+    "c": [
+     150,
+     40,
+     -100
+    ],
+    "dims": [
+     25.4,
+     25.4,
+     9.5
+    ]
+   },
+   "buy": [
+    [
+     "Pololu",
+     "https://www.pololu.com/product/4095",
+     "$44.95"
+    ]
+   ],
+   "job": "Turns battery voltage into a steady 12 V for the payload computer.",
+   "why": "The battery runs from 25.2 V full to about 18 V empty; the Jetson accepts 9 to 20 V. This regulator takes 13.3 to 50 V in and gives up to 4.5 A at 12 V, about 3 times what the payload needs.",
+   "instead": "D36V50F5 (5 V, same price) if the Raspberry Pi 5 is used instead.",
+   "source": "pololu.com product page, read 18 Nov",
+   "connects": [
+    [
+     "pm07",
+     "XT30 from the power module"
+    ],
+    [
+     "payload_computer",
+     "12 V barrel plug"
+    ]
+   ],
+   "nodes": [
+    "payload_power"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 416
+  },
+  {
+   "id": "thermal_cam",
+   "name": "Thermal camera: FLIR Lepton 3.5 on a PureThermal 3 board",
+   "system": "payload",
+   "tier": "minimum",
+   "qty": 1,
+   "status": "buy",
+   "price": 291.99,
+   "mass": 25,
+   "size": "Lepton 11.8 \u00d7 12.7 \u00d7 7.2 mm on a 32 \u00d7 32 mm board, in a 40 \u00d7 30 \u00d7 22 mm printed case",
+   "power_w": 1,
+   "box": {
+    "c": [
+     60,
+     -35,
+     -126
+    ],
+    "dims": [
+     40,
+     30,
+     22
+    ]
+   },
+   "buy": [
+    [
+     "GroupGets: Lepton 3.5",
+     "https://groupgets.com/products/flir-lepton-3-5",
+     "$172.00"
+    ],
+    [
+     "GroupGets: PureThermal 3 board",
+     "https://groupgets.com/products/purethermal-3",
+     "$119.99"
+    ]
+   ],
+   "job": "Measures the temperature of the shrub canopy, looking straight down.",
+   "why": "When chaparral shrubs run short of water they close their leaf pores and the leaves warm up compared with the air; leaf-minus-air temperature is a standard plant water-stress signal. 160 \u00d7 120 pixels, radiometric. At 60 m one pixel covers about 0.4 m, so a 1\u20133 m shrub spans several pixels. Its accuracy (about \u00b15 \u00b0C) is not enough alone, so warm and cool reference targets of known temperature sit in every flight.",
+   "instead": "FLIR Boson 320 or a Workswell WIRIS (thousands of dollars, asked by email). Same accuracy class as the Lepton without ground targets.",
+   "source": "Jackson et al. 1981 (crop water stress index); FLIR Lepton 3.5 datasheet; BEST_PRICES 10 Nov",
+   "connects": [
+    [
+     "payload_computer",
+     "USB"
+    ]
+   ],
+   "nodes": [
+    "thermal_cam"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 438
+  },
+  {
+   "id": "rgb_cam",
+   "name": "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens",
+   "system": "payload",
+   "tier": "minimum",
+   "qty": 1,
+   "status": "buy",
+   "price": 80,
+   "mass": 60,
+   "size": "38 \u00d7 38 \u00d7 28 mm body, C/CS lens on top",
+   "power_w": 1,
+   "box": {
+    "c": [
+     60,
+     30,
+     -124
+    ],
+    "dims": [
+     38,
+     38,
+     28
+    ]
+   },
+   "buy": [
+    [
+     "PiShop.us (camera $55, out of stock 18 Nov; lens about $25 not priced)",
+     "https://www.pishop.us/product/raspberry-pi-global-shutter-camera/",
+     "$55.00 + lens"
+    ]
+   ],
+   "job": "Photographs the plot so we can find every shrub, see how much is plant and how much is bare soil, and build its 3D shape from overlapping photos.",
+   "why": "1456 \u00d7 1088 pixels of 3.45 \u00b5m. With a 6 mm lens at 60 m one pixel is 3.5 cm and a photo covers 50 \u00d7 38 m, so 2 photos a second give 75 % overlap at 19 m/s, enough to build the canopy's 3D shape (photogrammetry). A global shutter takes the whole frame at once, so the picture does not skew at speed; 1 ms exposure smears 1.9 cm, under one pixel.",
+   "instead": "Livox Mid-360 lidar (265 g, 6.5 W): it looks sideways and up, and reaches only 40 m, so it cannot map the ground from 60 m. MAPIR Survey3W ($400) adds a near-infrared band.",
+   "source": "Raspberry Pi camera specs; Livox Mid-360 specs (read 18 Nov); our ground-resolution arithmetic",
+   "connects": [
+    [
+     "payload_computer",
+     "camera ribbon (CSI)"
+    ]
+   ],
+   "nodes": [
+    "rgb_cam"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 461
+  },
+  {
+   "id": "spot_sensor",
+   "name": "1610 nm spot sensor (built by us): two InGaAs photodiodes behind 1610 nm filters",
+   "system": "payload",
+   "tier": "minimum",
+   "qty": 1,
+   "status": "build",
+   "price": 409.71,
+   "mass": 80,
+   "size": "50 \u00d7 40 \u00d7 45 mm printed head with a 20\u00b0 view tube",
+   "power_w": 0.1,
+   "box": {
+    "c": [
+     125,
+     0,
+     -125
+    ],
+    "dims": [
+     50,
+     40,
+     45
+    ]
+   },
+   "buy": [
+    [
+     "SyronOptics BP1610-60 filter, 12.5 mm (\u00d72)",
+     "https://syronoptics.com/products/bp1610-60",
+     "$165.00 each"
+    ],
+    [
+     "DigiKey Marktech MTPD1346D-100 photodiode (\u00d72)",
+     "https://www.digikey.com/en/products/detail/marktech-optoelectronics/MTPD1346D-100/5866635",
+     "$17.63 each"
+    ],
+    [
+     "Adafruit ADS1115 16-bit converter",
+     "https://www.adafruit.com/product/1085",
+     "$14.95"
+    ],
+    [
+     "Microchip MCP6V32 op-amp (\u00d72)",
+     "https://www.microchipdirect.com/product/MCP6V32",
+     "$2.25 each"
+    ]
+   ],
+   "job": "Measures how much 1610 nm short-wave infrared light the shrubs reflect, one reading per spot, plus the sunlight coming down.",
+   "why": "Water in leaves absorbs strongly near 1600 nm, so reflectance in this band drops as shrubs lose water; it is the standard leaf-water band. A camera for this band costs $5,650 or more (LUCID Triton SWIR) or rents for $2,250 a week, so for the first flights we build a two-channel sensor: one diode looks down through a 20\u00b0 tube (a 21 m spot at 60 m), one looks up through a diffuser to read the sunlight. About $410 in parts plus $25 of small parts.",
+   "instead": "A SWIR camera through the companies we emailed (LUCID, Tech Imaging rental, SILIOS, Spectral Devices): images instead of spots, $2,250 a week to $30,000.",
+   "source": "Hunt and Rock 1989, Ceccato et al. 2001 (leaf water in the short-wave infrared); SPOT_SENSOR_CIRCUIT doc; prices BEST_PRICES 10 Nov",
+   "connects": [
+    [
+     "payload_computer",
+     "I2C"
+    ]
+   ],
+   "nodes": [
+    "spot_sensor"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 483
+  },
+  {
+   "id": "air_sensor",
+   "name": "Air temperature and humidity: Sensirion SHT45",
+   "system": "payload",
+   "tier": "minimum",
+   "qty": 1,
+   "status": "buy",
+   "price": 12.5,
+   "mass": 5,
+   "size": "25 \u00d7 18 mm board in a small printed sun shield",
+   "power_w": 0,
+   "box": {
+    "c": [
+     20,
+     0,
+     10
+    ],
+    "dims": [
+     25,
+     18,
+     12
+    ]
+   },
+   "buy": [
+    [
+     "Adafruit SHT45 (STEMMA QT)",
+     "https://www.adafruit.com/product/5665",
+     "$12.50"
+    ]
+   ],
+   "job": "Measures the air temperature and humidity at the drone, every flight.",
+   "why": "Leaf temperature only means stress when compared with the air around it and how dry that air is (vapour pressure deficit). \u00b10.1 \u00b0C and \u00b11 % humidity. It is checked against the ground weather meter in the shade before each flight.",
+   "instead": "Weather meter on the ground only: it misses the air at flight height.",
+   "source": "Adafruit SHT45 page (read 18 Nov); Idso et al. 1981",
+   "connects": [
+    [
+     "payload_computer",
+     "I2C"
+    ]
+   ],
+   "nodes": [
+    "air_sensor"
+   ],
+   "systemName": "Mission sensors",
+   "color": "#1f7a72",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 508
   }
  ],
  "systems": {
@@ -888,6 +1232,10 @@
   "airframe": {
    "name": "Airframe",
    "color": "#b9bcb4"
+  },
+  "payload": {
+   "name": "Mission sensors",
+   "color": "#1f7a72"
   }
  }
 }

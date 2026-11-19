@@ -101,9 +101,43 @@ def status_row():
             ("Loiter time, 20 % reserve left", f"{val('tloit_sl'):.0f} min", "at least 80 min", val("tloit_sl") >= 80),
             ("Survey flights per charge", f"{val('flights_pack'):.1f}", "at least 3", val("flights_pack") >= 3),
             ("Stall speed, clean wing", f"{val('Vs_sl'):.1f} m/s", "at most 15 m/s", val("Vs_sl") <= 15),
-            ("Aircraft cost", f"${val('cost_total'):,.0f}", "at most $3,000", val("cost_total") <= 3000)]
+            ("Aircraft cost", f"${val('cost_total'):,.0f}", "at most $3,000", val("cost_total") <= 3000),
+            ("Aircraft + mission sensors", f"${val('cost_all'):,.0f}", "stretch $4,000–5,000", val("cost_all") <= 4000)]
     tr = "".join(f'<tr><td>{a}</td><td class="num">{b}</td><td>{c}</td><td class="{"ok" if ok else "no"}">{"meets it" if ok else "short"}</td></tr>' for a, b, c, ok in rows)
     return f'<table class="status"><thead><tr><th>Requirement</th><th class="num">Estimate</th><th>Target</th><th>Result</th></tr></thead><tbody>{tr}</tbody></table>'
+
+
+TIER = {"minimum": "first flights", "add": "worth adding", "later": "later"}
+
+
+def cost_txt(p):
+    return "owned" if p["status"].startswith("reuse") else f"${p['price']:,.0f}"
+
+
+def payload_section():
+    pay = [p for p in PARTS if p["system"] == "payload"]
+    tr = "".join(f'<tr data-id="{p["id"]}" tabindex="0"><td>{E(p["name"].split(":")[0])}</td><td>{E(p["job"])}</td><td class="num">{p["mass"]:.0f} g</td>'
+                 f'<td class="num">{(f"{p['power_w']:g} W" if p.get("power_w") else "under 0.1 W")}</td><td class="num">{cost_txt(p)}</td></tr>' for p in pay)
+    return f"""<section id="sensors"><h2>What the drone carries for the mission</h2>
+<p>The parts above only make the drone fly. To see shrubs lose water between dawn and midday it needs to measure three things over the same
+plants on every flight: how warm the leaves are, how much short-wave infrared they reflect, and where every shrub is. These are the
+sensors for the first mission flights. Click a row to see it on the drone.</p>
+<div class="tablewrap"><table class="parts"><thead><tr><th>Sensor</th><th>What it does</th><th class="num">Mass</th><th class="num">Power</th><th class="num">Price</th></tr></thead>
+<tbody>{tr}<tr class="tot"><td>Total</td><td></td><td class="num">{val('m_pay_g'):.0f} g</td><td class="num">{val('P_payload'):.0f} W</td><td class="num">${val('cost_sensors'):,.0f}</td></tr></tbody></table></div>
+<p class="small">Mass and power go into the takeoff mass and the energy budget ({sheet('02_Mass_and_CG', 'Mass_CG')}, {sheet('04_Propulsion_Battery_Energy', 'Mission_Energy')}). With them on board: takeoff mass {val('m_to'):.2f} kg, hot-day hover thrust {val('TW_hot'):.2f} times the weight, loiter {val('tloit_sl'):.0f} min.</p>
+<h3>On the ground, every field day</h3>
+<table class="plain"><thead><tr><th>Item</th><th>Why</th><th>Cost</th></tr></thead><tbody>
+<tr><td>1610 nm reference panel (white PTFE sheet, measured once on a lab spectrometer)</td><td>Turns the spot sensor's readings into reflectance and catches drift between dawn and midday. Flown over before and after each flight.</td><td>about $40, not priced</td></tr>
+<tr><td>Warm and cool thermal targets: 2–3 insulated water tubs, each with a logging probe</td><td>The Lepton reads only to about ±5 °C; targets of known temperature in every flight correct it (Aragon et al. 2020 cut errors to about 1 °C this way).</td><td>about $350, not priced</td></tr>
+<tr><td>Weather meter on a tripod (Kestrel 5500 or an SHT45 logger)</td><td>Air temperature, humidity and wind at the site through the day; the drone's air sensor is checked against it.</td><td>$449 (Kestrel) or about $40</td></tr>
+<tr><td>Ground targets visible in both thermal and colour (black and foil squares)</td><td>Lines up the dawn and midday images so the same shrubs are compared.</td><td>about $120, own build</td></tr>
+</tbody></table>
+<h3>Not decided yet</h3>
+<ul class="open">
+<li><b>A SWIR camera</b> instead of the spot sensor: images of every shrub instead of one reading per 21 m spot. $2,250 a week to rent, $5,650 and up to buy; asked several companies.</li>
+<li><b>A near-infrared reference band</b> (about 860 nm, a cheap silicon photodiode as a third channel). Pairing a water band with a near-infrared band is the usual leaf-water index; filter not priced yet.</li>
+<li><b>Centimetre GPS (RTK)</b> to find the same shrub on every flight without ground targets. About $3,000; later.</li>
+</ul></section>"""
 
 
 # ------------------------------------------------------------------ index: the drone explorer
@@ -127,11 +161,11 @@ Click any part on the drone or in the list to see what it does, why we chose it,
 <section class="explorer">
   <div class="viewer"><div class="viewbar"><div class="mapbar" role="group" aria-label="Flight mode"><button type="button" data-mode="hover">Hover</button><button type="button" data-mode="cruise">Cruise</button><button type="button" data-mode="still">Still</button></div>
   <button type="button" id="reset" class="plainbtn">Whole drone</button></div>
-  <div class="picks" role="group" aria-label="Show a part"><span>Show:</span><button type="button" data-pick="battery">Battery</button><button type="button" data-pick="motor_lift">Lift motors</button><button type="button" data-pick="motor_pusher">Pusher</button><button type="button" data-pick="pixhawk">Flight controller</button><button type="button" data-pick="wing">Wing</button></div>
+  <div class="picks" role="group" aria-label="Show a part"><span>Show:</span><button type="button" data-pick="battery">Battery</button><button type="button" data-pick="motor_lift">Lift motors</button><button type="button" data-pick="motor_pusher">Pusher</button><button type="button" data-pick="pixhawk">Flight controller</button><button type="button" data-pick="wing">Wing</button><button type="button" data-pick="thermal_cam" class="sens">Thermal camera</button><button type="button" data-pick="spot_sensor" class="sens">1610 nm sensor</button><button type="button" data-pick="rgb_cam" class="sens">Colour camera</button></div>
   <div class="viewwrap"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div><div id="tip" class="tip" hidden></div></div>
   <div class="legend">{''.join(f'<span><i style="--c:{c}"></i>{E(n)}</span>' for k, (n, c) in SYSTEMS.items())}</div>
   <p class="hint">Drag to turn, scroll to zoom. Hover spins the lift propellers; Cruise parks them along the booms and runs the pusher. Every part sits at its CAD position and size.</p></div>
-  <aside id="detail" class="detail" aria-live="polite"><h2>Six systems</h2>
+  <aside id="detail" class="detail" aria-live="polite"><h2>Seven systems</h2>
   <p>Pick a part on the drone or below; it turns purple and lines show what it is wired or bolted to.</p>
   {''.join(f'<h3><span class="key" style="--c:{SYSTEMS[k][1]}"></span>{E(SYSTEMS[k][0])}</h3><p>{E(t)}</p>' for k, t in [
     ("power", "Battery, power module and servo regulator: 648 Wh at 21.6 V, about 56 A in a hot hover."),
@@ -139,9 +173,11 @@ Click any part on the drone or in the list to see what it does, why we chose it,
     ("cruise", "The pusher that flies the drone on the wing over the plot."),
     ("control", "Flight controller, GPS, airspeed, radios and Remote ID."),
     ("surfaces", "Four servos for the ailerons and the arch tail."),
-    ("airframe", f"Printed wing, fuselage and tail on carbon tubes. Takeoff mass {val('m_to'):.2f} kg.")])}</aside>
+    ("airframe", f"Printed wing, fuselage and tail on carbon tubes. Takeoff mass {val('m_to'):.2f} kg."),
+    ("payload", f"What the mission needs: thermal camera, 1610 nm spot sensor, colour camera, air sensor and the computer that logs them. {val('m_pay_g'):.0f} g, {val('P_payload'):.0f} W.")])}</aside>
 </section>
 <section><h2>Requirements</h2>{status_row()}</section>
+{payload_section()}
 <section><h2>Every part</h2>
 <div class="tablewrap"><table class="parts"><thead><tr><th>Part</th><th class="num">Qty</th><th>Status</th><th class="num">Unit price</th><th class="num">Mass each</th><th>Buy</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>

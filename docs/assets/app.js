@@ -26,7 +26,7 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8678, 2.0));
 const sun = new THREE.DirectionalLight(0xffffff, 1.8); sun.position.set(-3, 6, 2); scene.add(sun);
 const root = new THREE.Group(); root.rotation.x = -Math.PI / 2; scene.add(root);   // CAD: x aft, y right, z up
 
-const meshesByPart = {}, pickables = [], base = new Map();
+const meshesByPart = {}, pickables = [], base = new Map(), sizeOf = {};
 function register(mesh, pid, sys, opacity = 1) {
   const col = new THREE.Color(data.systems[sys].color);
   mesh.material = new THREE.MeshStandardMaterial({ color: col, roughness: 0.75, metalness: sys === 'airframe' ? 0 : 0.15, transparent: true, opacity });
@@ -101,6 +101,25 @@ const builders = {
   pitot(c, s) { const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z))); const t = M(cylX(0.003, 0.16)); t.position.set(-s.x / 2 - 0.08, 0, 0); g.add(t); return g; },
   servo(c, s) { const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z))); const h = M(new THREE.BoxGeometry(s.x * 0.15, s.y * 0.55, s.z * 0.25)); h.position.set(s.x * 0.3, s.y * 0.3, s.z * 0.55); g.add(h); return g; },
   box(c, s) { return M(new THREE.BoxGeometry(s.x, s.y, s.z)); },
+  camera(c, s) {                      // body with a lens looking down
+    const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z * 0.6)));
+    const l = M(cylZ(Math.min(s.x, s.y) * 0.3, s.z * 0.45)); l.position.z = -s.z * 0.5; g.add(l); return g;
+  },
+  thermal(c, s) {                     // board + small core with a dark window looking down
+    const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z * 0.5)));
+    const core = M(new THREE.BoxGeometry(s.x * 0.35, s.y * 0.45, s.z * 0.4)); core.position.z = -s.z * 0.42; g.add(core);
+    const win = M(cylZ(s.x * 0.12, s.z * 0.12)); win.position.z = -s.z * 0.66; g.add(win); return g;
+  },
+  spot(c, s) {                        // sensor head: view tube down, diffuser dome up
+    const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z * 0.5)));
+    const tube = M(cylZ(s.y * 0.18, s.z * 0.5)); tube.position.z = -s.z * 0.45; g.add(tube);
+    const d = M(new THREE.SphereGeometry(s.y * 0.2, 20, 10, 0, Math.PI * 2, 0, Math.PI / 2)); d.rotation.x = Math.PI / 2; d.position.z = s.z * 0.25; g.add(d); return g;
+  },
+  computer(c, s) {                    // board on a heatsink with a fan
+    const g = new THREE.Group(); g.add(M(new THREE.BoxGeometry(s.x, s.y, s.z * 0.25)));
+    const hs = M(new THREE.BoxGeometry(s.x * 0.55, s.y * 0.6, s.z * 0.55)); hs.position.z = s.z * 0.38; g.add(hs);
+    const fan = M(cylZ(s.y * 0.25, s.z * 0.12)); fan.position.z = s.z * 0.7; g.add(fan); return g;
+  },
 };
 function builderFor(node) {
   if (node.startsWith('motor_MN5008')) return ['motor'];
@@ -139,9 +158,19 @@ for (const [o, node, pid, sys, [kind, axis]] of swaps) {
   const bb = o.geometry.boundingBox, c = bb.getCenter(new THREE.Vector3()), s = bb.getSize(new THREE.Vector3());
   const obj = builders[kind](c, s, axis);
   obj.position.copy(c); obj.userData.node = node;
+  if (pid && !sizeOf[pid]) sizeOf[pid] = s.clone();
   root.add(obj); o.visible = false;
   obj.traverse(m => { if (m.isMesh) register(m, pid, sys, kind === 'prop' ? 0.85 : 1); });
   if (obj.userData.spin) spinning.push(obj);
+}
+
+const SHAPE = { thermal_cam: 'thermal', rgb_cam: 'camera', spot_sensor: 'spot', payload_computer: 'computer' };
+for (const p of data.parts) {
+  if (!p.box || meshesByPart[p.id]) continue;
+  const c = new THREE.Vector3(...p.box.c).multiplyScalar(0.001), s = new THREE.Vector3(...p.box.dims).multiplyScalar(0.001);
+  const obj = builders[SHAPE[p.id] || 'box'](c, s); obj.position.copy(c);
+  root.add(obj); obj.traverse(m => { if (m.isMesh) register(m, p.id, p.system, 1); });
+  sizeOf[p.id] = s;
 }
 
 // ---------- camera framing and fly-to
@@ -158,7 +187,7 @@ function flyTo(target, dist) {
 
 // ---------- selection
 const boxOf = pid => { const b = new THREE.Box3(); (meshesByPart[pid] || []).forEach(m => b.expandByObject(m)); return b; };
-let lines = null, selected = null;
+let lines = null, selected = null, sizeBox = null;
 function select(pid, fromHash = false) {
   selected = pid || null;
   base.forEach((b, m) => {
@@ -166,6 +195,7 @@ function select(pid, fromHash = false) {
     m.material.opacity = !pid ? b.opacity : (m.userData.sys === 'airframe' && m.userData.pid !== pid ? 0.14 : Math.min(b.opacity, 0.3));
   });
   if (lines) { scene.remove(lines); lines.geometry.dispose(); lines = null; }
+  if (sizeBox) { scene.remove(sizeBox); sizeBox = null; }
   document.querySelectorAll('tr[data-id]').forEach(r => r.classList.toggle('sel', r.dataset.id === pid));
   if (!pid) { flyTo(home, homePos.distanceTo(home)); return; }
   const p = parts[pid], pts = [];
@@ -183,6 +213,7 @@ function select(pid, fromHash = false) {
   (meshesByPart[pid] || []).forEach(m => { m.material.color.copy(PURPLE); m.material.opacity = 1; m.material.depthTest = false; m.renderOrder = 10; });
   if (pts.length) { lines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: PURPLE, depthTest: false })); lines.renderOrder = 11; scene.add(lines); }
   const b = boxOf(pid), size = b.getSize(new THREE.Vector3()).length();
+  if (p.system !== 'airframe' && (meshesByPart[pid] || []).length) { sizeBox = new THREE.Box3Helper(b, PURPLE); sizeBox.material.depthTest = false; sizeBox.renderOrder = 12; scene.add(sizeBox); }
   flyTo(b.getCenter(new THREE.Vector3()), Math.max(0.7, Math.min(3.4, size * 3.4)));
   showDetail(p);
   if (!fromHash) history.replaceState(null, '', '#' + pid);
@@ -201,7 +232,8 @@ function showDetail(p) {
   const conn = p.connects.length ? '<ul>' + p.connects.map(([to, how]) => `<li><button class="link" data-go="${to}">${esc(parts[to]?.name || to)}</button>: ${esc(how)}</li>`).join('') + '</ul>' : '<p>Nothing wired; it runs on its own.</p>';
   const buy = p.buy.length ? '<ul>' + p.buy.map(([s, u, pr]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(s)}</a>, ${esc(pr)}</li>`).join('') + '</ul>' : '<p>Not bought.</p>';
   document.getElementById('detail').innerHTML = `<h2>${esc(p.name)}</h2>
-   <div class="meta"><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}. ${esc(p.status)}. ${p.qty} × ${price}${price ? ', ' : ''}${p.mass} g each.</div>
+   <div class="meta"><span class="key" style="--c:${p.color}"></span>${esc(p.systemName)}. ${esc(p.status)}. ${p.qty} × ${price}${price ? ', ' : ''}${p.mass} g each${p.power_w ? `, ${p.power_w} W` : ''}.</div>
+   ${p.size || sizeOf[p.id] ? `<p class="size"><b>Size</b> ${esc(p.size || '')}${sizeOf[p.id] ? `${p.size ? '. ' : ''}Drawn at its CAD size: ${[sizeOf[p.id].x, sizeOf[p.id].y, sizeOf[p.id].z].map(v => Math.round(v * 1000)).join(' × ')} mm (outlined).` : ''}</p>` : ''}
    <h3>What it does</h3><p>${esc(p.job)}</p><h3>Why we chose it</h3><p>${esc(p.why)}</p>${calcBlock(p)}
    <h3>Connects to</h3>${conn}<h3>Where to buy</h3>${buy}
    ${p.instead ? `<h3>Considered instead</h3><p>${esc(p.instead)}</p>` : ''}${p.source ? `<p class="small">Numbers from: ${esc(p.source)}</p>` : ''}
