@@ -37,7 +37,7 @@
    "systemName": "Power",
    "color": "#8a5a2b",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 24,
+   "editLine": 25,
    "raw": {
     "id": "battery",
     "name": "Battery: 6S6P pack of Molicel P50B cells",
@@ -96,21 +96,21 @@
    "name": "Power module: Holybro PM07",
    "system": "power",
    "qty": 1,
-   "status": "reuse (Sky4)",
+   "status": "buy (in the Pixhawk 6C bundle)",
    "price": 0,
    "mass": 25,
    "size": "68 \u00d7 50 \u00d7 8 mm (Holybro)",
    "buy": [
     [
-     "Holybro (new, if needed)",
-     "https://holybro.com/products/pm07-power-module",
-     "$43.99"
+     "Holybro (in the Pixhawk 6C bundle; alone $43.99)",
+     "https://holybro.com/products/pixhawk-4-power-module-pm07",
+     "in bundle"
     ]
    ],
    "job": "Splits battery power to the five speed controllers and tells the flight controller the battery voltage and current.",
    "why": "Rated 90 A continuous. Hot-day hover draws 55 A. Its stock 30 A input wire is replaced by two 14 AWG wires and an XT90.",
    "instead": "PM08D (higher rating) if the wiring tests run hot.",
-   "source": "Holybro PM07 page; sheet 04 Lift_Hover",
+   "source": "Holybro PM07 page (90 A continuous, 140 A for 60 s), read 19 Nov; sheet 04 Lift_Hover",
    "connects": [
     [
      "battery",
@@ -139,27 +139,27 @@
    "systemName": "Power",
    "color": "#8a5a2b",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 44,
+   "editLine": 45,
    "raw": {
     "id": "pm07",
     "name": "Power module: Holybro PM07",
     "system": "power",
     "qty": 1,
-    "status": "reuse (Sky4)",
+    "status": "buy (in the Pixhawk 6C bundle)",
     "price": 0,
     "mass": 25,
     "size": "68 \u00d7 50 \u00d7 8 mm (Holybro)",
     "buy": [
      {
-      "store": "Holybro (new, if needed)",
-      "link": "https://holybro.com/products/pm07-power-module",
-      "price": "$43.99"
+      "store": "Holybro (in the Pixhawk 6C bundle; alone $43.99)",
+      "link": "https://holybro.com/products/pixhawk-4-power-module-pm07",
+      "price": "in bundle"
      }
     ],
     "job": "Splits battery power to the five speed controllers and tells the flight controller the battery voltage and current.",
     "why": "Rated 90 A continuous. Hot-day hover draws {Ipack_hot} A. Its stock 30 A input wire is replaced by two 14 AWG wires and an XT90.",
     "instead": "PM08D (higher rating) if the wiring tests run hot.",
-    "source": "Holybro PM07 page; sheet 04 Lift_Hover",
+    "source": "Holybro PM07 page (90 A continuous, 140 A for 60 s), read 19 Nov; sheet 04 Lift_Hover",
     "connects": [
      [
       "battery",
@@ -213,7 +213,7 @@
    ],
    "job": "Powers the four servos from the battery.",
    "why": "The ALPHA speed controllers have no built-in servo supply, so the servos need their own. Four servos at stall draw a few amps.",
-   "instead": "The Sky4 regulator, if its label shows 5 A or more.",
+   "instead": "A 5 A regulator of another make, if the Castle is out of stock.",
    "source": "Electronics sheet",
    "connects": [
     [
@@ -231,7 +231,7 @@
    "systemName": "Power",
    "color": "#8a5a2b",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 63,
+   "editLine": 64,
    "raw": {
     "id": "servo_reg",
     "name": "Servo regulator, 5\u20136 V, at least 5 A",
@@ -249,7 +249,7 @@
     ],
     "job": "Powers the four servos from the battery.",
     "why": "The ALPHA speed controllers have no built-in servo supply, so the servos need their own. Four servos at stall draw a few amps.",
-    "instead": "The Sky4 regulator, if its label shows 5 A or more.",
+    "instead": "A 5 A regulator of another make, if the Castle is out of stock.",
     "source": "Electronics sheet",
     "connects": [
      [
@@ -294,7 +294,7 @@
    ],
    "job": "Lifts the drone straight up for take-off and landing, and holds it in a hover.",
    "why": "T-Motor's own test table for this motor with an 18 inch prop on 6 cells: 4.2 kg of thrust at full throttle. Our drone weighs 8.7 kg, so each motor carries 2,178 g in a hover, about 55% throttle at sea level and 64% on a hot day at 800 m. Total thrust is 1.57 times the weight on that hot day, above the 1.5 we require for control in gusts. Each motor draws 13.5 A in a hot hover and 33.5 A at full throttle, inside the 40 A speed controller.",
-   "instead": "The SunnySky V4014 motors we already own from Sky4: only 1.20 times the weight on a hot day, below the 1.5 rule.",
+   "instead": "SunnySky V4014 KV330 (Sky4's motors, which we do not have): only 1.20 times the weight on a hot day anyway, below the 1.5 rule.",
    "source": "store.tmotor.com MN5008 test table (read 30 Oct); sheet 04 Lift_Hover",
    "connects": [
     [
@@ -315,7 +315,7 @@
    "systemName": "Lift (hover)",
    "color": "#22221f",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 81,
+   "editLine": 82,
    "raw": {
     "id": "motor_lift",
     "name": "Lift motor: T-Motor MN5008 KV340",
@@ -344,7 +344,7 @@
     ],
     "job": "Lifts the drone straight up for take-off and landing, and holds it in a hover.",
     "why": "T-Motor's own test table for this motor with an 18 inch prop on 6 cells: 4.2 kg of thrust at full throttle. Our drone weighs {m_to} kg, so each motor carries {Thov_sl} g in a hover, about {throttle_sl} throttle at sea level and {throttle_hot} on a hot day at 800 m. Total thrust is {TW_hot} times the weight on that hot day, above the 1.5 we require for control in gusts. Each motor draws {Imot_hot} A in a hot hover and {I_full} A at full throttle, inside the 40 A speed controller.",
-    "instead": "The SunnySky V4014 motors we already own from Sky4: only 1.20 times the weight on a hot day, below the 1.5 rule.",
+    "instead": "SunnySky V4014 KV330 (Sky4's motors, which we do not have): only 1.20 times the weight on a hot day anyway, below the 1.5 rule.",
     "source": "store.tmotor.com MN5008 test table (read 30 Oct); sheet 04 Lift_Hover",
     "connects": [
      [
@@ -412,7 +412,7 @@
    "systemName": "Lift (hover)",
    "color": "#22221f",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 102,
+   "editLine": 103,
    "raw": {
     "id": "prop_lift",
     "name": "Lift propeller: T-Motor P18x6.1 (pair)",
@@ -479,7 +479,7 @@
    ],
    "job": "Drives one lift motor at the speed the flight controller asks for. Sits in the boom nacelle next to its motor.",
    "why": "Made for this motor class on 6 cells. Rated 40 A against 33.5 A at full throttle. The US price beats the China price once duty is paid.",
-   "instead": "Sky4's Tekko32: may work on 6 cells, model not yet checked. One four-in-one board would also put all four lift motors on one failure.",
+   "instead": "A four-in-one board would put all four lift motors on one failure.",
    "source": "Electronics sheet; T-Motor table",
    "connects": [
     [
@@ -504,7 +504,7 @@
    "systemName": "Lift (hover)",
    "color": "#22221f",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 121,
+   "editLine": 122,
    "raw": {
     "id": "esc_lift",
     "name": "Speed controller: T-Motor ALPHA 40A 6S",
@@ -528,7 +528,7 @@
     ],
     "job": "Drives one lift motor at the speed the flight controller asks for. Sits in the boom nacelle next to its motor.",
     "why": "Made for this motor class on 6 cells. Rated 40 A against {I_full} A at full throttle. The US price beats the China price once duty is paid.",
-    "instead": "Sky4's Tekko32: may work on 6 cells, model not yet checked. One four-in-one board would also put all four lift motors on one failure.",
+    "instead": "A four-in-one board would put all four lift motors on one failure.",
     "source": "Electronics sheet; T-Motor table",
     "connects": [
      [
@@ -606,7 +606,7 @@
    "systemName": "Cruise (pusher)",
    "color": "#6b6b66",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 141,
+   "editLine": 142,
    "raw": {
     "id": "motor_pusher",
     "name": "Pusher motor: T-Motor AT3520 KV550",
@@ -692,7 +692,7 @@
    "systemName": "Cruise (pusher)",
    "color": "#6b6b66",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 161,
+   "editLine": 162,
    "raw": {
     "id": "prop_pusher",
     "name": "Pusher propeller: APC 12x6E",
@@ -764,7 +764,7 @@
    "systemName": "Cruise (pusher)",
    "color": "#6b6b66",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 180,
+   "editLine": 181,
    "raw": {
     "id": "esc_pusher",
     "name": "Pusher speed controller: ALPHA 40A 6S",
@@ -806,24 +806,24 @@
   },
   {
    "id": "pixhawk",
-   "name": "Flight controller: Holybro Pixhawk 6C",
+   "name": "Flight controller: Holybro Pixhawk 6C (plastic case), bought with the PM07",
    "system": "control",
    "qty": 1,
-   "status": "reuse (Sky4)",
-   "price": 0,
-   "mass": 59,
+   "status": "buy",
+   "price": 242.99,
+   "mass": 34.6,
    "size": "84.8 \u00d7 44 \u00d7 12.4 mm (Holybro)",
    "buy": [
     [
-     "Holybro (new, if needed)",
+     "Holybro (Pixhawk 6C plastic + PM07 bundle)",
      "https://holybro.com/products/pixhawk-6c",
-     "from $199"
+     "$242.99"
     ]
    ],
    "job": "Flies the drone: reads the sensors, runs PX4's VTOL software, and commands the motors and servos.",
-   "why": "Owned, and PX4 supports quadplanes on it out of the box.",
-   "instead": "Our own flight-controller board is for Sky 3, not this drone.",
-   "source": "Electronics sheet",
+   "why": "PX4 supports quadplanes on it out of the box, and the CAD, wiring table and PX4 settings are drawn for it. The bundle with the PM07 power module costs $242.99; the aluminium case is sold out, and the plastic one is 25 g lighter.",
+   "instead": "Pixhawk 6C Mini with PM02 V3 ($197.99): the PM02 is rated 60 A continuous, too close to the {Ipack_hot} A hot-day hover. Matek H743-WING V3 (built-in 220 A current sensor and servo regulator, ArduPilot): cheaper and replaces the servo regulator, but hard to find in stock, often counterfeited, and the CAD and settings would change.",
+   "source": "Holybro store, read 19 Nov",
    "connects": [
     [
      "gnss",
@@ -864,27 +864,27 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 199,
+   "editLine": 200,
    "raw": {
     "id": "pixhawk",
-    "name": "Flight controller: Holybro Pixhawk 6C",
+    "name": "Flight controller: Holybro Pixhawk 6C (plastic case), bought with the PM07",
     "system": "control",
     "qty": 1,
-    "status": "reuse (Sky4)",
-    "price": 0,
-    "mass": 59,
+    "status": "buy",
+    "price": 242.99,
+    "mass": 34.6,
     "size": "84.8 \u00d7 44 \u00d7 12.4 mm (Holybro)",
     "buy": [
      {
-      "store": "Holybro (new, if needed)",
+      "store": "Holybro (Pixhawk 6C plastic + PM07 bundle)",
       "link": "https://holybro.com/products/pixhawk-6c",
-      "price": "from $199"
+      "price": "$242.99"
      }
     ],
     "job": "Flies the drone: reads the sensors, runs PX4's VTOL software, and commands the motors and servos.",
-    "why": "Owned, and PX4 supports quadplanes on it out of the box.",
-    "instead": "Our own flight-controller board is for Sky 3, not this drone.",
-    "source": "Electronics sheet",
+    "why": "PX4 supports quadplanes on it out of the box, and the CAD, wiring table and PX4 settings are drawn for it. The bundle with the PM07 power module costs $242.99; the aluminium case is sold out, and the plastic one is 25 g lighter.",
+    "instead": "Pixhawk 6C Mini with PM02 V3 ($197.99): the PM02 is rated 60 A continuous, too close to the {Ipack_hot} A hot-day hover. Matek H743-WING V3 (built-in 220 A current sensor and servo regulator, ArduPilot): cheaper and replaces the servo regulator, but hard to find in stock, often counterfeited, and the CAD and settings would change.",
+    "source": "Holybro store, read 19 Nov",
     "connects": [
      [
       "gnss",
@@ -926,24 +926,24 @@
   },
   {
    "id": "gnss",
-   "name": "GPS and compass: Holybro M9N",
+   "name": "GPS and compass: Holybro M10",
    "system": "control",
    "qty": 1,
-   "status": "reuse (Sky4)",
-   "price": 0,
+   "status": "buy",
+   "price": 43.99,
    "mass": 32,
    "size": "\u00d8 50 \u00d7 15 mm",
    "buy": [
     [
-     "Holybro (new, if needed)",
-     "https://holybro.com/products/m9n-gps",
-     "$54.99"
+     "Holybro M10 GPS (standard 10-pin)",
+     "https://holybro.com/products/m10-gps",
+     "$43.99"
     ]
    ],
    "job": "Position and heading.",
-   "why": "Owned. Mounted on the wing, away from the high-current wires that would disturb the compass.",
-   "instead": "",
-   "source": "",
+   "why": "Plugs straight into the Pixhawk's GPS port with its compass. Mounted on the wing, away from the high-current wires that would disturb the compass.",
+   "instead": "Holybro M9N ($54.99): older chip, $11 more.",
+   "source": "Holybro store, read 19 Nov",
    "connects": [
     [
      "pixhawk",
@@ -956,27 +956,27 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 218,
+   "editLine": 219,
    "raw": {
     "id": "gnss",
-    "name": "GPS and compass: Holybro M9N",
+    "name": "GPS and compass: Holybro M10",
     "system": "control",
     "qty": 1,
-    "status": "reuse (Sky4)",
-    "price": 0,
+    "status": "buy",
+    "price": 43.99,
     "mass": 32,
     "size": "\u00d8 50 \u00d7 15 mm",
     "buy": [
      {
-      "store": "Holybro (new, if needed)",
-      "link": "https://holybro.com/products/m9n-gps",
-      "price": "$54.99"
+      "store": "Holybro M10 GPS (standard 10-pin)",
+      "link": "https://holybro.com/products/m10-gps",
+      "price": "$43.99"
      }
     ],
     "job": "Position and heading.",
-    "why": "Owned. Mounted on the wing, away from the high-current wires that would disturb the compass.",
-    "instead": "",
-    "source": "",
+    "why": "Plugs straight into the Pixhawk's GPS port with its compass. Mounted on the wing, away from the high-current wires that would disturb the compass.",
+    "instead": "Holybro M9N ($54.99): older chip, $11 more.",
+    "source": "Holybro store, read 19 Nov",
     "connects": [
      [
       "pixhawk",
@@ -990,17 +990,23 @@
   },
   {
    "id": "airspeed",
-   "name": "Airspeed sensor (Sky4)",
+   "name": "Airspeed sensor: Holybro MS5525DSO with PT40 pitot tube",
    "system": "control",
    "qty": 1,
-   "status": "reuse (Sky4)",
-   "price": 0,
-   "mass": 15,
-   "buy": [],
+   "status": "buy",
+   "price": 59.99,
+   "mass": 17.4,
+   "buy": [
+    [
+     "Holybro (MS5525DSO / PT40)",
+     "https://holybro.com/products/digital-air-speed-sensor-standard",
+     "$59.99"
+    ]
+   ],
    "job": "Measures airspeed so the flight controller knows when the wing can carry the drone and keeps it above stall.",
-   "why": "A quadplane needs it for transitions; we own one.",
-   "instead": "",
-   "source": "",
+   "why": "A quadplane needs airspeed for transitions and to stay above stall in turns. PX4 reads this sensor directly over I2C.",
+   "instead": "MS4525DO / PT40: same job, sold out. AS1318C: cheaper, sold out with a pitot tube.",
+   "source": "Holybro store, read 19 Nov",
    "connects": [
     [
      "pixhawk",
@@ -1013,20 +1019,26 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 237,
+   "editLine": 238,
    "raw": {
     "id": "airspeed",
-    "name": "Airspeed sensor (Sky4)",
+    "name": "Airspeed sensor: Holybro MS5525DSO with PT40 pitot tube",
     "system": "control",
     "qty": 1,
-    "status": "reuse (Sky4)",
-    "price": 0,
-    "mass": 15,
-    "buy": [],
+    "status": "buy",
+    "price": 59.99,
+    "mass": 17.4,
+    "buy": [
+     {
+      "store": "Holybro (MS5525DSO / PT40)",
+      "link": "https://holybro.com/products/digital-air-speed-sensor-standard",
+      "price": "$59.99"
+     }
+    ],
     "job": "Measures airspeed so the flight controller knows when the wing can carry the drone and keeps it above stall.",
-    "why": "A quadplane needs it for transitions; we own one.",
-    "instead": "",
-    "source": "",
+    "why": "A quadplane needs airspeed for transitions and to stay above stall in turns. PX4 reads this sensor directly over I2C.",
+    "instead": "MS4525DO / PT40: same job, sold out. AS1318C: cheaper, sold out with a pitot tube.",
+    "source": "Holybro store, read 19 Nov",
     "connects": [
      [
       "pixhawk",
@@ -1040,23 +1052,28 @@
   },
   {
    "id": "telemetry",
-   "name": "Telemetry radio (Sky4)",
+   "name": "Telemetry radios: Holybro SiK V3 915 MHz (pair)",
    "system": "control",
    "qty": 1,
-   "status": "reuse (Sky4)",
-   "price": 0,
-   "mass": 30,
+   "status": "buy",
+   "price": 58.99,
+   "mass": 23.5,
    "buy": [
     [
-     "Holybro SiK V3 (new, if needed)",
+     "Holybro (pair: one on the drone, one on the laptop)",
      "https://holybro.com/products/sik-telemetry-radio-v3",
-     "about $59"
+     "$58.99"
+    ],
+    [
+     "ReadyMadeRC (US, 2 pcs)",
+     "https://www.readymaderc.com/products/details/86245-holybro-sik-telemetry-radio-v3-100mw-915mhz-2-pcs",
+     "$75.78"
     ]
    ],
    "job": "Two-way link to the ground station laptop.",
-   "why": "We fly within about 1 km, well inside its range.",
-   "instead": "",
-   "source": "",
+   "why": "Two-way link to the ground station laptop (QGroundControl). We fly within about 1 km, well inside its range. The box holds both radios.",
+   "instead": "SiK 1 W long range ($175 a pair): more range than we may use.",
+   "source": "Holybro store, read 19 Nov",
    "connects": [
     [
      "pixhawk",
@@ -1069,26 +1086,31 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 253,
+   "editLine": 256,
    "raw": {
     "id": "telemetry",
-    "name": "Telemetry radio (Sky4)",
+    "name": "Telemetry radios: Holybro SiK V3 915 MHz (pair)",
     "system": "control",
     "qty": 1,
-    "status": "reuse (Sky4)",
-    "price": 0,
-    "mass": 30,
+    "status": "buy",
+    "price": 58.99,
+    "mass": 23.5,
     "buy": [
      {
-      "store": "Holybro SiK V3 (new, if needed)",
+      "store": "Holybro (pair: one on the drone, one on the laptop)",
       "link": "https://holybro.com/products/sik-telemetry-radio-v3",
-      "price": "about $59"
+      "price": "$58.99"
+     },
+     {
+      "store": "ReadyMadeRC (US, 2 pcs)",
+      "link": "https://www.readymaderc.com/products/details/86245-holybro-sik-telemetry-radio-v3-100mw-915mhz-2-pcs",
+      "price": "$75.78"
      }
     ],
     "job": "Two-way link to the ground station laptop.",
-    "why": "We fly within about 1 km, well inside its range.",
-    "instead": "",
-    "source": "",
+    "why": "Two-way link to the ground station laptop (QGroundControl). We fly within about 1 km, well inside its range. The box holds both radios.",
+    "instead": "SiK 1 W long range ($175 a pair): more range than we may use.",
+    "source": "Holybro store, read 19 Nov",
     "connects": [
      [
       "pixhawk",
@@ -1102,17 +1124,23 @@
   },
   {
    "id": "rc_rx",
-   "name": "RC receiver (Sky4)",
+   "name": "RC receiver: RadioMaster RP2 V2 (ExpressLRS)",
    "system": "control",
    "qty": 1,
-   "status": "reuse (Sky4)",
-   "price": 0,
-   "mass": 6,
-   "buy": [],
+   "status": "buy",
+   "price": 24.99,
+   "mass": 1,
+   "buy": [
+    [
+     "RaceDayQuads",
+     "https://www.racedayquads.com/products/radiomaster-rp2-2-4ghz-elrs-nano-receiver-ceramic-antenna",
+     "$24.99"
+    ]
+   ],
    "job": "Manual control link for the safety pilot.",
-   "why": "Owned, if Sky4 has one; otherwise a transmitter and receiver cost about $154.",
+   "why": "Manual control link for the safety pilot, paired with the RadioMaster Pocket transmitter. PX4 reads its CRSF signal on a serial port.",
    "instead": "",
-   "source": "",
+   "source": "RaceDayQuads page, read 19 Nov",
    "connects": [
     [
      "pixhawk",
@@ -1125,20 +1153,26 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 271,
+   "editLine": 275,
    "raw": {
     "id": "rc_rx",
-    "name": "RC receiver (Sky4)",
+    "name": "RC receiver: RadioMaster RP2 V2 (ExpressLRS)",
     "system": "control",
     "qty": 1,
-    "status": "reuse (Sky4)",
-    "price": 0,
-    "mass": 6,
-    "buy": [],
+    "status": "buy",
+    "price": 24.99,
+    "mass": 1,
+    "buy": [
+     {
+      "store": "RaceDayQuads",
+      "link": "https://www.racedayquads.com/products/radiomaster-rp2-2-4ghz-elrs-nano-receiver-ceramic-antenna",
+      "price": "$24.99"
+     }
+    ],
     "job": "Manual control link for the safety pilot.",
-    "why": "Owned, if Sky4 has one; otherwise a transmitter and receiver cost about $154.",
+    "why": "Manual control link for the safety pilot, paired with the RadioMaster Pocket transmitter. PX4 reads its CRSF signal on a serial port.",
     "instead": "",
-    "source": "",
+    "source": "RaceDayQuads page, read 19 Nov",
     "connects": [
      [
       "pixhawk",
@@ -1177,7 +1211,7 @@
    "systemName": "Flight control",
    "color": "#2f5d8a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 287,
+   "editLine": 293,
    "raw": {
     "id": "remote_id",
     "name": "Remote ID: Ruko R111S",
@@ -1248,7 +1282,7 @@
    "systemName": "Control surfaces",
    "color": "#4e7a3a",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 306,
+   "editLine": 312,
    "raw": {
     "id": "servos",
     "name": "Servo: KST X10 V2",
@@ -1333,7 +1367,7 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 326,
+   "editLine": 332,
    "raw": {
     "id": "wing",
     "name": "Wing: printed LW-ASA on carbon spars",
@@ -1415,7 +1449,7 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 344,
+   "editLine": 350,
    "raw": {
     "id": "booms",
     "name": "Booms: 30 mm carbon tubes with nacelles",
@@ -1482,7 +1516,7 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 362,
+   "editLine": 368,
    "raw": {
     "id": "fuselage",
     "name": "Fuselage: printed shell",
@@ -1543,7 +1577,7 @@
    "systemName": "Airframe",
    "color": "#b9bcb4",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 378,
+   "editLine": 384,
    "raw": {
     "id": "tail",
     "name": "Arch tail",
@@ -1613,7 +1647,7 @@
    "why": "It runs the Raspberry Pi colour camera with its own driver, the thermal camera over USB, the spot sensor and air sensor over I2C, and reads time and position from the flight controller over a serial cable, so each reading is tagged with where the drone was. About 130 g lighter and 5 W less than the Jetson we own. Readings are tagged by time only; a 50 ms timing error is about 1 m along track at 19 m/s, so the camera trigger should also be logged by the flight controller.",
    "without": "Readings would have no time or position, so they could not be put on the map or matched between the dawn and midday flights.",
    "refs": [],
-   "instead": "The Jetson Orin Nano we own from Sky4 ($0, 176 g, 7\u201315 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it.",
+   "instead": "NVIDIA Jetson Orin Nano (about $250, 176 g, 7\u201315 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it.",
    "source": "Adafruit price (read 18 Nov); mass and power estimated until weighed",
    "connects": [
     [
@@ -1647,7 +1681,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 394,
+   "editLine": 400,
    "raw": {
     "id": "payload_computer",
     "name": "Payload computer: Raspberry Pi 5 (4 GB) with active cooler",
@@ -1687,7 +1721,7 @@
     "why": "It runs the Raspberry Pi colour camera with its own driver, the thermal camera over USB, the spot sensor and air sensor over I2C, and reads time and position from the flight controller over a serial cable, so each reading is tagged with where the drone was. About 130 g lighter and 5 W less than the Jetson we own. Readings are tagged by time only; a 50 ms timing error is about 1 m along track at 19 m/s, so the camera trigger should also be logged by the flight controller.",
     "without": "Readings would have no time or position, so they could not be put on the map or matched between the dawn and midday flights.",
     "refs": [],
-    "instead": "The Jetson Orin Nano we own from Sky4 ($0, 176 g, 7\u201315 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it.",
+    "instead": "NVIDIA Jetson Orin Nano (about $250, 176 g, 7\u201315 W): worth it later for processing on board, but the Raspberry Pi camera has no stock driver on it.",
     "source": "Adafruit price (read 18 Nov); mass and power estimated until weighed",
     "connects": [
      [
@@ -1772,7 +1806,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 419,
+   "editLine": 425,
    "raw": {
     "id": "payload_power",
     "name": "Payload regulator: Pololu D36V50F5, 5 V 5.5 A",
@@ -1898,7 +1932,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 443,
+   "editLine": 449,
    "raw": {
     "id": "thermal_cam",
     "name": "Thermal camera: FLIR Lepton 3.5 on a PureThermal 3 board",
@@ -2026,7 +2060,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 473,
+   "editLine": 479,
    "raw": {
     "id": "rgb_cam",
     "name": "Colour camera: Raspberry Pi Global Shutter Camera, 6 mm lens (lens not priced)",
@@ -2159,7 +2193,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 499,
+   "editLine": 505,
    "raw": {
     "id": "spot_sensor",
     "name": "1610 nm spot sensor (built by us): two InGaAs photodiodes behind 1610 nm filters",
@@ -2292,7 +2326,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 530,
+   "editLine": 536,
    "raw": {
     "id": "air_sensor",
     "name": "Air temperature and humidity: Sensirion SHT45",
@@ -2405,7 +2439,7 @@
    "systemName": "Mission sensors",
    "color": "#1f7a72",
    "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
-   "editLine": 556,
+   "editLine": 562,
    "raw": {
     "id": "nir_channel",
     "name": "Near-infrared reference channel (850 nm) for the spot sensor",
@@ -2463,6 +2497,132 @@
      "nir_channel"
     ]
    }
+  },
+  {
+   "id": "rc_tx",
+   "name": "RC transmitter: RadioMaster Pocket (ExpressLRS), with two 18650 cells",
+   "system": "ground",
+   "qty": 1,
+   "status": "buy",
+   "price": 88.98,
+   "mass": 260,
+   "buy": [
+    [
+     "ReadyMadeRC (Pocket ELRS, mode 2, in stock)",
+     "https://www.readymaderc.com/products/details/85660-radiomaster-pocket-radio-controller-expresslrs-elrs-2-4ghz-charcoal-mode-2",
+     "$76.99"
+    ],
+    [
+     "RadioMaster (2 \u00d7 18650 cells; the radio ships without)",
+     "https://radiomasterrc.com/products/18650-3200mah-3-7v-battery-2pcs-for-tx16s-boxer-tx12-mt12-radios",
+     "$11.99"
+    ]
+   ],
+   "job": "The safety pilot's sticks: manual control and the switch between hover, transition and automatic flight.",
+   "why": "Cheapest ExpressLRS radio with the switches PX4 needs for flight modes; it talks to the RP2 receiver on the drone. Batteries are not included, so two 18650 cells are in the price.",
+   "instead": "RadioMaster Boxer or TX16S: bigger, nicer gimbals, about twice the price.",
+   "source": "ReadyMadeRC and RadioMaster pages, read 19 Nov",
+   "connects": [
+    [
+     "rc_rx",
+     "2.4 GHz ExpressLRS radio link"
+    ]
+   ],
+   "nodes": [],
+   "systemName": "Ground equipment",
+   "color": "#9a6b16",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 589,
+   "raw": {
+    "id": "rc_tx",
+    "name": "RC transmitter: RadioMaster Pocket (ExpressLRS), with two 18650 cells",
+    "system": "ground",
+    "qty": 1,
+    "status": "buy",
+    "price": 88.98,
+    "mass": 260,
+    "buy": [
+     {
+      "store": "ReadyMadeRC (Pocket ELRS, mode 2, in stock)",
+      "link": "https://www.readymaderc.com/products/details/85660-radiomaster-pocket-radio-controller-expresslrs-elrs-2-4ghz-charcoal-mode-2",
+      "price": "$76.99"
+     },
+     {
+      "store": "RadioMaster (2 \u00d7 18650 cells; the radio ships without)",
+      "link": "https://radiomasterrc.com/products/18650-3200mah-3-7v-battery-2pcs-for-tx16s-boxer-tx12-mt12-radios",
+      "price": "$11.99"
+     }
+    ],
+    "job": "The safety pilot's sticks: manual control and the switch between hover, transition and automatic flight.",
+    "why": "Cheapest ExpressLRS radio with the switches PX4 needs for flight modes; it talks to the RP2 receiver on the drone. Batteries are not included, so two 18650 cells are in the price.",
+    "instead": "RadioMaster Boxer or TX16S: bigger, nicer gimbals, about twice the price.",
+    "source": "ReadyMadeRC and RadioMaster pages, read 19 Nov",
+    "connects": [
+     [
+      "rc_rx",
+      "2.4 GHz ExpressLRS radio link"
+     ]
+    ],
+    "nodes": []
+   }
+  },
+  {
+   "id": "charger",
+   "name": "Battery charger: HOTA H6 Pro (200 W on wall power)",
+   "system": "ground",
+   "qty": 1,
+   "status": "buy",
+   "price": 106.99,
+   "mass": 700,
+   "buy": [
+    [
+     "WREKD (in stock)",
+     "https://wrekd.com/products/hota-h6-pro-700w-26a-1-6s-ac-dc-smart-charger-black",
+     "$106.99"
+    ]
+   ],
+   "job": "Charges and balances the 6S pack between field days.",
+   "why": "Takes wall power directly (200 W, no separate power supply) and balances all six cell groups. The 648 Wh pack takes about 3.5 to 4 hours from empty on wall power, so it charges overnight; one charge covers a field day if the fairings work (Requirements).",
+   "instead": "ToolKitRC M7AC ($91.49): only 100 W on wall power, about 7 hours a charge. HOTA D6 Pro ($149.99): two channels, same 200 W from the wall.",
+   "source": "WREKD product page, read 19 Nov",
+   "connects": [
+    [
+     "battery",
+     "XT90 to XT60 charge lead and the 6S balance lead"
+    ]
+   ],
+   "nodes": [],
+   "systemName": "Ground equipment",
+   "color": "#9a6b16",
+   "edit": "https://github.com/Stanford-SkyRunners/ridgeback-design/edit/main/data/parts.toml",
+   "editLine": 608,
+   "raw": {
+    "id": "charger",
+    "name": "Battery charger: HOTA H6 Pro (200 W on wall power)",
+    "system": "ground",
+    "qty": 1,
+    "status": "buy",
+    "price": 106.99,
+    "mass": 700,
+    "buy": [
+     {
+      "store": "WREKD (in stock)",
+      "link": "https://wrekd.com/products/hota-h6-pro-700w-26a-1-6s-ac-dc-smart-charger-black",
+      "price": "$106.99"
+     }
+    ],
+    "job": "Charges and balances the 6S pack between field days.",
+    "why": "Takes wall power directly (200 W, no separate power supply) and balances all six cell groups. The 648 Wh pack takes about 3.5 to 4 hours from empty on wall power, so it charges overnight; one charge covers a field day if the fairings work (Requirements).",
+    "instead": "ToolKitRC M7AC ($91.49): only 100 W on wall power, about 7 hours a charge. HOTA D6 Pro ($149.99): two channels, same 200 W from the wall.",
+    "source": "WREKD product page, read 19 Nov",
+    "connects": [
+     [
+      "battery",
+      "XT90 to XT60 charge lead and the 6S balance lead"
+     ]
+    ],
+    "nodes": []
+   }
   }
  ],
  "systems": {
@@ -2493,6 +2653,10 @@
   "payload": {
    "name": "Mission sensors",
    "color": "#1f7a72"
+  },
+  "ground": {
+   "name": "Ground equipment",
+   "color": "#9a6b16"
   }
  }
 }

@@ -253,12 +253,12 @@ srow("Loiter time (min), 20 % reserve left", "={tloit_sl}", "={tloit_hot}", "≥
 srow("Flights per battery: 15 min over a 2 ha site, 1 km out", "={flights_pack}", "", "≥ 3 per day", "=IF({flights_pack}>={req_flights},\"PASS\",\"FAIL\")&\": the field day (pre-dawn, mid-morning, midday) on one battery, 20 % reserve kept.\"")
 srow("Range on one charge (km)", "={range_km}", "", "not a driver", "We may only fly within about 1 km (line of sight, Part 107), so range is never the limit; hover thrust and time on site are.")
 srow("Pusher: thrust needed / available at loiter", "={Tratio_sl}", "={Tratio_hot}", "< 1", "=\"Level loiter OK. Best winged climb ≈ \"&TEXT({ROC_hot},\"0.0\")&\"-\"&TEXT({ROC_sl},\"0.0\")&\" m/s (estimate from 13x6.5 data): plan 1.5 m/s or climb on rotors.\"")
-srow("Aircraft cost (USD)", "={cost_total}", "", "≤ 3000", "=IF({cost_total}<={req_budget},\"PASS\",\"OVER\")&\" by $\"&TEXT(ABS({req_budget}-{cost_total}),\"0\")&\". Not included: 6S charger (~$100), RC transmitter (~$154) if the club has none, sensors.\"")
+srow("Aircraft cost (USD)", "={cost_total}", "", "≤ 3000", "=IF({cost_total}<={req_budget},\"PASS\",\"OVER\")&\" by $\"&TEXT(ABS({req_budget}-{cost_total}),\"0\")&\". Sensors and ground equipment (transmitter, charger) are counted separately.\"")
 section(ws, "What to do next, cheapest first")
 text_rows(ws, [
     ["1. Fair the bluff parts (cost: filament only)", "", "", "", "Teardrop TPU feet, a printed cowl/spinner over each lift motor, and park the lift props fore-aft in cruise. Together they are about 45 % of CD0 (Summary row: loiter time with them faired)."],
     ["2. Measure instead of assume", "", "", "", "Weigh the first printed parts; bench-test the 12x6E pusher; glide or fly to fit the real CD0. Each replaces an [A] on these tabs."],
-    ["3. Cut cost where risk is low", "", "", "", "Cost_Options: club leftovers, hardware from stock, Sky4 UBEC/ESC check, skip the nozzle if not needed."],
+    ["3. Cut cost where risk is low", "", "", "", "Cost_Options: club leftovers, hardware from stock, skip the nozzle if not needed."],
     ["4. Only then change size or battery", "", "", "", "A 7P pack adds time but drops hot-day T/W under 1.5 (Battery_Options); a larger wing lowers stall speed but adds mass. Re-run here before deciding."],
 ])
 
@@ -340,7 +340,7 @@ TAGS = [("motor_MN5008", "[S] CAD uses 150 g; store page lists 135 g [V]: conser
         ("esc_alpha40", "[S] 54.5 g with cables (uav-en.tmotor.com)"), ("esc_pusher", "[S] 54.5 g"),
         ("motor_pusher_AT3520", "[V] 218 g incl. cable (store.tmotor.com 11-17); CAD 221 g"),
         ("prop_pusher", "[A] APC 12x6E ~28 g"), ("battery", "[C] = Battery_Options chosen pack"),
-        ("servo_regulator", "[A] 20 g, model not chosen"), ("pixhawk", "[A] 59 g Holybro alu; weigh the Sky4 unit"),
+        ("servo_regulator", "[A] 20 g, model not chosen"), ("pixhawk", "[A] CAD 59 g (alu case); the plastic one bought is 34.6 g [V Holybro], so this is conservative"),
         ("remote_id", "[S] 13.5 g listing"), ("gnss", "[A] 32 g"), ("telemetry", "[A]"), ("rc_receiver", "[A]"),
         ("power_module", "[A]"), ("airspeed", "[A]"), ("servo_", "[A] 23 g; KST X10 mass not read"),
         ("tube_", "[C] CF density 1.6 g/cm³ x tube volume"), ("rod_", "[C] CF density x volume"),
@@ -702,6 +702,25 @@ r = ws._r
 put(ws, r, 1, "Field-day rule met?"); put(ws, r, 3, '=IF({flights_pack}>={req_flights},"YES","NO")', fill=KEY, bold=True); put(ws, r, 5, "n ≥ flights per day (Requirements)"); ws._r += 1
 p(ws, "range_km", "Still-air range on one charge, reserve kept", "range", "={V_sl}*{tloit_sl}*60/1000", "km", "range ≈ V t_loiter", "[C]", "Not a design driver: we fly within the operating radius.", fmt="0")
 p(ws, "endur_min", "Endurance (loiter time, reserve kept)", "t", "={tloit_sl}", "min", "= loiter time above", "[C]", "", fmt="0")
+section(ws, "Levers to close the gap: same mass, speed and battery; each row changes one thing (website: Requirements)")
+header(ws, PARAM_COLS)
+p(ws, "fair_frac", "Share of the motor, foot and stopped-prop drag removed by printed fairings", "", 0.5, "-", "typed",
+  "[A] not measured; fairings (teardrop feet, motor cowls, props parked fore-aft) typically halve a bluff body's drag", "", fmt="0%")
+
+
+def lever(key, label, cd0, survey="{req_survey}"):
+    p(ws, f"Pcr_{key}", f"{label}: loiter power", "", f"=0.5*{{rho_sl}}*{{V_sl}}^3*{{S}}*({cd0}+{{K}}*{{CL_sl}}^2)/{{eta_push}}+{{P_av}}", "W",
+      "P = ½ ρ V³ S (CD0 + K CL²) / η_p + P_av", "[C]", "", fmt="0")
+    p(ws, f"Eclimb_{key}", f"{label}: climb energy", "", f"=({{Pcr_{key}}}+{{W_sl}}*{{roc_plan}}/{{eta_push}})*({{h_climb}}/{{roc_plan}})/3600", "Wh", "as Eclimb", "[C]", "", fmt="0.0")
+    p(ws, f"tloit_{key}", f"{label}: loiter time", "", f"=({{E_use}}-{{Evtol_sl}}-{{Eclimb_{key}}})/{{Pcr_{key}}}*60", "min", "as tloit", "[C]", "", fmt="0", key_result=True)
+    p(ws, f"flights_{key}", f"{label}: flights per charge", "", f"={{E_use}}/({{Evtol_sl}}+{{Eclimb_{key}}}+{{Pcr_{key}}}*({survey}*60+{{t_transit}})/3600)", "-",
+      "as flights_pack", "[C]", "", fmt="0.00", key_result=True)
+
+
+lever("fair", "Fairings", "{CD0}-{fair_frac}*({CD0_build}-{CD0_clean})")
+lever("clean", "Upper bound: no motor, foot or prop drag", "{CD0_clean}")
+lever("s12", "Survey 12 min instead of 15", "{CD0}", "12")
+lever("fair12", "Fairings and a 12 min survey", "{CD0}-{fair_frac}*({CD0_build}-{CD0_clean})", "12")
 section(ws, "Sensitivity: loiter time (sea level) vs CD0 and Oswald e, same mass and battery")
 header(ws, ["CD0", "e", "V m/s", "P_cr W", "Loiter min", "Note", ""])
 for cd0, e, note in ((0.025, 0.80, "first sizing, low drag"), (0.035, 0.80, "first sizing, high drag"), (0.025, "={e_raymer}", ""), (0.035, "={e_raymer}", ""),
@@ -793,26 +812,24 @@ ws = sheet("Electronics", [30, 26, 5, 16, 10, 12, 44, 10, 46, 46, 18])
 title(ws, "Electronics: what each part does, reuse vs buy, and why this part")
 header(ws, ["Part", "Job", "Qty", "Status", "Unit $", "Line $", "Buy", "Mass g (each)", "Why this one", "Alternatives considered", "On the website"])
 EL = [
-    ("Holybro Pixhawk 6C (alu)", "flight controller (PX4 VTOL)", 1, "REUSE (Sky4)", 0, "https://holybro.com/products/pixhawk-6c", 59, "owned; PX4 standard VTOL support", "new one from $199 [S]"),
-    ("Holybro M9N GPS", "position, heading", 1, "REUSE (Sky4)", 0, "https://holybro.com/products/m9n-gps", 32, "owned", "$54.99 new [S]"),
-    ("Digital airspeed sensor (Sky4)", "airspeed for fixed-wing flight (needed)", 1, "REUSE (Sky4)", 0, "", 15, "owned; a VTOL needs airspeed for transitions and stall protection", "price NOT FOUND"),
-    ("Holybro PM07 power module", "battery voltage/current to the FC, power distribution", 1, "REUSE (Sky4)", 0, "https://holybro.com/products/pm07-power-module", 25,
-     "owned; 90 A continuous [V Holybro 10-18] vs ~55-65 A hover pack current [C Lift_Hover]", "stock 30 A wire must be replaced (mini_wiring: 2x14 AWG)"),
-    ("Telemetry radio (Sky4 SiK / LoRa)", "ground link", 1, "REUSE (Sky4)", 0, "", 30, "owned; model to confirm", "SiK V3 $58.99 [S], sold out"),
-    ("RC receiver (Sky4)", "manual control", 1, "REUSE (Sky4)", 0, "", 6, "owned if Sky4 has one; model NOT FOUND", "transmitter + receiver ≈ $154 [S] if the club has none"),
-    ("NVIDIA Jetson Orin Nano (Sky4)", "payload computer (later)", 1, "REUSE (Sky4)", 0, "", 176, "owned; not needed for first flights", "Raspberry Pi 5 logger"),
+    ("Holybro Pixhawk 6C (plastic) + PM07 bundle", "flight controller (PX4 VTOL) + power module", part_qty("pixhawk"), "BUY", part_price("pixhawk"), part_url("pixhawk"), part_mass("pixhawk"),
+     "PX4 standard VTOL support; CAD and params drawn for it; PM07 90 A continuous [V Holybro 11-19] vs hot hover current [C Lift_Hover]", "6C Mini + PM02 V3 $197.99 (60 A, too close); Matek H743-WING V3 (ArduPilot, hard to find)"),
+    ("Holybro M10 GPS", "position, heading", part_qty("gnss"), "BUY", part_price("gnss"), part_url("gnss"), part_mass("gnss"), "plugs into the 6C GPS port", "M9N $54.99"),
+    ("Holybro MS5525DSO airspeed + PT40", "airspeed for transitions and stall protection", part_qty("airspeed"), "BUY", part_price("airspeed"), part_url("airspeed"), part_mass("airspeed"), "PX4 I2C driver", "MS4525DO sold out"),
+    ("Holybro SiK V3 915 MHz (pair)", "ground link", part_qty("telemetry"), "BUY", part_price("telemetry"), part_url("telemetry"), part_mass("telemetry"), "pair = drone + laptop radio", "1 W pair $175"),
+    ("RadioMaster RP2 V2 ELRS receiver", "manual control", part_qty("rc_rx"), "BUY", part_price("rc_rx"), part_url("rc_rx"), part_mass("rc_rx"), "CRSF into PX4", ""),
     ("T-Motor MN5008 KV340", "lift motor", part_qty("motor_lift"), "BUY", part_price("motor_lift"), part_url("motor_lift"), part_mass("motor_lift"),
-     "maker's thrust table [V] gives T/W 1.5+ at 800 m hot on 6S with P18 (Lift_Hover)", "Sky4 SunnySky V4014 KV330 (owned, $0): T/W 1.20 hot [C] → rejected"),
+     "maker's thrust table [V] gives T/W 1.5+ at 800 m hot on 6S with P18 (Lift_Hover)", "SunnySky V4014 KV330: T/W 1.20 hot [C] → rejected"),
     ("T-Motor P18x6.1 prop pair", "lift props", part_qty("prop_lift"), "BUY", part_price("prop_lift"), part_url("prop_lift"), part_mass("prop_lift"), "matched to MN5008 in the maker's test", ""),
     ("T-Motor ALPHA 40A 6S ESC", "motor drive (4 lift + 1 pusher)", part_qty("esc_lift") + part_qty("esc_pusher"), "BUY", part_price("esc_lift"), part_url("esc_lift"), part_mass("esc_lift"),
-     "FOC, 6S; 40 A > 33.5 A motor full-throttle current [C Lift_Hover]; US stock = no import duty", "UnmannedRC $69.99 + 37.5 % duty = $96.24 [C]; Sky4 Tekko32 (owned): CHECK model, see Cost_Options"),
+     "FOC, 6S; 40 A > 33.5 A motor full-throttle current [C Lift_Hover]; US stock = no import duty", "UnmannedRC $69.99 + 37.5 % duty = $96.24 [C]"),
     ("T-Motor AT3520 KV550 long shaft", "pusher motor", part_qty("motor_pusher"), "BUY", part_price("motor_pusher"), part_url("motor_pusher"), part_mass("motor_pusher"),
      "maker recommends 6S + 13x6.5; table [V] 3.58 kg static at 34.9 A", "V4014 too slow (330 KV)"),
     ("APC 12x6E pusher prop", "pusher prop", part_qty("prop_pusher"), "BUY", part_price("prop_pusher"), part_url("prop_pusher"), part_mass("prop_pusher"), "fits the CAD (305 mm disc, ground clearance); price [A]", "13x6.5 (maker's test prop, 34.9 A < 40 A [V]) leaves ~15 mm ground clearance → only with longer legs"),
     ("KST X10 V2 wing servo", "ailerons + ruddervators", part_qty("servos"), "BUY", part_price("servos"), part_url("servos"), part_mass("servos"),
      "10 mm thin-wing servo; 7.5 kg cm vs 4.7 needed [C]", "KST DS145MG $34.99 (5.2 kg cm, ships from China) → Cost_Options"),
-    ("Servo regulator 5-6 V ≥ 5 A", "servo power", part_qty("servo_reg"), "BUY (or Sky4 UBEC)", part_price("servo_reg"), part_url("servo_reg"), part_mass("servo_reg"),
-     "ALPHA ESCs have no BEC [S]", "Sky4 UBEC if its model is OK → Cost_Options"),
+    ("Servo regulator 5-6 V ≥ 5 A", "servo power", part_qty("servo_reg"), "BUY", part_price("servo_reg"), part_url("servo_reg"), part_mass("servo_reg"),
+     "ALPHA ESCs have no BEC [S]", "another ≥ 5 A regulator if out of stock"),
     ("Ruko R111S Remote ID", "FAA broadcast Remote ID", part_qty("remote_id"), "BUY", part_price("remote_id"), part_url("remote_id"), part_mass("remote_id"),
      "on the FAA accepted list (RID000001939) [V 10-31], cheapest found", "Dronetag Beacon $149"),
     ("Molicel P50B 21700 cell", "battery 6S6P (Battery_Options)", part_qty("battery"), "BUY", part_price("battery"),
@@ -831,9 +848,7 @@ for row in EL:
 r = ws._r
 put(ws, r, 1, "Electronics to buy", bold=True); put(ws, r, 6, f"=SUM(F{e0}:F{r-1})", fill=KEY, fmt="$#,##0.00", bold=True)
 put(ws, r, 9, "Excludes wiring/connectors (BOM_Cost), shipping and duty."); ws._r += 1
-section(ws, "Not usable from Sky4 (and why)")
-text_rows(ws, [["SunnySky V4014 KV330 motors", "lift", "", "NOT USED", "", "", "", "", "T/W 1.36 SL / 1.20 at 800 m hot with 18 in props [C]; rule is 1.5", ""],
-               ["Sky4 Tekko32 ESC", "", "", "CHECK", "", "", "", "", "4-6S; was ruled out for the 12S design. For this 6S design it may work: needs the exact model and current rating", ""]])
+section(ws, "Nothing is reused from Sky4 (user, 19 Nov: the Sky4 parts are not available); every part above is bought")
 
 # =====================================================================================================
 ws = sheet("Connectors_Wiring", [34, 26, 6, 26, 12, 12, 10, 9, 10, 40])
@@ -880,6 +895,11 @@ BOM = [
     ("KST X10 V2 servo", part_qty("servos"), part_price("servos"), part_store("servos"), 0, 0, part_url("servos"), "[V] 11-10"),
     ("Servo regulator ≥ 5 A (Castle CC BEC 2.0)", part_qty("servo_reg"), part_price("servo_reg"), part_store("servo_reg"), 0, 0, part_url("servo_reg"), "[V] out of stock 11-10"),
     ("Ruko R111S Remote ID", part_qty("remote_id"), part_price("remote_id"), part_store("remote_id"), 0, 0, part_url("remote_id"), "[V]"),
+    ("Pixhawk 6C (plastic) + PM07 bundle", part_qty("pixhawk"), part_price("pixhawk"), part_store("pixhawk"), 1, 0.25, part_url("pixhawk"), "[V] Holybro 11-19; ships from China: duty rate [A]"),
+    ("Holybro M10 GPS", part_qty("gnss"), part_price("gnss"), part_store("gnss"), 1, 0.25, part_url("gnss"), "[V] Holybro 11-19; duty [A]"),
+    ("Holybro MS5525DSO airspeed + PT40", part_qty("airspeed"), part_price("airspeed"), part_store("airspeed"), 1, 0.25, part_url("airspeed"), "[V] Holybro 11-19; duty [A]"),
+    ("Holybro SiK V3 915 MHz pair", part_qty("telemetry"), part_price("telemetry"), part_store("telemetry"), 1, 0.25, part_url("telemetry"), "[V] Holybro 11-19; duty [A]"),
+    ("RadioMaster RP2 V2 receiver", part_qty("rc_rx"), part_price("rc_rx"), part_store("rc_rx"), 0, 0, part_url("rc_rx"), "[V] RaceDayQuads 11-19"),
     ("Molicel P50B cells", "={bat_S}*{bat_P}", part_price("battery"), part_store("battery"), 0, 0, part_url("battery"), "[V] 10-31; qty = Battery_Options"),
     ("Pack BMS, nickel strip, wrap", 1, 50.00, "any", 0, 0, "", "[A]; spot welder needed (club or lab?)"),
     ("HaoZhong 1 m carbon tubes (13: booms, spars, rods, legs)", 1, 197.01, "HaoZhong", 1, 0.375, "https://carbonfibertubes.net", "[V 10-30 cart]; 6815.13.00"),
@@ -903,6 +923,7 @@ BOM = [
     ("Hardware (inserts, bolts, magnets, hinges, epoxy)", 1, 120.00, "hardware store", 0, 0, "", "[A] check club/lab stock"),
     ("Prusa ObXidian 0.4 nozzle (only if needed)", 1, 52.90, "Prusa", 0, 0, "https://www.prusa3d.com/product/prusa-nozzle-obxidian-4/", "[V]; only if no hardened nozzle"),
 ]
+BUY = []   # everything to buy, for the website's buy list (data/buy_list.json)
 c0 = ws._r
 for name, qty, usd, store, china, rate, link, src in BOM:
     r = ws._r
@@ -913,14 +934,17 @@ for name, qty, usd, store, china, rate, link, src in BOM:
     c = put(ws, r, 9, link)
     if link: c.hyperlink = link; c.font = Font(color="1155CC", underline="single")
     put(ws, r, 10, src); part_link(ws, r, 11, name); ws._r += 1
+    qn = part_qty("battery") if str(qty).startswith("=") else qty
+    BUY.append(dict(group="Aircraft", name=name, qty=qn, unit=usd, line=qn * usd, duty=round(qn * usd * china * rate, 2), store=store, link=link, note=src))
 c1 = ws._r - 1
 section(ws, "Shipping and fees")
 s0 = ws._r
-for name, usd, src in (("UnmannedRC express", 29.80, "[V 10-30]"), ("HaoZhong expedited", 45.00, "[V 10-30] ($30 standard)"), ("Liion Wholesale UPS Ground", 11.03, "[V 10-31]"),
+for name, usd, src in (("UnmannedRC express", 29.80, "[V 10-30]"), ("HaoZhong expedited", 45.00, "[V 10-30] ($30 standard)"), ("Liion Wholesale UPS Ground", 11.03, "[V 10-31]"), ("Holybro (flight electronics, from China)", 30.00, "[A] shipping not read; check at checkout"),
                        ("Other US stores (about 6 orders)", 45.00, "[A]"), ("Customs clearance fees (2 China parcels)", 40.00, "[A] $20-60")):
     r = ws._r
     put(ws, r, 1, name); put(ws, r, 2, 1, fill=INP, fmt="0"); put(ws, r, 3, usd, fill=INP, fmt="$#,##0.00"); put(ws, r, 4, f"=B{r}*C{r}", fill=CALC, fmt="$#,##0.00")
     put(ws, r, 10, src); ws._r += 1
+    BUY.append(dict(group="Shipping and fees", name=name, qty=1, unit=usd, line=usd, duty=0, store="", link="", note=src))
 s1 = ws._r - 1
 section(ws, "Totals")
 header(ws, PARAM_COLS)
@@ -930,9 +954,23 @@ p(ws, "cost_ship", "Shipping and fees", "", f"=SUM(D{s0}:D{s1})", "USD", "", "[C
 p(ws, "cost_total", "Aircraft total", "", "={cost_parts}+{cost_duty}+{cost_ship}", "USD", "", "[C]", "", fmt="$#,##0", key_result=True)
 p(ws, "cost_left", "Left of the budget", "", "={req_budget}-{cost_total}", "USD", "", "[C]", "", fmt="$#,##0", key_result=True)
 section(ws, "Not included yet (decide or confirm)")
-text_rows(ws, [["6S charger", "", 100, "", "", "", "", "", "", "[A] if Sky4/club has none"],
-               ["RC transmitter + receiver", "", 154, "", "", "", "", "", "", "[S] if Sky4/club has none"],
+text_rows(ws, [["Spot welder for the 21700 pack (or a lab's)", "", "", "", "", "", "", "", "", "borrow first (Stanford PRL / a lab); price not checked"],
+               ["Ground station laptop", "", "", "", "", "", "", "", "", "a team member's laptop with QGroundControl (free)"],
                ])
+section(ws, "Ground equipment (from data/parts.toml, system ground)")
+header(ws, ["Item", "Qty", "Unit $", "Line $", "Store", "", "", "", "Buy", "Why it is needed", "On the website"])
+g0 = ws._r
+for gp_ in [p_ for p_ in _PARTS if p_["system"] == "ground"]:
+    r = ws._r
+    put(ws, r, 1, gp_["name"]); put(ws, r, 2, gp_["qty"], fill=INP, fmt="0"); put(ws, r, 3, gp_["price"], fill=INP, fmt="$#,##0.00")
+    put(ws, r, 4, f"=B{r}*C{r}", fill=CALC, fmt="$#,##0.00"); put(ws, r, 5, gp_["buy"][0][0] if gp_["buy"] else "")
+    c = put(ws, r, 9, gp_["buy"][0][1] if gp_["buy"] else "")
+    if gp_["buy"]: c.hyperlink = gp_["buy"][0][1]; c.font = Font(color="1155CC", underline="single")
+    put(ws, r, 10, gp_["job"]); part_link(ws, r, 11, gp_["name"]); ws._r += 1
+    BUY.append(dict(group="Ground equipment", name=gp_["name"], qty=gp_["qty"], unit=gp_["price"], line=gp_["qty"] * gp_["price"], duty=0, store=gp_["buy"][0][0] if gp_["buy"] else "", link=gp_["buy"][0][1] if gp_["buy"] else "", note=gp_["source"], id=gp_["id"]))
+g1 = ws._r - 1
+header(ws, PARAM_COLS)
+p(ws, "cost_ground", "Ground equipment", "", f"=SUM(D{g0}:D{g1})", "USD", "Σ lines", "[C]", "US stores; shipping in the row above", fmt="$#,##0", key_result=True)
 section(ws, "Mission sensors (minimum kit, from data/parts.toml; not in the aircraft total above)")
 header(ws, ["Item", "Qty", "Unit $", "Line $", "Status", "", "", "", "Buy", "Why it is needed", "On the website"])
 m0 = ws._r
@@ -950,6 +988,7 @@ m1 = ws._r - 1
 header(ws, PARAM_COLS)
 p(ws, "cost_sensors", "Mission sensors", "", f"=SUM(D{m0}:D{m1})", "USD", "Σ lines", "[C]", "small parts and shipping not included", fmt="$#,##0", key_result=True)
 p(ws, "cost_all", "Aircraft + mission sensors", "", "={cost_total}+{cost_sensors}", "USD", "", "[C]", "budget: $3,000 cap, stretch $4,000–5,000 (user, 30 Oct)", fmt="$#,##0", key_result=True)
+p(ws, "cost_every", "Everything to buy: aircraft, mission sensors and ground equipment", "", "={cost_all}+{cost_ground}", "USD", "", "[C]", "", fmt="$#,##0", key_result=True)
 
 # =====================================================================================================
 ws = sheet("Cost_Options", [44, 12, 14, 50, 34, 16])
@@ -960,8 +999,6 @@ text_rows(ws, [
     ["Club leftovers for ASA / TPU / PETG", 83.00, "OPEN", "need < 100 g of each", "ask in #officers or the CHIP shelf", "[A]"],
     ["Hardware and epoxy from club / lab stock", 120.00, "OPEN", "", "check the bins before ordering", "[A]"],
     ["Skip the hardened nozzle", 52.90, "OPEN", "only if the CORE One already has one (PETG-CF wears brass)", "look at the nozzle marking", "[V] price"],
-    ["Sky4 UBEC instead of a new servo regulator", part_price("servo_reg"), "OPEN", "needs ≥ 5 A at 5-6 V", "read the UBEC label", "[A]"],
-    ["Sky4 Tekko32 ESC (if 4 channels usable) instead of 4 ALPHA 40A", f"={part_qty('esc_lift')}*{part_price('esc_lift')}", "OPEN, CHECK", "6S OK; current rating vs 33.5 A full throttle; a 4-in-1 sits in the fuselage → 4 long motor leads (~0.6 m) and one failure takes out all 4 lift motors", "exact model + rating; bench run on one motor", "[A]"],
     ["Samsung 50S cells instead of Molicel P50B", f"={part_qty('battery')}*({part_price('battery')}-6.99)", "OPEN, TEST", "voltage sag under 12 A per cell must be within 0.2 V of the P50B (else hot-day T/W drops below 1.5)", "bench: one 6S pack at hover current, log voltage + temperature", "[C] doc §4l"],
     ["KST DS145MG servos instead of KST X10", f"={part_qty('servos')}*({part_price('servos')}-34.99)", "NOT RECOMMENDED", "margin 1.11 over need (X10 1.60); ships from China (+duty, 10-20 days)", "", "[C] mini_servo.md"],
     ["Buy motors + props in the US (no duty)", f"=ROUND({part_qty('motor_lift')}*{part_price('motor_lift')}*0.415+{part_qty('prop_lift')}*{part_price('prop_lift')}*0.375+{part_price('motor_pusher')}*0.415,0)", "OPEN", "only IR-LOCK found; out of stock since 10-30", "check IR-LOCK / United UAV stock", "[C] mini_duty.md"],
@@ -989,7 +1026,7 @@ text_rows(ws, [
     ["Booms", "30/28 CF, two 1 m tubes bonded with a sleeve", "one-piece 2 m 25/22 ($288.60)", "$97 vs $289; margin 1.97; needs a bonded-joint test.", "Structure_Stability; mini_boom.md", "10-31 / done"],
     ["Servos", "KST X10 V2", "DS145MG, X10 Mini", "Margin 1.60 over need, US stock.", "Electronics; mini_servo.md", "10-30 / done"],
     ["Remote ID", "Ruko R111S", "Dronetag Beacon $149", "On the FAA accepted list; cheapest found.", "Electronics", "10-31 / done"],
-    ["Reuse from Sky4", "Pixhawk 6C, M9N, airspeed, PM07, telemetry, RC rx, Jetson", "buy new", "Saves ≥ $357 at new prices (Pixhawk $199, M9N $54.99, PM07 $43.99, SiK $58.99 [S]) + Jetson; all work on 6S.", "Electronics", "10-18 / done"],
+    ["Flight electronics", "Buy new: Pixhawk 6C + PM07, M10, MS5525DSO, SiK V3, RP2, Pocket", "reuse Sky4 (not available, user 11-19)", "Prices read on the stores 11-19 (Electronics tab); the Pocket transmitter and charger are in BOM_Cost, Ground equipment.", "Electronics; BOM_Cost", "11-19 / done"],
 ])
 
 # =====================================================================================================
@@ -1004,7 +1041,6 @@ text_rows(ws, [
     ["Pusher thrust at speed", "climb plan", "Thrust stand with airflow, or a car-top test; or plan rotor climbs.", "before first transition"],
     ["Pusher 12x6E thrust and current", "climb plan", "Thrust stand; no maker data for 12x6E on the AT3520.", "before first transition"],
     ["Samsung 50S sag", "-$72", "Bench test (Cost_Options).", "optional"],
-    ["Sky4 inventory (Tekko32 model, UBEC, receiver, charger, transmitter)", "up to -$560 or +$254", "Find the Sky4 box after the RoboRoom move-out; read the labels.", "officers"],
     ["Bonded boom joint", "safety", "Bench bending test of the sleeve joint to 1.5 x design moment.", "before flight"],
     ["Motor and pusher bolt patterns", "CNC plates", "Calipers on the real motors before cutting.", "on delivery"],
     ["Real payload masses", "CG, T/W", "Weigh Jetson, cameras, spot sensor.", "on delivery"],
@@ -1034,4 +1070,8 @@ json.dump(REF, open(HERE / "refs.json", "w"))
 _unused = sorted(set(INPUTS) - USED_INPUTS)
 assert not _unused, f"data/inputs.toml has names the workbook does not know (typo?): {_unused}"
 json.dump(TYPED, open(HERE / "typed_inputs.json", "w"), ensure_ascii=False, indent=0)
+for pp_ in PAY:                                  # mission sensors: first-flight kit, then the options
+    BUY.append(dict(group="Mission sensors" if pp_.get("tier") == "minimum" else "Mission sensors: worth adding", name=pp_["name"], qty=pp_["qty"], unit=pp_["price"],
+                    line=pp_["qty"] * pp_["price"], duty=0, store=pp_["buy"][0][0] if pp_["buy"] else "", link=pp_["buy"][0][1] if pp_["buy"] else "", note=pp_["source"], id=pp_["id"]))
+json.dump(BUY, open(HERE / "buy_list.json", "w"), ensure_ascii=False, indent=0)
 print("saved", OUTF, len(REF), "named cells")

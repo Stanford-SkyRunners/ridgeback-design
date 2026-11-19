@@ -127,13 +127,13 @@ function start() {
     Saving writes data/parts.toml or data/inputs.toml on GitHub with your name; the sheets and pages rebuild in about two minutes. Every save is a commit in <a href="https://github.com/${REPO}/commits/main" target="_blank" rel="noopener">the history</a>, so it can be undone. <button type="button" id="forget" class="plainbtn">${viaRelay() ? 'Sign out' : 'Forget my token'}</button>`);
   document.getElementById('forget').onclick = () => { store.set('rb-token', null); store.set('rb-pass', null); try { sessionStorage.removeItem('rb-token'); } catch { } token = null; pass = null; stop(); };
   window.RB?.rerender?.();
-  inputsMode(true);
+  inputsMode(true); showUndo(true);
 }
 function stop() {
   editing = false; btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Edit';
   document.body.classList.remove('editing'); bar.hidden = true;
   window.RB?.rerender?.();
-  inputsMode(false);
+  inputsMode(false); showUndo(false);
 }
 btn?.addEventListener('click', () => {
   if (editing) return stop();
@@ -257,3 +257,31 @@ async function saveInputs() {
     if (sha) follow(sha, changes.map(c => c[0]).join(', '));
   } catch (x) { err.textContent = 'Could not save: ' + x.message.slice(0, 160); err.hidden = false; }
 }
+
+// ---------- recent edits (files page): public GitHub history of the two data files, with Undo through the relay
+async function recentEdits() {
+  const list = document.getElementById('editlist'); if (!list) return;
+  try {
+    const get = path => fetch(`${API}/commits?path=${path}&per_page=10`).then(r => r.ok ? r.json() : []);
+    const seen = new Set();
+    const all = [...await get('data/parts.toml'), ...await get('data/inputs.toml')].filter(c => !seen.has(c.sha) && seen.add(c.sha))
+      .sort((a, b) => new Date(b.commit.author.date) - new Date(a.commit.author.date)).slice(0, 12);
+    if (!all.length) { list.innerHTML = '<li class="quiet">No edits yet.</li>'; return; }
+    list.innerHTML = all.map(c => {
+      const msg = c.commit.message.split('\n')[0], who = (msg.match(/\(by ([^,]+), on the website\)/) || [])[1] || c.commit.author.name;
+      const when = new Date(c.commit.author.date).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return `<li><span class="when">${esc(when)}</span> <b>${esc(who)}</b>: ${esc(msg.replace(/ \(by [^)]*\)$/, '').replace(/ on the website$/, ''))}
+        <a href="${c.html_url}" target="_blank" rel="noopener">what changed</a> <button type="button" class="plainbtn undo" data-sha="${c.sha}" hidden>Undo</button></li>`;
+    }).join('');
+    showUndo(editing);
+    list.addEventListener('click', async e => {
+      const b = e.target.closest('.undo'); if (!b) return;
+      if (!confirm('Put the file back as it was before this change?')) return;
+      b.disabled = true; b.textContent = 'Undoing…';
+      try { const r = await relay({ op: 'undo', sha: b.dataset.sha }); follow(r.commit, 'the undo'); }
+      catch (x) { b.textContent = 'Could not undo'; say(esc(x.message.slice(0, 160)), 'bad'); }
+    });
+  } catch { list.innerHTML = '<li class="quiet">Could not load the history; see it on GitHub.</li>'; }
+}
+function showUndo(on) { document.querySelectorAll('#editlist .undo').forEach(b => { b.hidden = !(on && viaRelay()); }); }
+recentEdits();

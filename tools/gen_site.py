@@ -85,7 +85,7 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="
 
 
 def page(title, slug, body, extra_head="", body_class=""):
-    nav = [("index.html", "Drone"), ("mission.html", "Mission and range"), ("calculations.html", "Calculations"), ("files.html", "Sheets, code, CAD")]
+    nav = [("index.html", "Drone"), ("mission.html", "Mission and range"), ("calculations.html", "Calculations"), ("buy.html", "Buy list"), ("files.html", "Sheets, code, CAD")]
     links = "".join(f'<a href="{h}"{" aria-current=page" if h == slug else ""}>{t}</a>' for h, t in nav)
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title>{FONTS}<link rel="stylesheet" href="assets/style.css">{extra_head}</head>
@@ -103,9 +103,31 @@ def status_row():
             ("Survey flights per charge", f"{val('flights_pack'):.1f}", "at least 3", val("flights_pack") >= 3),
             ("Stall speed, clean wing", f"{val('Vs_sl'):.1f} m/s", "at most 15 m/s", val("Vs_sl") <= 15),
             ("Aircraft cost", f"${val('cost_total'):,.0f}", "at most $3,000", val("cost_total") <= 3000),
-            ("Aircraft + mission sensors", f"${val('cost_all'):,.0f}", "stretch $4,000–5,000", val("cost_all") <= 4000)]
+            ("Aircraft + mission sensors", f"${val('cost_all'):,.0f}", "stretch: at most $5,000", val("cost_all") <= 5000),
+            ("Everything to buy, with transmitter and charger", f"${val('cost_every'):,.0f}", "stretch: at most $5,000", val("cost_every") <= 5000)]
     tr = "".join(f'<tr><td>{a}</td><td class="num">{b}</td><td>{c}</td><td class="{"ok" if ok else "no"}">{"meets it" if ok else "short"}</td></tr>' for a, b, c, ok in rows)
     return f'<table class="status"><thead><tr><th>Requirement</th><th class="num">Estimate</th><th>Target</th><th>Result</th></tr></thead><tbody>{tr}</tbody></table>'
+
+
+
+def gap_box():
+    """The two targets the design misses, and what each lever does to them (Sheet 04, Mission_Energy, Levers)."""
+    rows = [("As designed", val("tloit_sl"), val("flights_pack"), "", "estimate"),
+            ("Printed fairings on motors and feet, lift props parked fore-aft", val("tloit_fair"), val("flights_fair"), "filament only", f"assumes they remove {val('fair_frac'):.0%} of that drag [A]"),
+            ("Survey 12 min over the plot instead of 15", val("tloit_sl"), val("flights_s12"), "none", "only if 12 min covers the plot with the thermal camera's overlap"),
+            ("Both", val("tloit_fair12"), val("flights_fair12"), "filament only", "the plan"),
+            ("Upper bound: motors, feet and props add no drag at all", val("tloit_clean"), val("flights_clean"), "", "cannot be beaten by fairings")]
+    tr = "".join(f'<tr><td>{E(a)}</td><td class="num {"ok" if t >= 80 else "no"}">{t:.0f} min</td><td class="num {"ok" if f >= 3 else "no"}">{f:.2f}</td><td>{E(c)}</td><td class="quiet">{E(n)}</td></tr>' for a, t, f, c, n in rows)
+    ft, ff, tc = val("tloit_fair12"), val("flights_fair12"), val("tloit_clean")
+    verdict = (f"With fairings and a 12 min survey the field day fits on one charge ({ff:.1f} flights)" if ff >= 3 else f"Even with both levers the field day needs {ff:.1f} of 3 flights") + \
+              (f"; loiter reaches {ft:.0f} min, so the 80 min rule is met" if ft >= 80 else
+               f"; loiter reaches {ft:.0f} of 80 min. 80 min is possible only if fairings remove most of that drag (the upper bound is {tc:.0f} min)" if tc >= 80 else
+               f"; even with no motor, foot or prop drag loiter stays at {tc:.0f} min, so 80 min needs a lighter aircraft")
+    return f"""<h3>How we close the two gaps</h3>
+<p>Loiter time and flights per charge come out short. These rows use the same formulas with one thing changed each
+({sheet('04_Propulsion_Battery_Energy', 'Mission_Energy')}, "Levers"). The field day needs 3 flights; the 80 min loiter rule is a margin target.</p>
+<div class="tablewrap"><table class="plain gap"><thead><tr><th>Lever</th><th class="num">Loiter (target 80 min)</th><th class="num">Flights per charge (target 3)</th><th>Cost</th><th>Note</th></tr></thead><tbody>{tr}</tbody></table></div>
+<p class="small">{verdict}. A bigger battery is not the way out: a 6S7P pack drops hot-day hover thrust below 1.5 times the weight (Battery_Options). The next real step is to measure: weigh the printed parts, bench-test the pusher and fit the drag from the first flights, since every row here rests on an estimated drag.</p>"""
 
 
 TIER = {"minimum": "first flights", "add": "worth adding", "later": "later"}
@@ -157,6 +179,32 @@ A SWIR camera or centimetre GPS would make the readings better; see "Not decided
 </ul></section>"""
 
 
+def access_section():
+    """How each electronics group is held and reached (CAD: cad/fab/f_fuse.py MINI block; build guide section 6-7)."""
+    rows = [
+        ("Flight controller, receiver, telemetry radio, Remote ID", "Nose, top tray (tray A) between frames F1 and F2, x −330 to −170 mm",
+         "Screwed to a printed plate with a 20 mm grid of M3 holes; the plate is held by 4 M3 screws in heat-set inserts. Flight controller on rubber vibration mounts.",
+         "Lift the top hatch (held by 4 magnets, no tools). Mount the flight controller with its USB and microSD side toward the opening, so setup and log download need nothing removed.", "good"),
+        ("Power module", "Nose, lower tray (tray B), under tray A", "Same grid plate, 4 M3 screws.",
+         "Top hatch, then take out tray A (4 screws) because tray B sits under it. Fine for a part that is rarely touched.", "ok"),
+        ("Battery", "Under the wing, on a 1.5 mm carbon tray, centre at x −58 mm", "3 straps and a printed stop at the back; the XT90 plug faces the hatch.",
+         "Second magnetic hatch (x −165 to −15 mm): unplug, undo the straps, slide forward and out. No tools.", "good"),
+        ("Lift speed controllers", "In each boom nacelle, under the tube, behind the motor", "Printed clips in the nacelle hold it; the two nacelle halves close around it.", "Open the nacelle halves. The build guide allows tape or glue to close them: use tape (or two small screws), never glue, so they can be opened again.", "ok"),
+        ("Pusher speed controller and servo regulator", "Tail cone (fuselage segment 4)", "Glued trays on the tail-cone floor, cable ties.",
+         "Problem: the tail cone has no opening, so they cannot be reached after it is bonded. Fix: a small screwed belly panel under the tail cone, or move the regulator to tray B.", "fix"),
+        ("Mission sensors and the Raspberry Pi", "Belly, behind the battery, x +40 to +160 mm, looking down",
+         "Not drawn yet: today there is only a reserved space.",
+         "Problem: the space is under the wing, so as planned it is reachable only with the wing off. Fix: all sensors and the Pi on one removable belly plate (4 thumb screws, one power plug and one cable to the flight controller), so the whole sensor set comes off from below, can be tested on the bench and swapped between flights.", "fix"),
+    ]
+    tag = {"good": "easy", "ok": "fine", "fix": "to fix"}
+    tr = "".join(f'<tr class="acc-{k}"><td><b>{E(a)}</b><br><span class=quiet>{E(b)}</span></td><td>{E(c)}</td><td>{E(d_)}</td><td class="acctag">{tag[k]}</td></tr>' for a, b, c, d_, k in rows)
+    return f"""<section id="access"><h2>How the electronics are held, and how you reach them</h2>
+<p>Everything sits on printed plates screwed into heat-set inserts, so parts can be moved without new holes, and every link between groups is a plug
+(JST-GH for signals, XT30/XT60/XT90 for power), so a group can come out without cutting or soldering. Two places are not good yet; their fixes are the next CAD change.</p>
+<div class="tablewrap"><table class="plain access"><thead><tr><th>What</th><th>How it is held</th><th>How you reach it</th><th></th></tr></thead><tbody>{tr}</tbody></table></div>
+<p class="small">From the CAD (cad/fab/f_fuse.py) and the build guide. Hatches are printed (radio-transparent), so the GPS and radios work through them.</p></section>"""
+
+
 # ------------------------------------------------------------------ index: the drone explorer
 groups = {}
 for p in PARTS:
@@ -182,7 +230,7 @@ Click any part on the drone or in the list to see what it does, why we chose it,
   <div class="viewwrap"><div id="view" aria-label="3D model of the drone. Drag to turn, scroll to zoom, click a part."></div><div id="tip" class="tip" hidden></div></div>
   <div class="legend">{''.join(f'<span><i style="--c:{c}"></i>{E(n)}</span>' for k, (n, c) in SYSTEMS.items())}</div>
   <p class="hint">Drag to turn, scroll to zoom. Hover spins the lift propellers; Cruise parks them along the booms and runs the pusher. Every part sits at its CAD position and size.</p></div>
-  <aside id="detail" class="detail" aria-live="polite"><h2>Seven systems</h2>
+  <aside id="detail" class="detail" aria-live="polite"><h2>Eight groups</h2>
   <p>Pick a part on the drone or below; it turns purple and lines show what it is wired or bolted to.</p>
   {''.join(f'<h3><span class="key" style="--c:{SYSTEMS[k][1]}"></span>{E(SYSTEMS[k][0])}</h3><p>{E(t)}</p>' for k, t in [
     ("power", "Battery, power module and servo regulator: 648 Wh at 21.6 V, about 56 A in a hot hover."),
@@ -191,10 +239,12 @@ Click any part on the drone or in the list to see what it does, why we chose it,
     ("control", "Flight controller, GPS, airspeed, radios and Remote ID."),
     ("surfaces", "Four servos for the ailerons and the arch tail."),
     ("airframe", f"Printed wing, fuselage and tail on carbon tubes. Takeoff mass {val('m_to'):.2f} kg."),
-    ("payload", f"What the mission needs: thermal camera, 1610 nm spot sensor, colour camera, air sensor and the computer that logs them. {val('m_pay_g'):.0f} g, {val('P_payload'):.0f} W.")])}</aside>
+    ("payload", f"What the mission needs: thermal camera, 1610 nm spot sensor, colour camera, air sensor and the computer that logs them. {val('m_pay_g'):.0f} g, {val('P_payload'):.0f} W."),
+    ("ground", "Stays on the ground: the safety pilot's transmitter and the battery charger (the laptop radio comes with the telemetry pair).")])}</aside>
 </section>
-<section><h2>Requirements</h2>{status_row()}</section>
+<section><h2>Requirements</h2>{status_row()}{gap_box()}</section>
 {payload_section()}
+{access_section()}
 <section><h2>Every part</h2>
 <div class="tablewrap"><table class="parts"><thead><tr><th>Part</th><th class="num">Qty</th><th>Status</th><th class="num">Unit price</th><th class="num">Mass each</th><th>Buy</th></tr></thead>
 <tbody>{''.join(rows)}</tbody></table></div>
@@ -377,6 +427,7 @@ sheets = [("01_Overview_Requirements_Decisions", "Requirements, summary of resul
 srows = "".join(f'<tr><td>{sheet(n)}</td><td>{E(d)}</td><td><a href="sheets/Ridgeback_{n}.xlsx">.xlsx</a></td></tr>' for n, d in sheets)
 files_body = f"""
 <section class="lead"><h1>Sheets, code and CAD</h1><p>Everything behind the numbers on this site. The sheets and pages are rebuilt from two plain files, so a change made there is permanent and shows up everywhere.</p></section>
+<section id="edits"><h2>Recent edits</h2><p class="small">Every change to the parts and design numbers, newest first. Each one is kept in the GitHub history; while editing with the team passcode, <b>Undo</b> puts the file back as it was before that change.</p><ol class="edits" id="editlist"><li class="quiet">Loading the history…</li></ol></section>
 <section id="edit"><h2>Change a value or a link</h2>
 <p><b>Easiest: press Edit at the top right of any page.</b> On the drone page, pick a part and its panel turns into a form (price, shop links, size, reasons, references); on the calculations page, the design numbers become editable. With the team passcode no GitHub account is needed (<a href="{GH}/blob/main/tools/relay/SETUP.md">how the passcode relay is set up</a>); until it is set up, Edit asks for a GitHub token. Or edit the files directly:</p>
 <table class="plain"><thead><tr><th>To change</th><th>Edit this file</th></tr></thead><tbody>
@@ -408,3 +459,36 @@ files_body = f"""
 tools/rebuild.sh     # sheets, checks (0 errors, split files equal the full model) and this site</pre></section>"""
 (ROOT / "docs/files.html").write_text(page("Ridgeback sheets, code and CAD", "files.html", files_body))
 print("site written")
+
+# ------------------------------------------------------------------ buy list: everything to buy, from the sheets (data/buy_list.json)
+BUY = json.load(open(ROOT / "data/buy_list.json"))
+GROUPS = ["Aircraft", "Mission sensors", "Ground equipment", "Shipping and fees", "Mission sensors: worth adding"]
+PART_BY_NAME = {p["name"]: p["id"] for p in PARTS}
+buy_html, totals = [], {}
+for g in GROUPS:
+    rows = [b for b in BUY if b["group"] == g and b["qty"]]
+    if not rows: continue
+    sub = sum(b["line"] for b in rows); duty = sum(b["duty"] for b in rows); totals[g] = sub + duty
+    def shop(b):
+        return f'<a href="{E(b["link"])}" target="_blank" rel="noopener">{E(b["store"].split(" (")[0] or "shop")}</a>' if b["link"] else E(b["store"])
+    def name(b):
+        pid = b.get("id") or PART_BY_NAME.get(b["name"])
+        return f'<a href="index.html#{pid}">{E(b["name"])}</a>' if pid else E(b["name"])
+    tr = "".join(f'<tr><td>{name(b)}</td><td class="num">{b["qty"]:g}</td><td class="num">${b["unit"]:,.2f}</td><td class="num">${b["line"]:,.2f}</td><td>{shop(b)}</td><td class="quiet">{E(b["note"])}</td></tr>' for b in rows)
+    if duty: tr += f'<tr class="sub"><td>Import duty on parts shipped from China</td><td></td><td></td><td class="num">${duty:,.2f}</td><td></td><td class="quiet">rates in Sheet 06, BOM_Cost</td></tr>'
+    tr += f'<tr class="tot"><td>{E(g)}: total</td><td></td><td></td><td class="num">${sub + duty:,.2f}</td><td></td><td></td></tr>'
+    buy_html.append(f'<h2 id="{g.split(":")[0].lower().replace(" ", "-")}{"-add" if ":" in g else ""}">{E(g)}</h2>'
+                    + (f'<p class="small">Not in the total below: recommended before the first mission flights, still to decide.</p>' if ":" in g else "")
+                    + f'<div class="tablewrap"><table class="parts buy"><thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Each</th><th class="num">Line</th><th>Shop</th><th>Price from</th></tr></thead><tbody>{tr}</tbody></table></div>')
+grand = sum(v for k, v in totals.items() if ":" not in k)
+assert abs(grand - val("cost_every")) < 1.5, (grand, val("cost_every"))     # same total as the sheets
+buy_body = f"""<section class="lead"><h1>Buy list</h1>
+<p>Everything we have to buy to fly the first mission, from the calculation sheets: the aircraft, the mission sensors and the ground equipment.
+Nothing comes from Sky4. Every price was read on the shop's page; the date is in the last column. Nothing has been ordered.</p>
+<table class="status"><tbody>{''.join(f'<tr><td>{E(k)}</td><td class="num">${v:,.0f}</td></tr>' for k, v in totals.items() if ":" not in k)}
+<tr class="tot"><td><b>Everything</b></td><td class="num"><b>${grand:,.0f}</b></td></tr></tbody></table>
+<p class="small">Budget: $3,000 for the aircraft, stretch $4,000–5,000 for everything (team, 30 Oct). To change a price or a shop link, press Edit on the drone page and pick the part; this list rebuilds from it.
+Not bought: a spot welder for the battery pack (borrow one from a lab first) and the ground-station laptop (a team member's, with QGroundControl, free).</p></section>
+{''.join(f'<section>{h}</section>' for h in buy_html)}"""
+(ROOT / "docs/buy.html").write_text(page("Ridgeback buy list", "buy.html", buy_body))
+print("buy list", len(BUY), "rows, total", round(grand))

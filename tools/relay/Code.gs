@@ -14,7 +14,7 @@ function doPost(e) {
   try {
     const q = JSON.parse(e.postData.contents);
     const props = PropertiesService.getScriptProperties();
-    const pass = props.getProperty('PASSCODE') || '';
+    const pass = props.getProperty('PASSCODE') || secret('PASSCODE');
     const cache = CacheService.getScriptCache();
     const wrong = Number(cache.get('wrong') || 0);
     if (wrong >= MAX_WRONG_PASSCODES) return out({ error: 'Too many wrong passcodes; editing is paused for 10 minutes.', status: 429 });
@@ -34,6 +34,20 @@ function doPost(e) {
         content: Utilities.base64Encode(q.text, Utilities.Charset.UTF_8), sha: q.sha, branch: 'main',
       };
       const r = gh('put', '/contents/' + q.path, body);
+      return out({ commit: r.commit.sha });
+    }
+    if (q.op === 'undo') {                       // put a file back as it was before one commit, if nobody changed it since
+      const sha = String(q.sha || '');
+      if (!/^[0-9a-f]{40}$/.test(sha)) throw err('Bad commit id.', 400);
+      const name = String(q.name || '').replace(/[^\w .,'-]/g, '').slice(0, 40).trim() || 'someone';
+      const c = gh('get', '/commits/' + sha);
+      const files = (c.files || []).filter(function (f) { return ALLOWED.indexOf(f.filename) >= 0; });
+      if (files.length !== 1) throw err('That change cannot be undone from the website.', 400);
+      const path = files[0].filename, now = gh('get', '/contents/' + path + '?ref=main');
+      if (now.sha !== files[0].sha) throw err('Someone changed this file after that edit; undo it by hand (see the history).', 409);
+      const before = gh('get', '/contents/' + path + '?ref=' + c.parents[0].sha);
+      rateLimit();
+      const r = gh('put', '/contents/' + path, { message: 'Undo ' + sha.slice(0, 7) + ' (by ' + name + ', on the website)', content: before.content.replace(/\n/g, ''), sha: now.sha, branch: 'main' });
       return out({ commit: r.commit.sha });
     }
     throw err('Unknown request.', 400);
@@ -71,7 +85,7 @@ function rateLimit() {
 }
 
 function gh(method, path, body) {
-  const token = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN');
+  const token = PropertiesService.getScriptProperties().getProperty('GITHUB_TOKEN') || secret('GITHUB_TOKEN');
   if (!token) throw err('The relay has no GitHub token yet (see tools/relay/SETUP.md).', 500);
   const opt = { method: method, muteHttpExceptions: true,
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
@@ -82,5 +96,8 @@ function gh(method, path, body) {
   return JSON.parse(text);
 }
 
+// Values may also come from a private Secrets.gs in the Apps Script project (never in this repository):
+//   const SECRETS = { GITHUB_TOKEN: 'github_pat_...', PASSCODE: '...' };
+function secret(k) { return (typeof SECRETS !== 'undefined' && SECRETS[k]) || ''; }
 function err(msg, status) { const e = new Error(msg); e.status = status; return e; }
 function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
