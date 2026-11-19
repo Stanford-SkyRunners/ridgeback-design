@@ -1917,7 +1917,7 @@
    "status": "buy",
    "price": 80,
    "mass": 60,
-   "size": "38 \u00d7 38 \u00d7 28 mm body, C/CS lens on top",
+   "size": "38 \u00d7 38 \u00d7 28 mm body (Raspberry Pi drawing), C/CS lens on top",
    "power_w": 1,
    "box": {
     "c": [
@@ -1964,7 +1964,7 @@
     "status": "buy",
     "price": 80,
     "mass": 60,
-    "size": "38 \u00d7 38 \u00d7 28 mm body, C/CS lens on top",
+    "size": "38 \u00d7 38 \u00d7 28 mm body (Raspberry Pi drawing), C/CS lens on top",
     "power_w": 1,
     "box": {
      "c": [
