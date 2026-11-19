@@ -467,7 +467,7 @@ qty = 1
 status = "buy"
 price = 80
 mass = 60
-size = "38 × 38 × 28 mm body, C/CS lens on top"
+size = "38 × 38 × 28 mm body (Raspberry Pi drawing), C/CS lens on top"
 power_w = 1
 box = { c = [60, 30, -124], dims = [38, 38, 28] }
 buy = [
